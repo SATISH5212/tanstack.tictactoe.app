@@ -11,9 +11,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as FetchErrorRouteImport } from './routes/fetch-error'
 import { Route as LayoutRouteImport } from './routes/_layout'
-import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LayoutUserdashboardRouteImport } from './routes/_layout/userdashboard'
 import { Route as LayoutDashboardRouteImport } from './routes/_layout/dashboard'
@@ -65,17 +63,8 @@ const LayoutDevicesDevicesDevice_idRouteImport = createFileRoute(
   '/_layout/_devices/devices/$device_id',
 )()
 
-const FetchErrorRoute = FetchErrorRouteImport.update({
-  id: '/fetch-error',
-  path: '/fetch-error',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -329,7 +318,6 @@ const LayoutUsersUsersUser_idPondsPondsPond_idMotorsMotor_idIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/fetch-error': typeof FetchErrorRoute
   '/dashboard': typeof LayoutDashboardRoute
   '/userdashboard': typeof LayoutUserdashboardRoute
   '/default-settings': typeof LayoutDefaultSettingsIndexRoute
@@ -367,7 +355,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/fetch-error': typeof FetchErrorRoute
   '/dashboard': typeof LayoutDashboardRoute
   '/userdashboard': typeof LayoutUserdashboardRoute
   '/default-settings': typeof LayoutDefaultSettingsIndexRoute
@@ -406,9 +393,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_auth': typeof AuthRoute
   '/_layout': typeof LayoutRouteWithChildren
-  '/fetch-error': typeof FetchErrorRoute
   '/_layout/_apfc': typeof LayoutApfcRouteWithChildren
   '/_layout/_devices': typeof LayoutDevicesRouteWithChildren
   '/_layout/_locations': typeof LayoutLocationsRouteWithChildren
@@ -458,7 +443,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/fetch-error'
     | '/dashboard'
     | '/userdashboard'
     | '/default-settings'
@@ -496,7 +480,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/fetch-error'
     | '/dashboard'
     | '/userdashboard'
     | '/default-settings'
@@ -534,9 +517,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/_auth'
     | '/_layout'
-    | '/fetch-error'
     | '/_layout/_apfc'
     | '/_layout/_devices'
     | '/_layout/_locations'
@@ -585,32 +566,16 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRoute
   LayoutRoute: typeof LayoutRouteWithChildren
-  FetchErrorRoute: typeof FetchErrorRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/fetch-error': {
-      id: '/fetch-error'
-      path: '/fetch-error'
-      fullPath: '/fetch-error'
-      preLoaderRoute: typeof FetchErrorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_layout': {
       id: '/_layout'
       path: ''
       fullPath: ''
       preLoaderRoute: typeof LayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -1187,9 +1152,7 @@ const LayoutRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRoute,
   LayoutRoute: LayoutRouteWithChildren,
-  FetchErrorRoute: FetchErrorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,22 +1,15 @@
 "use client";
 
+import { LogoIcon } from "@/components/svg/LogoIcon";
+import { Button } from "@/components/ui/button";
+import { updateAuthStore } from "@/lib/interfaces/auth/auth";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import Cookies from "js-cookie";
 import { Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { LogoIcon } from "@/components/svg/LogoIcon";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { useUserDetails } from "@/lib/helpers/userpermission";
-import { updateAuthStore } from "@/lib/interfaces/auth/auth";
 import { EmailSvg } from "src/components/svg/EmailSvg";
 import { EyeSvg } from "src/components/svg/EyeSvg";
 import { OpenEye } from "src/components/svg/OpenEye";
@@ -27,12 +20,7 @@ import {
   ServerError,
   ValidationErrors,
 } from "src/lib/interfaces/auth/login";
-import { loginAPI, sendOtpAPI, verifyOtpAPI } from "src/lib/services/auth";
-
-type ViewType = "email" | "phone" | "otp";
-const OTP_LENGTH = 4;
-const PHONE_LENGTH = 10;
-const TIMER_DURATION = 59;
+import { loginAPI } from "src/lib/services/auth";
 
 const setAuthTokens = (accessToken: string, userDetails: any) => {
   Cookies.set("userDetails", JSON.stringify(userDetails));
@@ -57,55 +45,13 @@ const handleServerError = (
   }
 };
 
-const useOtpTimer = () => {
-  const [timer, setTimer] = useState(TIMER_DURATION);
-  const [canResend, setCanResend] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const startTimer = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
-    setTimer(TIMER_DURATION);
-    setCanResend(false);
-
-    intervalRef.current = setInterval(() => {
-      setTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(intervalRef.current!);
-          intervalRef.current = null;
-          setCanResend(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const stopTimer = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
-
-  useEffect(() => {
-    return () => stopTimer();
-  }, []);
-
-  return { timer, canResend, startTimer, stopTimer };
-};
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { isAdmin } = useUserDetails();
-  const { timer, canResend, startTimer, stopTimer } = useOtpTimer();
-  const [view, setView] = useState<ViewType>("email");
   const [showPassword, setShowPassword] = useState(false);
   const [validation, setValidations] = useState<ValidationErrors>({});
   const [conflictError, setConflictError] = useState<{ message?: string }>({});
-  const [phoneNumber, setPhoneNumber] = useState("");
 
   const {
     register,
@@ -119,8 +65,6 @@ export function LoginPage() {
     defaultValues: {
       email: "",
       password: "",
-      phone: "",
-      otp: "",
     },
   });
 
@@ -140,83 +84,8 @@ export function LoginPage() {
     },
   });
 
-  const { mutate: mutateOtp, isPending: isPendingSendOtp } = useMutation({
-    mutationKey: ["otp"],
-    mutationFn: sendOtpAPI,
-    onSuccess: (response) => {
-      const phone = response?.data?.data?.phone || phoneNumber;
-      setPhoneNumber(phone);
-      setView("otp");
-      toast.success(response?.data?.message || "OTP sent successfully");
-    },
-    onError: (error: ServerError) => {
-      handleServerError(error, setValidations, setConflictError);
-    },
-  });
-
- const { mutate: mutateVerifyOtp, isPending: isPendingVerifyOtp } =
-    useMutation({
-      mutationKey: ["verify-otp"],
-      mutationFn: verifyOtpAPI,
-      onSuccess: (response) => {
-        const { access_token, user_details } = response?.data?.data || {};
-        setAuthTokens(access_token, user_details);
-        localStorage.setItem("userId", user_details?.id);
-        toast.success(response?.data?.message || "Login successful");
-        reset();
-        navigate({ to: isAdmin() ? "/dashboard" : "/ponds" });
-      },
-      onError: (error: ServerError) => {
-        handleServerError(error, setValidations, setConflictError);
-      },
-    });
-
   const onEmailSubmit = (data: FormValues) => {
     mutateLogin({ email: data.email, password: data.password });
-  };
-
-  const onPhoneSubmit = (data: phoneValues) => {
-    setPhoneNumber(data.phone);
-    mutateOtp({ phone: data.phone });
-  };
-
-  const onOtpSubmit = (data: phoneValues) => {
-    mutateVerifyOtp({ phone: phoneNumber, otp: data.otp });
-  };
-
-  const handleResendOtp = () => {
-    if (!canResend) return;
-
-    setValue("otp", "");
-    clearFieldError("otp");
-    mutateOtp({ phone: phoneNumber });
-  };
-
-  const handleOtpChange = (val: string) => {
-    const numericValue = val.replace(/\D/g, "");
-    setValue("otp", numericValue);
-    clearFieldError("otp");
-
-    if (numericValue.length === OTP_LENGTH) {
-      mutateVerifyOtp({ phone: phoneNumber, otp: numericValue });
-    }
-  };
-
-  const handleBackToPhone = () => {
-    setView("phone");
-    setValue("otp", "");
-    stopTimer();
-  };
-
-  const handleSwitchToEmail = () => {
-    setView("email");
-    setPhoneNumber("");
-    setValue("phone", "");
-    stopTimer();
-  };
-
-  const handleSwitchToPhone = () => {
-    setView("phone");
   };
 
   const clearFieldError = (field: keyof (FormValues & phoneValues)) => {
@@ -233,41 +102,14 @@ export function LoginPage() {
   }, [navigate]);
 
   useEffect(() => {
-    const shouldKeepPhone = view === "otp" || view === "phone";
     reset({
       email: "",
       password: "",
-      phone: shouldKeepPhone ? phoneNumber : "",
-      otp: "",
     });
     setValidations({});
     setConflictError({});
     clearErrors();
-  }, [view, phoneNumber, reset, clearErrors]);
-
-  useEffect(() => {
-    if (view === "otp") {
-      setValue("otp", "");
-      startTimer();
-    } else {
-      stopTimer();
-    }
-  }, [view]);
-
-  const viewConfig = {
-    email: {
-      title: "Sign In",
-      subtitle: "Sign in to access your Account",
-    },
-    phone: {
-      title: "Verify Your Phone Number",
-      subtitle: "Enter Phone Number to Access Your Account",
-    },
-    otp: {
-      title: "OTP Verification",
-      subtitle: `Enter the OTP sent to ****** ${phoneNumber.slice(6)}`,
-    },
-  };
+  }, [reset, clearErrors]);
 
   return (
     <div className="h-screen w-screen flex text-xs bg-white">
@@ -282,23 +124,17 @@ export function LoginPage() {
         <LogoIcon />
         <div className="w-full space-y-5 text-35353d">
           <div className="text-center">
-            <div className="text-lg font-normal">{viewConfig[view].title}</div>
+            <div className="text-lg font-normal">Sign In</div>
             <div className="text-gray-500 text-sm font-light">
-              {viewConfig[view].subtitle}
+             Sign in to access your Account
             </div>
           </div>
           <form
-            onSubmit={handleSubmit(
-              view === "email"
-                ? onEmailSubmit
-                : view === "phone"
-                  ? onPhoneSubmit
-                  : onOtpSubmit
-            )}
+            onSubmit={handleSubmit(onEmailSubmit)}
+  
             className="space-y-5"
           >
-            {view === "email" && (
-              <>
+          
                 <div className="space-y-1">
                   <div className="font-normal">
                     Email<span className="text-red-500"> *</span>
@@ -376,155 +212,8 @@ export function LoginPage() {
                     )}
                     {isPendingLogin ? "Logging in..." : "Login"}
                   </Button>
-
-                  <div className="cursor-pointer">
-                    <span
-                      className="text-blue-500"
-                      onClick={handleSwitchToPhone}
-                    >
-                      Login with Phone Number
-                    </span>
-                  </div>
                 </div>
-              </>
-            )}
-            {view === "phone" && (
-              <>
-                <div className="space-y-1">
-                  <Input
-                    placeholder="Enter phone number"
-                    autoComplete="off"
-                    maxLength={PHONE_LENGTH}
-                    autoFocus
-                    {...register("phone", {
-                      required: "Phone number is required",
-                      pattern: {
-                        value: /^[0-9]{10}$/,
-                        message: "Invalid phone number (10 digits required)",
-                      },
-                      onChange: () => clearFieldError("phone"),
-                    })}
-                    className="h-full outline-none p-2 w-full bg-inherit"
-                    onInput={(e) => {
-                      e.currentTarget.value = e.currentTarget.value.replace(
-                        /[^0-9]/g,
-                        ""
-                      );
-                    }}
-                  />
-                  {errors.phone && (
-                    <p className="text-red-500 text-xs">
-                      {errors.phone.message}
-                    </p>
-                  )}
-                  {validation.phone && (
-                    <p className="text-red-500 text-xs">{validation.phone}</p>
-                  )}
-                </div>
-
-                <div className="text-center pt-5 space-y-6">
-                  <Button
-                    type="submit"
-                    className="w-full text-white bg-primary p-2 rounded-full hover:bg-primary/80"
-                    disabled={isPendingSendOtp}
-                  >
-                    {isPendingSendOtp && (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    )}
-                    {isPendingSendOtp ? "Sending OTP..." : "Send OTP"}
-                  </Button>
-
-                  <div className="cursor-pointer">
-                    <span
-                      className="text-blue-500"
-                      onClick={handleSwitchToEmail}
-                    >
-                      Back to Email Login
-                    </span>
-                  </div>
-                </div>
-              </>
-            )}
-            {view === "otp" && (
-              <>
-                <div className="flex flex-col justify-center space-y-1">
-                  <div className="flex justify-center">
-                    <Controller
-                      control={control}
-                      name="otp"
-                      render={({ field }) => (
-                        <InputOTP
-                          maxLength={OTP_LENGTH}
-                          value={field.value || ""}
-                          onChange={handleOtpChange}
-                          autoFocus
-                        >
-                          <InputOTPGroup>
-                            {Array.from({ length: OTP_LENGTH }, (_, i) => (
-                              <InputOTPSlot
-                                key={i}
-                                index={i}
-                                className="border-black bg-white text-black h-12 w-12 text-lg 3xl:text-xl ml-1 mr-1 [&_.caret]:bg-black"
-                              />
-                            ))}
-                          </InputOTPGroup>
-                        </InputOTP>
-                      )}
-                    />
-                  </div>
-
-                  <div className="flex flex-row justify-center">
-                    {errors.otp && (
-                      <p className="text-red-500 text-xs">
-                        {errors.otp.message}
-                      </p>
-                    )}
-                    {validation.otp && (
-                      <p className="text-red-500 text-xs">{validation.otp}</p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col gap-1 text-center mt-4 text-sm text-gray-600">
-                    <p>Didn't receive the OTP?</p>
-                    {canResend ? (
-                      <button
-                        type="button"
-                        className="font-medium hover:underline-offset-4 hover:underline text-blue-400 hover:text-blue-500"
-                        onClick={handleResendOtp}
-                      >
-                        Resend OTP
-                      </button>
-                    ) : (
-                      <p className="font-medium">
-                        Resend OTP in{" "}
-                        <span className="text-yellow-500 font-semibold">
-                          {timer}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="text-center pt-2 space-y-8">
-                  <Button
-                    type="submit"
-                    className="w-full text-white bg-primary p-2 rounded-full hover:bg-primary/80 disabled:cursor-not-allowed"
-                    disabled={isPendingVerifyOtp}
-                  >
-                    {isPendingVerifyOtp && (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    )}
-                    {isPendingVerifyOtp ? "Verifying..." : "Verify OTP"}
-                  </Button>
-
-                  <div className="cursor-pointer">
-                    <span className="text-blue-500" onClick={handleBackToPhone}>
-                      Back to Phone
-                    </span>
-                  </div>
-                </div>
-              </>
-            )}
+            
           </form>
         </div>
       </div>
