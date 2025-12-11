@@ -1,0 +1,792 @@
+import { capitalize } from "@/lib/helpers/capitalize";
+import { useUserDetails } from "@/lib/helpers/userpermission";
+import { updateDeviceStatusAPI } from "@/lib/services/deviceses";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ColumnDef } from "@tanstack/react-table";
+import { Loader2, SettingsIcon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { DeviceLogs } from "../core/DeviceLogs";
+import AddIcon from "../icons/apfc/AddIcon";
+import { DeleteDeviceIcon } from "../svg/DeletePond";
+import { EditDeviceIcon } from "../svg/EditDevice";
+import { GreenDot } from "../svg/GreenDot";
+import { InfoDeviceIcon } from "../svg/InfoIcon";
+import LogsIcon from "../svg/LogsSvg";
+import { MenuIcon } from "../svg/Menu icon";
+import { PowerOff } from "../svg/PowerOff";
+import { PowerOn } from "../svg/PowerOn";
+import { RedDot } from "../svg/RedDot";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
+import { Badge } from "../ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import AssignUserToDevice from "./AssignUserToDevice";
+import ViewRawDataButton from "./ViewRawDataButton";
+
+interface DeviceColumnsProps {
+  refetchDevices: () => void;
+  handleInfoDialogClick: (device: any) => void;
+  handleSettingsClick: (device: any) => void;
+  setEditState: (state: { isOpen: boolean; device: any | null }) => void;
+  handleDelete: (device: any) => void;
+  debounceSearchString?: string;
+  pageSize?: number;
+  assignedMember: any;
+  onViewRawData: (device: any) => void;
+}
+
+export const DeviceColumns = ({
+  refetchDevices,
+  handleInfoDialogClick,
+  handleSettingsClick,
+  setEditState,
+  handleDelete,
+  debounceSearchString,
+  assignedMember,
+  pageSize,
+  onViewRawData,
+}: DeviceColumnsProps): ColumnDef<any>[] => {
+  const [logsSheetOpen, setLogsSheetOpen] = useState(false);
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+  const [selectedDeviceName, setSelectedDeviceName] = useState<any>(null);
+  const { isAdmin, isOwner } = useUserDetails();
+  return [
+    {
+      accessorFn: (row: any) =>
+        isAdmin()
+          ? row.title
+          : row.alias_starter_title != null
+            ? row.alias_starter_title
+            : row.title,
+      id: "title",
+      cell: (info: any) => {
+    
+        
+        const title = info.getValue() || "-";
+        const formattedTitle =
+          title !== "-"
+            ? title.charAt(0).toUpperCase() + title.slice(1).toLowerCase()
+            : title;
+        const displayText =
+          formattedTitle?.length > 15
+            ? `${formattedTitle.slice(0, 12)}...`
+            : formattedTitle;
+
+        return (
+          <div className="p-2 h-[40px] flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left bg-white">
+            <span title={title}>{displayText}</span>
+          </div>
+        );
+      },
+      header: () => (
+        <span className="!text-left w-full block sticky top-0 z-11">
+          Device Name
+        </span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 100,
+    },
+    {
+      accessorFn: (row: any) => row.pcb_number,
+      id: "pcb_number",
+      cell: (info: any) => {
+        const value = info.getValue() || "-";
+        const displayText =
+          value?.length > 15 ? `${value.slice(0, 12)}...` : value;
+
+        return (
+          <div className="w-full truncate p-2 h-[40px] flex items-center bg-white justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left ">
+            <span title={value}>{displayText}</span>
+          </div>
+        );
+      },
+      header: () => <span className="!text-left w-full pl-3">PCB Number</span>,
+      footer: (props: any) => props.column.id,
+      size: 110,
+    },
+    {
+      accessorFn: (row: any) => row.mac_address,
+      id: "mac_address",
+      cell: (info: any) => {
+        const value = info.getValue() || "-";
+
+        return (
+          <div className="w-full h-[40px] justify-center items-center flex truncate p-2 overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left">
+            <span>{value}</span>
+          </div>
+        );
+      },
+      header: () => (
+        <span className="!text-left w-full pl-5 h-[40px] flex items-center">
+          MAC Address
+        </span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 150,
+    },
+    {
+      accessorFn: (row: any) => row.starter_number,
+      id: "starter_number",
+      cell: (info: any) => {
+        const value = info.getValue() || "-";
+        const displayText =
+          value?.length > 15 ? `${value.slice(0, 12)}...` : value;
+
+        return (
+          <div className="p-2 h-[40px] justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left">
+            <span title={value}>{displayText}</span>
+          </div>
+        );
+      },
+      header: () => <span className="text-center w-full">Starter Number</span>,
+      footer: (props: any) => props.column.id,
+      size: 150,
+    },
+    {
+      accessorFn: (row: any) => row.device_status,
+      id: "device_status",
+      cell: (info: any) => {
+        const status = info.getValue() || "--";
+        const deviceId = info.row.original.id;
+        const [open, setOpen] = useState(false);
+        const [dialogOpen, setDialogOpen] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
+        const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+
+        const queryClient = useQueryClient();
+
+        const { mutate: updateStatus } = useMutation({
+          mutationFn: (newStatus: string) =>
+            updateDeviceStatusAPI(deviceId, { device_status: newStatus }),
+          onSuccess: (response, newStatus) => {
+            if (response.status === 200 || response.status === 201) {
+              toast.success(response?.data?.message);
+              queryClient.setQueryData(
+                ["devices", debounceSearchString, pageSize],
+                (oldData: any) => {
+                  if (!oldData) return oldData;
+                  return {
+                    ...oldData,
+                    pages: oldData.pages.map((page: any) => ({
+                      ...page,
+                      data: page.data.map((device: any) =>
+                        device.id === deviceId
+                          ? { ...device, device_status: newStatus }
+                          : device
+                      ),
+                    })),
+                  };
+                }
+              );
+              refetchDevices();
+            }
+          },
+          onError: (error: any) => {
+            toast.error(error?.data?.message || "Failed to update status");
+          },
+          onSettled: () => {
+            setIsLoading(false);
+            setDialogOpen(false);
+          },
+        });
+
+        const assignedUser = info.row.original.user
+          ? assignedMember?.find(
+              (user: any) => user.id === info.row.original.user.id
+            )
+          : null;
+
+        const handleStatusChange = (newStatus: string) => {
+          if (newStatus === "DEPLOYED") {
+            setDialogOpen(true);
+          } else {
+            updateStatus(newStatus);
+            setOpen(false);
+          }
+        };
+
+        const handleAssignUser = () => {
+          setAssignDialogOpen(true);
+        };
+
+        return (
+          <div
+            className="p-2 h-[40px] flex justify-start items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {status === "ASSIGNED" ? (
+              <div
+                className="flex items-center justify-center gap-2"
+                key={deviceId}
+              >
+                <Badge className="px-1 py-0.5 border border-gray-200 rounded-md bg-gray-500 text-white text-2xs font-normal hover:bg-gray-500 cursor-not-allowed">
+                  Assigned
+                </Badge>
+                {assignedUser && (
+                  <div className="bg-[#B0C4DE] w-6 h-6 rounded-full flex items-center justify-center overflow-hidden">
+                    <p title={assignedUser.full_name || "--"}>
+                      {assignedUser.full_name
+                        ? assignedUser.full_name
+                            ?.split(" ")
+                            .slice(0, 2)
+                            .map((name: string) => name.charAt(0))
+                            .join("")
+                            .toUpperCase()
+                        : "--"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Select
+                  value={status !== "--" ? status : ""}
+                  onValueChange={(value) => handleStatusChange(value)}
+                >
+                  <SelectTrigger
+                    className={`w-fit px-1 py-0 h-6 border border-gray-200 rounded-md text-2xs font-normal cursor-pointer 
+                    ${
+                      status === "READY"
+                        ? "bg-green-500 text-white"
+                        : status === "TEST"
+                          ? "bg-yellow-400 text-white"
+                          : status === "DEPLOYED"
+                            ? "bg-cyan-500 text-white"
+                            : "bg-gray-300 text-white"
+                    }`}
+                  >
+                    <SelectValue placeholder="Select Status">
+                      {status !== "--"
+                        ? status === "TEST"
+                          ? "Testing"
+                          : status === "DEPLOYED"
+                            ? "Deployable"
+                            : capitalize(status.toLowerCase())
+                        : "Select Status"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {status === "READY" && (
+                      <SelectItem
+                        value="TEST"
+                        className="text-xs cursor-pointer hover:bg-gray-200"
+                      >
+                        Testing
+                      </SelectItem>
+                    )}
+                    {status === "TEST" && (
+                      <SelectItem
+                        value="DEPLOYED"
+                        className="text-xs cursor-pointer hover:bg-gray-200"
+                      >
+                        Deployable
+                      </SelectItem>
+                    )}
+                    {status === "DEPLOYED" && (
+                      <SelectItem
+                        value="TEST"
+                        className="text-xs cursor-pointer hover:bg-gray-200"
+                      >
+                        Testing
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                {status === "DEPLOYED" && (
+                  <AddIcon
+                    className="size-4 cursor-pointer ml-2"
+                    onClick={(e: any) => {
+                      e.stopPropagation();
+                      handleAssignUser();
+                    }}
+                  />
+                )}
+                <div className="bg-white">
+                  <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <AlertDialogContent className="bg-white">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-sm font-bold">
+                          Confirm Device Deploy
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="text-sm font-normal">
+                          Are you sure you want to Deploy this device?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isLoading}>
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-red-500 hover:bg-red-500 text-white h-8 font-normal"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsLoading(true);
+                            updateStatus("DEPLOYED");
+                          }}
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <div className="flex items-center gap-2">
+                              <Loader2 className="h-4 w-4 animate-spin text-white" />
+                              Confirming...
+                            </div>
+                          ) : (
+                            "Confirm"
+                          )}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <AssignUserToDevice
+                    open={assignDialogOpen}
+                    onClose={() => {
+                      setAssignDialogOpen(false);
+                    }}
+                    getData={refetchDevices}
+                    device_id={deviceId}
+                    deviceData={info.row.original}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-left w-full cursor-default">
+          Deployment Status
+        </span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 110,
+    },
+    {
+      accessorFn: (row: any) => row.status,
+      id: "status",
+      cell: (info: any) => {
+        const status = info.getValue() || "--";
+        return (
+          <div className="p-2 h-[40px] justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
+            <span
+              className={
+                status === "ACTIVE" ? "text-green-600" : "text-red-600"
+              }
+            >
+              {status === "ACTIVE"
+                ? "Active"
+                : status === "INACTIVE"
+                  ? "Inactive"
+                  : "--"}
+            </span>
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">Device Status</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 100,
+    },
+    {
+      accessorFn: (row: any) => row.starterBoxParameters?.[0]?.power_present,
+      id: "power_present",
+      cell: (info: any) => {
+        const powerPresent = info.getValue();
+        return (
+          <div className="p-2 h-[40px] items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm flex justify-center">
+            <span>{powerPresent === "1" ? <PowerOn /> : <PowerOff />}</span>
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">Power</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 50,
+    },
+    {
+      accessorFn: (row: any) => row.starterBoxParameters,
+      id: "line_voltages",
+      cell: (info: any) => {
+        const params = info.getValue() || [];
+        const device = info.row.original;
+        const voltages = device.starterBoxParameters?.[0] || {};
+
+        return (
+          <div className="p-2 h-[40px] text-xs 3xl:text-sm text-center leading-tight flex flex-col gap-1 justify-center items-center">
+            {params.length > 0 ? (
+              <div className="flex flex-col items-center gap-1">
+                {voltages && (
+                  <div className="flex gap-1">
+                    <div className="text-red-500 w-[32px] text-center">
+                      {voltages?.line_voltage_vry?.toFixed(1)}
+                    </div>
+                    <div className="text-yellow-500 w-[32px] text-center">
+                      {voltages?.line_voltage_vyb?.toFixed(1)}
+                    </div>
+                    <div className="text-blue-500 w-[32px] text-center">
+                      {voltages?.line_voltage_vbr?.toFixed(1)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              "--"
+            )}
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">Volts</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 100,
+    },
+    {
+      accessorFn: (row: any) => row.starterBoxParameters,
+      id: "state",
+      cell: (info: any) => {
+        const params = info.getValue() || [];
+        const device = info.row.original;
+        const states = params.reduce(
+          (acc: any, param: any) => {
+            if (param.motor_ref_id === "mtr_1") acc.m1 = param.motor_state;
+            if (param.motor_ref_id === "mtr_2") acc.m2 = param.motor_state;
+            return acc;
+          },
+          { m1: null, m2: null }
+        );
+
+        return (
+          <div className="p-2 h-[40px] justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col gap-1 items-center">
+            {params.length > 0 ? (
+              <div className="flex flex-col items-center gap-1">
+                {device.capable_motors >= 1 && (
+                  <div className="flex items-center gap-1">
+                    <span className="text-[11px] 3xl:!text-sm font-medium">
+                      M1:
+                    </span>
+                    {states.m1 === 1 ? <GreenDot /> : <RedDot />}
+                  </div>
+                )}
+                {device.capable_motors === 2 && (
+                  <div className="flex items-center gap-1">
+                    <span className="text-[11px] 3xl:!text-sm font-medium">
+                      M2:
+                    </span>
+                    {states.m2 === 1 ? <GreenDot /> : <RedDot />}
+                  </div>
+                )}
+              </div>
+            ) : (
+              "--"
+            )}
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">State</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 100,
+    },
+    {
+      accessorFn: (row: any) => row.starterBoxParameters,
+      id: "mode",
+      cell: (info: any) => {
+        const params = info.getValue() || [];
+        const device = info.row.original;
+        const modes = params.reduce(
+          (acc: any, param: any) => {
+            if (param.motor_ref_id === "mtr_1") acc.m1 = param.motor_mode;
+            if (param.motor_ref_id === "mtr_2") acc.m2 = param.motor_mode;
+            return acc;
+          },
+          { m1: null, m2: null }
+        );
+
+        return (
+          <div className="p-0 h-[40px] justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col items-center">
+            {params.length > 0 ? (
+              <div className="flex flex-col items-center gap-1">
+                {device.capable_motors >= 1 && (
+                  <div className="flex items-center gap-1">
+                    <span>
+                      {modes.m1 ? capitalize(modes.m1.toLowerCase()) : "--"}
+                    </span>
+                  </div>
+                )}
+                {device.capable_motors === 2 && (
+                  <div className="flex items-center gap-1">
+                    <span>
+                      {modes.m2 ? capitalize(modes.m2.toLowerCase()) : "--"}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              "--"
+            )}
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">Mode</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 100,
+    },
+
+    {
+      accessorFn: (row: any) => row.starterBoxParameters,
+      id: "currents",
+      cell: (info: any) => {
+        const params = info.getValue() || [];
+        const device = info.row.original;
+        const currents = params.reduce(
+          (acc: any, param: any) => {
+            if (param.motor_ref_id === "mtr_1") {
+              acc.m1 = {
+                i1:
+                  param.current_i1 != null ? param.current_i1.toFixed(1) : "0",
+                i2:
+                  param.current_i2 != null ? param.current_i2.toFixed(1) : "0",
+                i3:
+                  param.current_i3 != null ? param.current_i3.toFixed(1) : "0",
+              };
+            }
+            if (param.motor_ref_id === "mtr_2") {
+              acc.m2 = {
+                i1:
+                  param.current_i1 != null ? param.current_i1.toFixed(1) : "0",
+                i2:
+                  param.current_i2 != null ? param.current_i2.toFixed(1) : "0",
+                i3:
+                  param.current_i3 != null ? param.current_i3.toFixed(1) : "0",
+              };
+            }
+            return acc;
+          },
+          {
+            m1:
+              device.capable_motors >= 1 ? { i1: "0", i2: "0", i3: "0" } : null,
+            m2:
+              device.capable_motors === 2
+                ? { i1: "0", i2: "0", i3: "0" }
+                : null,
+          }
+        );
+
+        return (
+          <div className="p-2 h-[40px] text-xs 3xl:text-sm justify-center text-left leading-tight flex flex-col gap-1 items-center">
+            {params.length > 0 || device.capable_motors > 0 ? (
+              <div className="flex flex-col items-center gap-1">
+                {device.capable_motors >= 1 && currents.m1 && (
+                  <div className="flex items-center gap-1">
+                    <div className="flex gap-1 min-w-[80px] justify-between">
+                      <div className="text-red-500 w-[32px] text-center">
+                        {currents?.m1.i1}
+                      </div>
+                      <div className="text-yellow-500 w-[32px] text-center">
+                        {currents?.m1.i2}
+                      </div>
+                      <div className="text-blue-500 w-[32px] text-center">
+                        {currents?.m1.i3}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {device.capable_motors === 2 && currents.m2 && (
+                  <div className="flex items-center gap-1">
+                    <div className="flex gap-1 min-w-[80px] justify-between">
+                      <div className="text-red-500 w-[32px] text-center">
+                        {currents?.m2.i1}
+                      </div>
+                      <div className="text-yellow-500 w-[32px] text-center">
+                        {currents?.m2.i2}
+                      </div>
+                      <div className="text-blue-500 w-[32px] text-center">
+                        {currents?.m2.i3}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              "--"
+            )}
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">Currents</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 100,
+    },
+    {
+      accessorFn: (row: any) => row.alert_count,
+      id: "alert_count",
+      cell: (info: any) => {
+        const count = info.getValue() ?? "--";
+        return (
+          <div className="p-2 h-[40px] flex justify-center text-xs 3xl:text-sm text-center leading-tight items-center">
+            {count}
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">Alerts</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 50,
+    },
+    {
+      accessorFn: (row: any) => row.fault_count,
+      id: "fault_count",
+      cell: (info: any) => {
+        const count = info.getValue() ?? "--";
+        return (
+          <div className="p-2 h-[40px] flex justify-center items-center text-xs 3xl:text-sm text-center leading-tight ">
+            {count}
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">Faults</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 50,
+    },
+    {
+      id: "actions",
+      header: () => (
+        <span className="text-center w-full block sticky top-0 z-11">
+          Actions
+        </span>
+      ),
+      cell: (info: any) => (
+        <div
+          className="w-full flex justify-center p-2 sticky right-0 bg-white z-10"
+          style={{
+            position: "sticky",
+            right: 0,
+            zIndex: 10,
+            background: "white",
+          }}
+        >
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <MenuIcon />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                className="text-gray-500 cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleInfoDialogClick(info.row.original);
+                }}
+              >
+                <InfoDeviceIcon />
+                Info
+              </DropdownMenuItem>
+
+              {isAdmin() && (
+                <>
+                  <DropdownMenuItem
+                    className="text-gray-500 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSettingsClick(info.row.original);
+                    }}
+                  >
+                    <SettingsIcon />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="text-gray-500 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditState({ isOpen: true, device: info.row.original });
+                    }}
+                  >
+                    <EditDeviceIcon />
+                    Edit
+                  </DropdownMenuItem>
+                </>
+              )}
+              {(isOwner() || isAdmin()) && (
+                <DropdownMenuItem
+                  className="text-gray-500 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(info.row.original);
+                  }}
+                >
+                  <DeleteDeviceIcon />
+                  Delete
+                </DropdownMenuItem>
+              )}
+
+              <ViewRawDataButton
+                device={info.row.original}
+                onOpenDrawer={() => {
+                  if (onViewRawData) {
+                    onViewRawData(info.row.original);
+                  }
+                }}
+              />
+              <DropdownMenuItem
+                className="text-gray-500 cursor-pointer"
+                onClick={(e) => {
+                  
+                  e.stopPropagation();
+                  setSelectedDeviceId(info.row.original.id);
+                  setSelectedDeviceName(() => {
+                    return info.row.original.alias_starter_title
+                      ? info.row.original.alias_starter_title
+                      : info.row.original.title;
+                  });
+                  setLogsSheetOpen(true);
+                }}
+              >
+                <LogsIcon />
+                Device Logs
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {selectedDeviceId && (
+            <DeviceLogs
+              motorId={selectedDeviceId}
+              open={logsSheetOpen}
+              devicename={selectedDeviceName}
+              setOpen={setLogsSheetOpen}
+            />
+          )}
+        </div>
+      ),
+      size: 80,
+    },
+  ];
+};
