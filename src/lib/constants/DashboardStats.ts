@@ -16,11 +16,6 @@ export const BaseStats = [
     icon: TotalLocationsIcon,
   },
   {
-    label: "Total Ponds",
-    color: "p-2 space-y-2 bg-gray-200 w-full rounded-lg",
-    icon: TotalPondsIcon,
-  },
-  {
     label: "Total Devices",
     color: "p-2 space-y-2 bg-gray-200 w-full rounded-lg",
     icon: TotalDeviceIcon,

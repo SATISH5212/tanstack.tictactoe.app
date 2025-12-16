@@ -28,8 +28,6 @@ const StatsList = () => {
         return data?.users_count ?? 0;
       case "Total Locations":
         return data?.locations_count ?? 0;
-      case "Total Ponds":
-        return data?.ponds_count ?? 0;
       case "Total Devices":
         return data?.starterBoxes_count ?? 0;
       case "Total Motors":
@@ -52,7 +50,6 @@ const StatsList = () => {
     getStatValue,
     data?.users_count,
     data?.locations_count,
-    data?.ponds_count,
     data?.starterBoxes_count,
     data?.motors_count,
   ]);
