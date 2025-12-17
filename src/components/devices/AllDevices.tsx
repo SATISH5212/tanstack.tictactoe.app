@@ -1,29 +1,25 @@
 import { useUserDetails } from "@/lib/helpers/userpermission";
 import { deleteUsersDeviceAPI } from "@/lib/services/users";
 import {
-    useInfiniteQuery,
-    useMutation,
-    useQuery,
-    useQueryClient,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
-import {
-    Outlet,
-    useLocation,
-    useNavigate
-} from "@tanstack/react-router";
+import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
 import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import { toast } from "sonner";
 import {
-    getAllPaginatedDeviceData,
-    getGatewayTitleAPI,
-    getSingleDeviceAPI
+  getAllPaginatedDeviceData,
+  getGatewayTitleAPI,
+  getSingleDeviceAPI,
 } from "src/lib/services/deviceses";
 import DeleteDialog from "../core/DeleteDialog";
 import EditDeviceSheet from "../core/EditDeviceSheet";
@@ -34,6 +30,8 @@ import TanStackTable from "../core/TanstackTable";
 import { DeviceColumns } from "./DeviceColumns";
 import DevicesFilter from "./DevicesFilter";
 import AddDevice from "./add";
+import UserDropdown from "../core/UsersDropdown";
+import LocationDropdown from "../core/LocationDropdown";
 
 export function AllDevices() {
   const { isUser, isSuperAdmin } = useUserDetails();
@@ -48,10 +46,7 @@ export function AllDevices() {
   const [selectedFiltersCount, setSelectedFiltersCount] = useState(0);
   const pageIndexParam = Number(searchParams.get("current_page")) || 1;
   const pageSizeParam = Number(searchParams.get("page_size")) || 20;
-  const capableMotorsParam = searchParams.get("capable_motors");
-  const [capableMotors, setCapableMotors] = useState<number | undefined>(
-    capableMotorsParam ? Number(capableMotorsParam) : undefined
-  );
+
   const [searchString, setSearchString] = useState(
     searchParams.get("search_string") || ""
   );
@@ -147,21 +142,21 @@ export function AllDevices() {
           );
         return [...prevMembers, ...newUsers];
       });
-    //   if (device_id && pageParam === 1) {
-    //     const selectedDevice = devices.find(
-    //       (device: any) => device.id == device_id
-    //     );
-    //     if (selectedDevice) {
-    //       const gatewayTitle = selectedDevice?.gateways?.title || null;
-    //       setIsTestDevice(
-    //         selectedDevice.device_status === "TEST" ||
-    //           selectedDevice.device_status === "DEPLOYED"
-    //       );
-    //       if (selectedDevice.capable_motors) {
-    //         setCapableMotors(Number(selectedDevice.capable_motors));
-    //       }
-    //     }
-    //   }
+      //   if (device_id && pageParam === 1) {
+      //     const selectedDevice = devices.find(
+      //       (device: any) => device.id == device_id
+      //     );
+      //     if (selectedDevice) {
+      //       const gatewayTitle = selectedDevice?.gateways?.title || null;
+      //       setIsTestDevice(
+      //         selectedDevice.device_status === "TEST" ||
+      //           selectedDevice.device_status === "DEPLOYED"
+      //       );
+      //       if (selectedDevice.capable_motors) {
+      //         setCapableMotors(Number(selectedDevice.capable_motors));
+      //       }
+      //     }
+      //   }
 
       return {
         data: devices,
@@ -203,7 +198,6 @@ export function AllDevices() {
     return devices;
   }, [data]);
 
-  
   const { data: singleDeviceData } = useQuery({
     queryKey: ["single-device", deviceId],
     queryFn: async () => {
@@ -253,16 +247,16 @@ export function AllDevices() {
       return { previousData };
     },
     onSuccess: (response, deviceId) => {
-    //   if (response?.status === 200 || response?.status === 201) {
-    //     if (deviceId === device_id) {
-    //       navigate({ to: "/devices" });
-    //     }
-    //   } else if (response?.status === 409) {
-    //     toast.error(
-    //       response?.data?.message ||
-    //         "Starter box was connected to motors and cannot be deleted"
-    //     );
-    //   }
+      //   if (response?.status === 200 || response?.status === 201) {
+      //     if (deviceId === device_id) {
+      //       navigate({ to: "/devices" });
+      //     }
+      //   } else if (response?.status === 409) {
+      //     toast.error(
+      //       response?.data?.message ||
+      //         "Starter box was connected to motors and cannot be deleted"
+      //     );
+      //   }
     },
     onError: (error: any, deviceId, context) => {
       queryClient.setQueryData(
@@ -307,7 +301,6 @@ export function AllDevices() {
   const toggleShowIcons = () => {
     setShowIcons((prev) => !prev);
   };
- 
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastRowRef = useCallback(
@@ -351,23 +344,15 @@ export function AllDevices() {
         device.capable_motors && device.capable_motors > 0
           ? device.capable_motors
           : device.starterBoxParameters?.length || 1;
-      setCapableMotors(capableMotorsValue);
 
       navigate({
         to: `/devices/${device.id}/motors/mtr_1`,
         search: {
           motor_ref_id: "mtr_1",
-          capable_motors: capableMotorsValue,
         },
       });
     },
-    [
-      navigate,
-      debounceSearchString,
-      selectedStatus,
-      powerStatus,
-      setCapableMotors,
-    ]
+    [navigate, debounceSearchString, selectedStatus, powerStatus]
   );
 
   const handleCloseMotorDrawer = useCallback(() => {
@@ -392,12 +377,10 @@ export function AllDevices() {
   };
 
   const handleRowClick = (device: any) => {
-    setCapableMotors(Number(device.capable_motors));
     navigate({
-      to: `/devices/${device?.id}/motors`,
+      to: `/devices/${device?.id}`,
       search: {
         search_string: debounceSearchString || undefined,
-        capable_motors: Number(device.capable_motors),
       },
       replace: true,
     });
@@ -418,24 +401,24 @@ export function AllDevices() {
     });
   }, []);
 
-//   const handleSettingsClick = useCallback(
-//     (device: any) => {
-//       setDeviceId(device?.id);
-//       setShowSettings(true);
-//       setGateway(device?.gateways?.title || gatewayData?.title);
-//     },
-//     [gatewayData?.title]
-//   );
+  //   const handleSettingsClick = useCallback(
+  //     (device: any) => {
+  //       setDeviceId(device?.id);
+  //       setShowSettings(true);
+  //       setGateway(device?.gateways?.title || gatewayData?.title);
+  //     },
+  //     [gatewayData?.title]
+  //   );
   const handleDeleteClick = useCallback((device: any) => {
     setIsDeleteDialogOpen(true);
     setDeviceToDelete(device);
   }, []);
-  
-//   useEffect(() => {
-//     if (gatewayData?.id) {
-//       setGatewayId(gatewayData.id);
-//     }
-//   }, [gatewayData?.id]);
+
+  //   useEffect(() => {
+  //     if (gatewayData?.id) {
+  //       setGatewayId(gatewayData.id);
+  //     }
+  //   }, [gatewayData?.id]);
 
   useEffect(() => {
     if (singleDeviceData?.device_status) {
@@ -446,27 +429,27 @@ export function AllDevices() {
     }
   }, [singleDeviceData?.device_status]);
 
-//   useEffect(() => {
-//     const targetDeviceId = Number(device_id);
-//     if (
-//       device_id &&
-//       !deviceData.find((d: any) => d.id === targetDeviceId) &&
-//       hasNextPage &&
-//       !isFetchingNextPage &&
-//       !isFetching &&
-//       data?.pages?.[0]?.pagination?.total_records &&
-//       deviceData?.length < data.pages[0].pagination.total_records
-//     ) {
-//       fetchNextPage();
-//     }
-//   }, [
-//     device_id,
-//     deviceData,
-//     hasNextPage,
-//     isFetchingNextPage,
-//     isFetching,
-//     data,
-//   ]);
+  //   useEffect(() => {
+  //     const targetDeviceId = Number(device_id);
+  //     if (
+  //       device_id &&
+  //       !deviceData.find((d: any) => d.id === targetDeviceId) &&
+  //       hasNextPage &&
+  //       !isFetchingNextPage &&
+  //       !isFetching &&
+  //       data?.pages?.[0]?.pagination?.total_records &&
+  //       deviceData?.length < data.pages[0].pagination.total_records
+  //     ) {
+  //       fetchNextPage();
+  //     }
+  //   }, [
+  //     device_id,
+  //     deviceData,
+  //     hasNextPage,
+  //     isFetchingNextPage,
+  //     isFetching,
+  //     data,
+  //   ]);
 
   useEffect(() => {
     const currentSearchParams = new URLSearchParams(location.search);
@@ -475,9 +458,6 @@ export function AllDevices() {
       to: "/devices",
       search: {
         search_string: debounceSearchString || undefined,
-        capable_motors: currentCapableMotors
-          ? Number(currentCapableMotors)
-          : capableMotors || undefined,
         device_status: selectedStatus !== "ALL" ? selectedStatus : undefined,
         status: deviceStatusFilter !== "ALL" ? deviceStatusFilter : undefined,
         power_status: powerStatus || undefined,
@@ -492,7 +472,6 @@ export function AllDevices() {
     sortBy,
     sortType,
     powerStatus,
-    capableMotors,
     deviceStatusFilter,
     navigate,
   ]);
@@ -505,18 +484,6 @@ export function AllDevices() {
       clearTimeout(handler);
     };
   }, [searchString]);
-
-  // useEffect(() => {
-  //   return () => {
-  //     setSearchString("");
-  //     setDebounceSearchString("");
-  //     navigate({
-  //       to: location.pathname,
-  //       search: {},
-  //       replace: true,
-  //     });
-  //   };
-  // }, [location.pathname]);
 
   useEffect(() => {
     if (selectedStatus !== "ALL" && deviceStatusFilter !== "ALL") {
@@ -534,8 +501,38 @@ export function AllDevices() {
   return (
     <div className="w-full flex justify-between text-xs 3xl:text-sm  h-full bg-white">
       <div className="w-[65%] p-3 space-y-2  border-r border-slate-200">
-        <div className="flex items-center justify-end">
-         
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4 ">
+            <div className="w-[250px]">
+              <UserDropdown
+                // users={users}
+                // selectedUser={selectedUser}
+                // isUsersLoading={isUsersLoading}
+                // searchString={userSearchString}
+                // setSearchString={setUserSearchString}
+                // setIsSelectOpen={setIsUserSelectOpen}
+                // handleUserChange={handleUserChange}
+                // handleClearUser={handleClearUser}
+                // ispondsRoute={ispondsRoute}
+              />
+            </div>
+
+            <div className="w-[250px]">
+              <LocationDropdown
+                // pond={{ location: selectedLocation?.id }}
+                // locations={locations}
+                // isLocationsLoading={isLocationsLoading}
+                // searchString={locationSearchString}
+                // setSearchString={setLocationSearchString}
+                // setIsSelectOpen={setIsLocationSelectOpen}
+                // handlePondLocationChange={handleLocationChange}
+                // selectedLocation={selectedLocation}
+                // handleClearLocation={handleClearLocation}
+                // ispondsRoute={ispondsRoute}
+              />
+            </div>
+          </div>
+
           <div className="flex items-center gap-2  justify-end ">
             <form
               onSubmit={handleSearchSubmit}
@@ -591,7 +588,7 @@ export function AllDevices() {
             columns={DeviceColumns({
               refetchDevices,
               handleInfoDialogClick,
-            //   handleSettingsClick,
+              //   handleSettingsClick,
               setEditState,
               handleDelete: handleDeleteClick,
               debounceSearchString,
@@ -633,7 +630,6 @@ export function AllDevices() {
         <Outlet />
       </div>
 
-    
       {isInfoDialogOpen && (
         <InfoDialogBox
           openOrNot={isInfoDialogOpen}
@@ -660,7 +656,6 @@ export function AllDevices() {
           buttonLabling="Deleting..."
         />
       )}
-    
     </div>
   );
 }

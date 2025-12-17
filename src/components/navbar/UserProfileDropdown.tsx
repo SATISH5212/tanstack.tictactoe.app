@@ -29,7 +29,7 @@ const UserProfileDropdown = ({
   return (
     <div className="relative z-50" ref={menuRef}>
       <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
-        <DropdownMenuTrigger className="flex items-center gap-2 px-2 py-1   border-b-2  bg-gray-50  rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer select-none">
+        <DropdownMenuTrigger className="flex items-center gap-2 px-2 py-1   border-b-2  bg-blue-100  rounded-lg  dark:hover:bg-gray-800 transition cursor-pointer select-none">
           {isSuperAdmin ? (
             <Avatar className="w-6 h-6">
               <AvatarImage

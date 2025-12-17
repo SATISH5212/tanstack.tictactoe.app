@@ -41,7 +41,6 @@ import {
   SelectValue,
 } from "../ui/select";
 
-
 interface DeviceColumnsProps {
   refetchDevices: () => void;
   handleInfoDialogClick: (device: any) => void;
@@ -79,8 +78,6 @@ export const DeviceColumns = ({
             : row.name,
       id: "name",
       cell: (info: any) => {
-    
-        
         const title = info.getValue() || "-";
         const formattedTitle =
           title !== "-"
@@ -98,9 +95,7 @@ export const DeviceColumns = ({
         );
       },
       header: () => (
-        <span className=" w-full block sticky top-0 z-11 ">
-          Device Name
-        </span>
+        <span className=" w-full block ">Device Name</span>
       ),
       footer: (props: any) => props.column.id,
       size: 100,
@@ -157,9 +152,53 @@ export const DeviceColumns = ({
           </div>
         );
       },
-      header: () => <span className="text-center w-full flex items-center justify-center pl-7 ">Starter Number</span>,
+      header: () => (
+        <span className="text-center w-full flex items-center justify-center pl-7 ">
+          Starter Number
+        </span>
+      ),
       footer: (props: any) => props.column.id,
       size: 150,
+    },
+    {
+      accessorFn: (row: any) => row,
+      id: "user",
+      cell: (info: any) => {
+        const username = info.getValue() || "--";
+        return (
+          <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
+            {username?.user?.full_name || "--" }
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">User</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 100,
+    },
+    {
+      accessorFn: (row: any) => row,
+      id: "location",
+      cell: (info: any) => {
+        console.log(info.getValue())
+        
+    
+        
+        const location = info.getValue() || "--";
+            console.log(location.motors);
+        return (
+          <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
+            {location?.motors[0]?.location?.name || "--"
+            }
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">Location</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 100,
     },
     {
       accessorFn: (row: any) => row.device_status,
@@ -463,6 +502,93 @@ export const DeviceColumns = ({
     },
     {
       accessorFn: (row: any) => row.starterBoxParameters,
+      id: "currents",
+      cell: (info: any) => {
+        const params = info.getValue() || [];
+        const device = info.row.original;
+        const currents = params.reduce(
+          (acc: any, param: any) => {
+            if (param.motor_ref_id === "mtr_1") {
+              acc.m1 = {
+                i1:
+                  param.current_i1 != null ? param.current_i1.toFixed(1) : "0",
+                i2:
+                  param.current_i2 != null ? param.current_i2.toFixed(1) : "0",
+                i3:
+                  param.current_i3 != null ? param.current_i3.toFixed(1) : "0",
+              };
+            }
+            if (param.motor_ref_id === "mtr_2") {
+              acc.m2 = {
+                i1:
+                  param.current_i1 != null ? param.current_i1.toFixed(1) : "0",
+                i2:
+                  param.current_i2 != null ? param.current_i2.toFixed(1) : "0",
+                i3:
+                  param.current_i3 != null ? param.current_i3.toFixed(1) : "0",
+              };
+            }
+            return acc;
+          },
+          {
+            m1:
+              device.capable_motors >= 1 ? { i1: "0", i2: "0", i3: "0" } : null,
+            m2:
+              device.capable_motors === 2
+                ? { i1: "0", i2: "0", i3: "0" }
+                : null,
+          }
+        );
+
+        return (
+          <div className="p-2 h-10 text-xs 3xl:text-sm justify-center text-left leading-tight flex flex-col gap-1 items-center">
+            {params.length > 0 || device.capable_motors > 0 ? (
+              <div className="flex flex-col items-center gap-1">
+                {device.capable_motors >= 1 && currents.m1 && (
+                  <div className="flex items-center gap-1">
+                    <div className="flex gap-1 min-w-[80px] justify-between">
+                      <div className="text-red-500 w-[32px] text-center">
+                        {currents?.m1.i1}
+                      </div>
+                      <div className="text-yellow-500 w-[32px] text-center">
+                        {currents?.m1.i2}
+                      </div>
+                      <div className="text-blue-500 w-[32px] text-center">
+                        {currents?.m1.i3}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {device.capable_motors === 2 && currents.m2 && (
+                  <div className="flex items-center gap-1">
+                    <div className="flex gap-1 min-w-[80px] justify-between">
+                      <div className="text-red-500 w-[32px] text-center">
+                        {currents?.m2.i1}
+                      </div>
+                      <div className="text-yellow-500 w-[32px] text-center">
+                        {currents?.m2.i2}
+                      </div>
+                      <div className="text-blue-500 w-[32px] text-center">
+                        {currents?.m2.i3}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              "--"
+            )}
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">Currents</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 100,
+    },
+    {
+      accessorFn: (row: any) => row.starterBoxParameters,
       id: "state",
       cell: (info: any) => {
         const params = info.getValue() || [];
@@ -556,137 +682,17 @@ export const DeviceColumns = ({
       size: 100,
     },
 
-    {
-      accessorFn: (row: any) => row.starterBoxParameters,
-      id: "currents",
-      cell: (info: any) => {
-        const params = info.getValue() || [];
-        const device = info.row.original;
-        const currents = params.reduce(
-          (acc: any, param: any) => {
-            if (param.motor_ref_id === "mtr_1") {
-              acc.m1 = {
-                i1:
-                  param.current_i1 != null ? param.current_i1.toFixed(1) : "0",
-                i2:
-                  param.current_i2 != null ? param.current_i2.toFixed(1) : "0",
-                i3:
-                  param.current_i3 != null ? param.current_i3.toFixed(1) : "0",
-              };
-            }
-            if (param.motor_ref_id === "mtr_2") {
-              acc.m2 = {
-                i1:
-                  param.current_i1 != null ? param.current_i1.toFixed(1) : "0",
-                i2:
-                  param.current_i2 != null ? param.current_i2.toFixed(1) : "0",
-                i3:
-                  param.current_i3 != null ? param.current_i3.toFixed(1) : "0",
-              };
-            }
-            return acc;
-          },
-          {
-            m1:
-              device.capable_motors >= 1 ? { i1: "0", i2: "0", i3: "0" } : null,
-            m2:
-              device.capable_motors === 2
-                ? { i1: "0", i2: "0", i3: "0" }
-                : null,
-          }
-        );
-
-        return (
-          <div className="p-2 h-10 text-xs 3xl:text-sm justify-center text-left leading-tight flex flex-col gap-1 items-center">
-            {params.length > 0 || device.capable_motors > 0 ? (
-              <div className="flex flex-col items-center gap-1">
-                {device.capable_motors >= 1 && currents.m1 && (
-                  <div className="flex items-center gap-1">
-                    <div className="flex gap-1 min-w-[80px] justify-between">
-                      <div className="text-red-500 w-[32px] text-center">
-                        {currents?.m1.i1}
-                      </div>
-                      <div className="text-yellow-500 w-[32px] text-center">
-                        {currents?.m1.i2}
-                      </div>
-                      <div className="text-blue-500 w-[32px] text-center">
-                        {currents?.m1.i3}
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {device.capable_motors === 2 && currents.m2 && (
-                  <div className="flex items-center gap-1">
-                    <div className="flex gap-1 min-w-[80px] justify-between">
-                      <div className="text-red-500 w-[32px] text-center">
-                        {currents?.m2.i1}
-                      </div>
-                      <div className="text-yellow-500 w-[32px] text-center">
-                        {currents?.m2.i2}
-                      </div>
-                      <div className="text-blue-500 w-[32px] text-center">
-                        {currents?.m2.i3}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              "--"
-            )}
-          </div>
-        );
-      },
-      header: () => (
-        <span className="text-center w-full cursor-default">Currents</span>
-      ),
-      footer: (props: any) => props.column.id,
-      size: 100,
-    },
-    {
-      accessorFn: (row: any) => row.alert_count,
-      id: "alert_count",
-      cell: (info: any) => {
-        const count = info.getValue() ?? "--";
-        return (
-          <div className="p-2 h-10 flex justify-center text-xs 3xl:text-sm text-center leading-tight items-center">
-            {count}
-          </div>
-        );
-      },
-      header: () => (
-        <span className="text-center w-full cursor-default">Alerts</span>
-      ),
-      footer: (props: any) => props.column.id,
-      size: 50,
-    },
-    {
-      accessorFn: (row: any) => row.fault_count,
-      id: "fault_count",
-      cell: (info: any) => {
-        const count = info.getValue() ?? "--";
-        return (
-          <div className="p-2 h-10 flex justify-center items-center text-xs 3xl:text-sm text-center leading-tight ">
-            {count}
-          </div>
-        );
-      },
-      header: () => (
-        <span className="text-center w-full cursor-default">Faults</span>
-      ),
-      footer: (props: any) => props.column.id,
-      size: 50,
-    },
+    
     {
       id: "actions",
       header: () => (
-        <span className="text-center w-full block sticky top-0 z-11">
+        <span className="text-center w-full block  z-11">
           Actions
         </span>
       ),
       cell: (info: any) => (
         <div
-          className="w-full flex justify-center p-2 sticky right-0 bg-white z-10"
+          className="w-full flex justify-center p-2   bg-white z-10"
           style={{
             position: "sticky",
             right: 0,
@@ -709,14 +715,14 @@ export const DeviceColumns = ({
                 <InfoDeviceIcon />
                 Info
               </DropdownMenuItem>
-
-              {/* {isAdmin() && (
+{/* 
+              {isAdmin() && (
                 <>
                   <DropdownMenuItem
                     className="text-gray-500 cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSettingsClick(info.row.original);
+                      // handleSettingsClick(info.row.original);
                     }}
                   >
                     <SettingsIcon />
@@ -758,7 +764,6 @@ export const DeviceColumns = ({
               <DropdownMenuItem
                 className="text-gray-500 cursor-pointer"
                 onClick={(e) => {
-                  
                   e.stopPropagation();
                   setSelectedDeviceId(info.row.original.id);
                   setSelectedDeviceName(() => {

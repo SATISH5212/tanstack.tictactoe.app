@@ -32,7 +32,7 @@ export const authMiddleware = async ({
 
     if (getIsAuthenticated() && authRoutes.includes(location.pathname)) {
         throw redirect({
-            to: "/dashboard",
+            to: "/devices",
         });
     }
 };

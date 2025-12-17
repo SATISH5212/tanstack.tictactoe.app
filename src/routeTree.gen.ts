@@ -8,11 +8,19 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LayoutDevicesRouteImport } from './routes/_layout/_devices'
 import { Route as LayoutDevicesDevicesIndexRouteImport } from './routes/_layout/_devices/devices/index'
+import { Route as LayoutDevicesDevicesDevice_idDevicegraphRouteImport } from './routes/_layout/_devices/devices/$device_id/_devicegraph'
+import { Route as LayoutDevicesDevicesDevice_idDevicegraphIndexRouteImport } from './routes/_layout/_devices/devices/$device_id/_devicegraph/index'
+
+const LayoutDevicesDevicesDevice_idRouteImport = createFileRoute(
+  '/_layout/_devices/devices/$device_id',
+)()
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -27,20 +35,40 @@ const LayoutDevicesRoute = LayoutDevicesRouteImport.update({
   id: '/_devices',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutDevicesDevicesDevice_idRoute =
+  LayoutDevicesDevicesDevice_idRouteImport.update({
+    id: '/devices/$device_id',
+    path: '/devices/$device_id',
+    getParentRoute: () => LayoutDevicesRoute,
+  } as any)
 const LayoutDevicesDevicesIndexRoute =
   LayoutDevicesDevicesIndexRouteImport.update({
     id: '/devices/',
     path: '/devices/',
     getParentRoute: () => LayoutDevicesRoute,
   } as any)
+const LayoutDevicesDevicesDevice_idDevicegraphRoute =
+  LayoutDevicesDevicesDevice_idDevicegraphRouteImport.update({
+    id: '/_devicegraph',
+    getParentRoute: () => LayoutDevicesDevicesDevice_idRoute,
+  } as any)
+const LayoutDevicesDevicesDevice_idDevicegraphIndexRoute =
+  LayoutDevicesDevicesDevice_idDevicegraphIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => LayoutDevicesDevicesDevice_idDevicegraphRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/devices': typeof LayoutDevicesDevicesIndexRoute
+  '/devices/$device_id': typeof LayoutDevicesDevicesDevice_idDevicegraphRouteWithChildren
+  '/devices/$device_id/': typeof LayoutDevicesDevicesDevice_idDevicegraphIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/devices': typeof LayoutDevicesDevicesIndexRoute
+  '/devices/$device_id': typeof LayoutDevicesDevicesDevice_idDevicegraphIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -48,18 +76,24 @@ export interface FileRoutesById {
   '/_layout': typeof LayoutRouteWithChildren
   '/_layout/_devices': typeof LayoutDevicesRouteWithChildren
   '/_layout/_devices/devices/': typeof LayoutDevicesDevicesIndexRoute
+  '/_layout/_devices/devices/$device_id': typeof LayoutDevicesDevicesDevice_idRouteWithChildren
+  '/_layout/_devices/devices/$device_id/_devicegraph': typeof LayoutDevicesDevicesDevice_idDevicegraphRouteWithChildren
+  '/_layout/_devices/devices/$device_id/_devicegraph/': typeof LayoutDevicesDevicesDevice_idDevicegraphIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/devices'
+  fullPaths: '/' | '/devices' | '/devices/$device_id' | '/devices/$device_id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/devices'
+  to: '/' | '/devices' | '/devices/$device_id'
   id:
     | '__root__'
     | '/'
     | '/_layout'
     | '/_layout/_devices'
     | '/_layout/_devices/devices/'
+    | '/_layout/_devices/devices/$device_id'
+    | '/_layout/_devices/devices/$device_id/_devicegraph'
+    | '/_layout/_devices/devices/$device_id/_devicegraph/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -90,6 +124,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutDevicesRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/_devices/devices/$device_id': {
+      id: '/_layout/_devices/devices/$device_id'
+      path: '/devices/$device_id'
+      fullPath: '/devices/$device_id'
+      preLoaderRoute: typeof LayoutDevicesDevicesDevice_idRouteImport
+      parentRoute: typeof LayoutDevicesRoute
+    }
     '/_layout/_devices/devices/': {
       id: '/_layout/_devices/devices/'
       path: '/devices'
@@ -97,15 +138,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutDevicesDevicesIndexRouteImport
       parentRoute: typeof LayoutDevicesRoute
     }
+    '/_layout/_devices/devices/$device_id/_devicegraph': {
+      id: '/_layout/_devices/devices/$device_id/_devicegraph'
+      path: '/devices/$device_id'
+      fullPath: '/devices/$device_id'
+      preLoaderRoute: typeof LayoutDevicesDevicesDevice_idDevicegraphRouteImport
+      parentRoute: typeof LayoutDevicesDevicesDevice_idRoute
+    }
+    '/_layout/_devices/devices/$device_id/_devicegraph/': {
+      id: '/_layout/_devices/devices/$device_id/_devicegraph/'
+      path: '/'
+      fullPath: '/devices/$device_id/'
+      preLoaderRoute: typeof LayoutDevicesDevicesDevice_idDevicegraphIndexRouteImport
+      parentRoute: typeof LayoutDevicesDevicesDevice_idDevicegraphRoute
+    }
   }
 }
 
+interface LayoutDevicesDevicesDevice_idDevicegraphRouteChildren {
+  LayoutDevicesDevicesDevice_idDevicegraphIndexRoute: typeof LayoutDevicesDevicesDevice_idDevicegraphIndexRoute
+}
+
+const LayoutDevicesDevicesDevice_idDevicegraphRouteChildren: LayoutDevicesDevicesDevice_idDevicegraphRouteChildren =
+  {
+    LayoutDevicesDevicesDevice_idDevicegraphIndexRoute:
+      LayoutDevicesDevicesDevice_idDevicegraphIndexRoute,
+  }
+
+const LayoutDevicesDevicesDevice_idDevicegraphRouteWithChildren =
+  LayoutDevicesDevicesDevice_idDevicegraphRoute._addFileChildren(
+    LayoutDevicesDevicesDevice_idDevicegraphRouteChildren,
+  )
+
+interface LayoutDevicesDevicesDevice_idRouteChildren {
+  LayoutDevicesDevicesDevice_idDevicegraphRoute: typeof LayoutDevicesDevicesDevice_idDevicegraphRouteWithChildren
+}
+
+const LayoutDevicesDevicesDevice_idRouteChildren: LayoutDevicesDevicesDevice_idRouteChildren =
+  {
+    LayoutDevicesDevicesDevice_idDevicegraphRoute:
+      LayoutDevicesDevicesDevice_idDevicegraphRouteWithChildren,
+  }
+
+const LayoutDevicesDevicesDevice_idRouteWithChildren =
+  LayoutDevicesDevicesDevice_idRoute._addFileChildren(
+    LayoutDevicesDevicesDevice_idRouteChildren,
+  )
+
 interface LayoutDevicesRouteChildren {
   LayoutDevicesDevicesIndexRoute: typeof LayoutDevicesDevicesIndexRoute
+  LayoutDevicesDevicesDevice_idRoute: typeof LayoutDevicesDevicesDevice_idRouteWithChildren
 }
 
 const LayoutDevicesRouteChildren: LayoutDevicesRouteChildren = {
   LayoutDevicesDevicesIndexRoute: LayoutDevicesDevicesIndexRoute,
+  LayoutDevicesDevicesDevice_idRoute:
+    LayoutDevicesDevicesDevice_idRouteWithChildren,
 }
 
 const LayoutDevicesRouteWithChildren = LayoutDevicesRoute._addFileChildren(

@@ -11,7 +11,7 @@ import LocationIcon from "../icons/users/location";
 import DownArrowIcon from "../svg/DownArrow";
 import { useEffect, useRef, useState } from "react";
 
-const LocationDropdown: React.FC<LocationDropdownProps> = (props) => {
+const LocationDropdown: React.FC<any> = (props) => {
   const {
     pond,
     locations,
@@ -35,13 +35,13 @@ const LocationDropdown: React.FC<LocationDropdownProps> = (props) => {
     <Select
       value={pond?.location ? pond.location.toString() : ""}
       onValueChange={handlePondLocationChange}
-      onOpenChange={(open) => {
-        setIsSelectOpen(open);
+      // onOpenChange={(open) => {
+      //   setIsSelectOpen(open);
 
-        if (!open) {
-          setSearchString("");
-        }
-      }}
+      //   if (!open) {
+      //     setSearchString("");
+      //   }
+      // }}
     >
       <SelectTrigger
         className={`${ispondsRoute && "!border-0 !border-b-2 "}  bg-white w-full border rounded-lg text-sm py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500 gap-1 h-full`}

@@ -11,7 +11,7 @@ import DownArrowIcon from "../svg/DownArrow";
 import { UsersSvg } from "../svg/UsersSvg";
 import { useEffect, useRef } from "react";
 
-const UserDropdown: React.FC<UserDropdownProps> = ({
+const UserDropdown: React.FC<any> = ({
   users,
   selectedUser,
   isUsersLoading,
@@ -33,12 +33,12 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
     <Select
       value={selectedUser?.id ? selectedUser.id.toString() : ""}
       onValueChange={handleUserChange}
-      onOpenChange={(open) => {
-        setIsSelectOpen(open);
-        if (!open) {
-          setSearchString("");
-        }
-      }}
+      // onOpenChange={(open) => {
+      //   setIsSelectOpen(open);
+      //   if (!open) {
+      //     setSearchString("");
+      //   }
+      // }}
     >
       <SelectTrigger className="!border-0 !border-b-2  w-full border rounded-lg text-sm py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500 gap-1 h-full">
         <div className="flex items-center gap-1 capitalize">

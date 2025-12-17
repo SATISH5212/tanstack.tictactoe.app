@@ -1,4 +1,4 @@
-import { useLocation, useParams, useRouter } from "@tanstack/react-router";
+import { useLocation, useRouter } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-table";
 import { FC, useState } from "react";
 import { NoDataDevice } from "../svg/NoDataDeviceSvg";
+import { NoDataPonds } from "../svg/NoDataPonds";
 import { NoUsersDataSvg } from "../svg/NoUsersDataSvg";
 import { SortAscIcon } from "../svg/SortAscIcon";
 import { SortDescIcon } from "../svg/SortDescIcon";
@@ -23,8 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import PondsIcon from "../svg/map/PondsIcon";
-import { NoDataPonds } from "../svg/NoDataPonds";
 
 const TanStackTable: FC<any> = ({
   columns,
@@ -174,7 +173,7 @@ const TanStackTable: FC<any> = ({
                           className={`${
                             tableType == "ponds"
                               ? "bg-neutral-200"
-                              : "bg-gray-200"
+                              : " bg-[#eef5f8]"
                           }`}
                         >
                           {header.isPlaceholder ? null : (
