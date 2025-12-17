@@ -29,7 +29,7 @@ const UserProfileDropdown = ({
   return (
     <div className="relative z-50" ref={menuRef}>
       <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
-        <DropdownMenuTrigger className="flex items-center gap-2 px-2 py-1   border-b-2  bg-green-100  rounded-lg hover:bg-green-100 dark:hover:bg-gray-800 transition cursor-pointer select-none">
+        <DropdownMenuTrigger className="flex items-center gap-2 px-2 py-1   border-b-2  bg-gray-50  rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer select-none">
           {isSuperAdmin ? (
             <Avatar className="w-6 h-6">
               <AvatarImage
@@ -73,10 +73,10 @@ const UserProfileDropdown = ({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
-          sideOffset={8}
+          sideOffset={2}
           className="bg-white w-42 rounded-lg shadow-xl border border-gray-100"
         >
-          {isOwner && (
+          {/* {isOwner && (
             <DropdownMenuItem
               className="cursor-pointer flex items-center gap-3 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-md mx-1"
               onClick={() => onNavigate("/viewprofile")}
@@ -84,9 +84,9 @@ const UserProfileDropdown = ({
               <ViewProfileIcon className="w-4 h-4 text-gray-700" />
               <span>User Management</span>
             </DropdownMenuItem>
-          )}
+          )} */}
 
-          {isSuperAdmin && (
+          {/* {isSuperAdmin && (
             <DropdownMenuItem
               className="cursor-pointer flex items-center gap-3 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-md mx-1"
               onClick={() => onNavigate("/default-settings")}
@@ -94,7 +94,7 @@ const UserProfileDropdown = ({
               <SettingsSvg color="#282b16ff" />
               <span>Device Settings</span>
             </DropdownMenuItem>
-          )}
+          )} */}
 
           <DropdownMenuItem
             className="cursor-pointer flex items-center gap-3 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-md mx-1"

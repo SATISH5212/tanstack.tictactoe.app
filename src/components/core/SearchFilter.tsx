@@ -27,7 +27,7 @@ const SearchFilter: React.FC<ISearchFilters> = ({
         placeholder={title}
         value={searchString}
         onChange={handleInputChange}
-        className="px-8 bg-white rounded-md border-0 outline-none ring-0 shadow-none w-full h-full placeholder:text-xs focus:border-0 focus:outline-none focus:ring-0 focus:shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-xs 3xl:text-sm font-normal"
+        className="px-8 py-2 bg-white rounded-md border-0 outline-none ring-0 shadow-none w-full h-full placeholder:text-xs focus:border-0 focus:outline-none focus:ring-0 focus:shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-xs 3xl:text-sm font-normal"
       />
       {searchString && (
         <button

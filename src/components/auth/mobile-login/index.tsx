@@ -74,7 +74,7 @@ export function LoginPage() {
       const { access_token, user_details } = response?.data?.data || {};
       setAuthTokens(access_token, user_details);
       reset();
-      navigate({ to: "/dashboard", replace: true });
+      navigate({ to: "/devices", replace: true });
       toast.success(response?.data?.message || "Login successful");
     },
 
@@ -97,7 +97,7 @@ export function LoginPage() {
   useEffect(() => {
     const token = Cookies.get("token");
     if (token) {
-      navigate({ to: "/dashboard", replace: true });
+      navigate({ to: "/devices", replace: true });
     }
   }, []);
 
@@ -147,14 +147,14 @@ export function LoginPage() {
             <form onSubmit={handleSubmit(onEmailSubmit)} className="space-y-10">
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <div className="font-normal text-white text-xs">
+                  <div className="font-light text-white text-xs">
                     Email<span className="text-red-500 "> *</span>
                   </div>
                   <div className="flex items-center w-full rounded-md border  pl-2">
                     <EmailSvg />
                     <input
                       placeholder="Enter your email"
-                      className="h-full outline-none p-2.5 w-full bg-transparent placeholder-white text-xs font-normal"
+                      className="h-full outline-none p-2.5 w-full bg-transparent placeholder-white text-xs font-light"
                       type="text"
                       autoComplete="off"
                       {...register("email", {
@@ -173,14 +173,14 @@ export function LoginPage() {
                 </div>
 
                 <div className="space-y-1 ">
-                  <div className="font-normal text-white text-xs">
+                  <div className="font-light text-white text-xs">
                     Password <span className="text-red-500 ">*</span>
                   </div>
                   <div className="flex items-center w-full rounded-md border pl-2">
                     <PasswordSvg />
                     <input
                       placeholder="Enter your Password"
-                      className="h-full outline-none p-2.5 w-full bg-transparent text-white placeholder-white text-xs"
+                      className="h-full outline-none p-2.5 w-full bg-transparent text-white placeholder-white text-xs font-light"
                       type={showPassword ? "text" : "password"}
                       autoComplete="new-password"
                       {...register("password", {
@@ -215,7 +215,7 @@ export function LoginPage() {
 
               <Button
                 type="submit"
-                className="  w-full rounded-lg bg-gradient-to-r from-blue-700 to-blue-500  py-2 font-medium text-white  hover:opacity-90 "
+                className="  w-full rounded-lg bg-gradient-to-r from-blue-700 to-blue-500  py-2 font-light text-white  hover:opacity-90 "
                 disabled={isPendingLogin}
               >
                 {isPendingLogin && (

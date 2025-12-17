@@ -1,53 +1,46 @@
 import { useUserDetails } from "@/lib/helpers/userpermission";
 import { deleteUsersDeviceAPI } from "@/lib/services/users";
 import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
+    useInfiniteQuery,
+    useMutation,
+    useQuery,
+    useQueryClient,
 } from "@tanstack/react-query";
 import {
-  Outlet,
-  useLocation,
-  useNavigate,
-  useParams,
+    Outlet,
+    useLocation,
+    useNavigate
 } from "@tanstack/react-router";
-import { CircleCheck, CircleX, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 import { toast } from "sonner";
 import {
-  getAllPaginatedDeviceData,
-  getGatewayTitleAPI,
-  getSingleDeviceAPI,
-  updateGatewayTitleAPI,
+    getAllPaginatedDeviceData,
+    getGatewayTitleAPI,
+    getSingleDeviceAPI
 } from "src/lib/services/deviceses";
 import DeleteDialog from "../core/DeleteDialog";
 import EditDeviceSheet from "../core/EditDeviceSheet";
 import InfoDialogBox from "../core/InfoDialogBox";
 import SearchFilter from "../core/SearchFilter";
 import TanStackTable from "../core/TanstackTable";
-import { MotorDetailsDrawer } from "../deviceSettings/MotorDetailsDrawer";
-import StarterBoxSettings from "../StarterBoxSettings";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import UserAddDevice from "../usersModule/addDevice";
-import AddDevice from "./add";
+
 import { DeviceColumns } from "./DeviceColumns";
 import DevicesFilter from "./DevicesFilter";
+import AddDevice from "./add";
 
-export function GetAllDevices() {
+export function AllDevices() {
   const { isUser, isSuperAdmin } = useUserDetails();
   const location = useLocation() as { pathname: string; search: string };
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { device_id } = useParams({ strict: false });
   const searchParams = new URLSearchParams(location.search);
   const initialStatus = searchParams.get("status") || "ALL";
   const initialDeviceDeploymentStatus =
@@ -154,21 +147,21 @@ export function GetAllDevices() {
           );
         return [...prevMembers, ...newUsers];
       });
-      if (device_id && pageParam === 1) {
-        const selectedDevice = devices.find(
-          (device: any) => device.id == device_id
-        );
-        if (selectedDevice) {
-          const gatewayTitle = selectedDevice?.gateways?.title || null;
-          setIsTestDevice(
-            selectedDevice.device_status === "TEST" ||
-            selectedDevice.device_status === "DEPLOYED"
-          );
-          if (selectedDevice.capable_motors) {
-            setCapableMotors(Number(selectedDevice.capable_motors));
-          }
-        }
-      }
+    //   if (device_id && pageParam === 1) {
+    //     const selectedDevice = devices.find(
+    //       (device: any) => device.id == device_id
+    //     );
+    //     if (selectedDevice) {
+    //       const gatewayTitle = selectedDevice?.gateways?.title || null;
+    //       setIsTestDevice(
+    //         selectedDevice.device_status === "TEST" ||
+    //           selectedDevice.device_status === "DEPLOYED"
+    //       );
+    //       if (selectedDevice.capable_motors) {
+    //         setCapableMotors(Number(selectedDevice.capable_motors));
+    //       }
+    //     }
+    //   }
 
       return {
         data: devices,
@@ -275,16 +268,16 @@ export function GetAllDevices() {
       return { previousData };
     },
     onSuccess: (response, deviceId) => {
-      if (response?.status === 200 || response?.status === 201) {
-        if (deviceId === device_id) {
-          navigate({ to: "/devices" });
-        }
-      } else if (response?.status === 409) {
-        toast.error(
-          response?.data?.message ||
-          "Starter box was connected to motors and cannot be deleted"
-        );
-      }
+    //   if (response?.status === 200 || response?.status === 201) {
+    //     if (deviceId === device_id) {
+    //       navigate({ to: "/devices" });
+    //     }
+    //   } else if (response?.status === 409) {
+    //     toast.error(
+    //       response?.data?.message ||
+    //         "Starter box was connected to motors and cannot be deleted"
+    //     );
+    //   }
     },
     onError: (error: any, deviceId, context) => {
       queryClient.setQueryData(
@@ -293,7 +286,7 @@ export function GetAllDevices() {
       );
       toast.error(
         error?.message ||
-        "Starter box was connected to motors and cannot be deleted"
+          "Starter box was connected to motors and cannot be deleted"
       );
     },
   });
@@ -301,16 +294,16 @@ export function GetAllDevices() {
     if (deviceToDelete) {
       setDeleteLoading(true);
       deletedeviceMutation.mutate(deviceToDelete?.id, {
-        onSuccess: (response, deviceId) => {
-          if (response?.status === 200 || response?.status === 201) {
-            toast.success(response?.data?.message);
-            if (deviceId === device_id) {
-              navigate({ to: "/devices" });
-            }
+        // onSuccess: (response, deviceId) => {
+        //   if (response?.status === 200 || response?.status === 201) {
+        //     toast.success(response?.data?.message);
+        //     if (deviceId === device_id) {
+        //       navigate({ to: "/devices" });
+        //     }
 
-            refetchDevices();
-          }
-        },
+        //     refetchDevices();
+        //   }
+        // },
         onSettled: () => {
           setDeleteLoading(false);
           setIsDeleteDialogOpen(false);
@@ -321,7 +314,7 @@ export function GetAllDevices() {
   }, [
     deviceToDelete,
     deletedeviceMutation,
-    device_id,
+    // device_id,
     navigate,
     refetchDevices,
   ]);
@@ -353,39 +346,6 @@ export function GetAllDevices() {
     },
     [isFetching, isFetchingNextPage, hasNextPage, fetchNextPage]
   );
-
-  const handleSubmit = async () => {
-    try {
-      const response = await updateGatewayTitleAPI({ title: title.trim() });
-      if (response?.status === 200 || response?.status === 201) {
-        toast.success("Gateway title updated successfully");
-        setOriginalTitle(title);
-        setShowIcons(false);
-        setErrors({});
-        refetchGateway();
-      }
-    } catch (error: any) {
-      if (error?.status === 422) {
-        const gatewayTitleError = error?.data?.errors?.gateway_title;
-        setErrors({ gateway_title: gatewayTitleError });
-        setShowIcons(true);
-      } else if (error?.status === 409) {
-        const gatewayTitleError = error?.data?.message;
-        setErrors({ gateway_title: gatewayTitleError });
-        setShowIcons(true);
-      } else {
-        toast.error("Something went wrong while updating gateway title");
-      }
-    }
-  };
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-    setErrors((prevErrors: any) => ({
-      ...prevErrors,
-      gateway_title: "",
-    }));
-  };
 
   const handleViewRawData = useCallback(
     (device: any) => {
@@ -499,32 +459,32 @@ export function GetAllDevices() {
     if (singleDeviceData?.device_status) {
       setIsTestDevice(
         singleDeviceData.device_status === "TEST" ||
-        singleDeviceData.device_status === "DEPLOYED"
+          singleDeviceData.device_status === "DEPLOYED"
       );
     }
   }, [singleDeviceData?.device_status]);
 
-  useEffect(() => {
-    const targetDeviceId = Number(device_id);
-    if (
-      device_id &&
-      !deviceData.find((d: any) => d.id === targetDeviceId) &&
-      hasNextPage &&
-      !isFetchingNextPage &&
-      !isFetching &&
-      data?.pages?.[0]?.pagination?.total_records &&
-      deviceData?.length < data.pages[0].pagination.total_records
-    ) {
-      fetchNextPage();
-    }
-  }, [
-    device_id,
-    deviceData,
-    hasNextPage,
-    isFetchingNextPage,
-    isFetching,
-    data,
-  ]);
+//   useEffect(() => {
+//     const targetDeviceId = Number(device_id);
+//     if (
+//       device_id &&
+//       !deviceData.find((d: any) => d.id === targetDeviceId) &&
+//       hasNextPage &&
+//       !isFetchingNextPage &&
+//       !isFetching &&
+//       data?.pages?.[0]?.pagination?.total_records &&
+//       deviceData?.length < data.pages[0].pagination.total_records
+//     ) {
+//       fetchNextPage();
+//     }
+//   }, [
+//     device_id,
+//     deviceData,
+//     hasNextPage,
+//     isFetchingNextPage,
+//     isFetching,
+//     data,
+//   ]);
 
   useEffect(() => {
     const currentSearchParams = new URLSearchParams(location.search);
@@ -552,7 +512,7 @@ export function GetAllDevices() {
     powerStatus,
     capableMotors,
     deviceStatusFilter,
-    navigate
+    navigate,
   ]);
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -592,101 +552,8 @@ export function GetAllDevices() {
   return (
     <div className="w-full flex justify-between text-xs 3xl:text-sm">
       <div className="w-[65%] p-3 space-y-2 bg-white border-r border-slate-200">
-        <div className="w-full flex items-center justify-end gap-4">
-          {/* <form
-            onSubmit={handleSearchSubmit}
-            className="flex items-center gap-1.5 border border-slate-200 rounded-md w-[30%] px-2 h-8"
-          >
-            <SearchFilter
-              searchString={searchString}
-              setSearchString={setSearchString}
-              title="Search devices"
-              className="h-full w-full "
-            />
-          </form> */}
-
-          {isSuperAdmin() && (
-            <div className="flex items-center gap-2">
-              <span className="text-gray-500">Default GTW :</span>
-              <div className="flex-1">
-                <Input
-                  name="title"
-                  value={title}
-                  onChange={handleTitleChange}
-                  onDoubleClick={toggleShowIcons}
-                  placeholder="Gateway Title"
-                  className="!text-smd !3xl:text-base rounded-none bg-blue-50 p-2 border-0 shadow-none outline-none focus:outline-none focus-visible:outline-none !focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-transparent focus:ring-none h-8 w-[100%]"
-                />
-                {errors?.gateway_title && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.gateway_title}
-                  </p>
-                )}
-              </div>
-              {showIcons && (
-                <div className="flex gap-2 items-center">
-                  <Button
-                    className="bg-green-500 hover:bg-green-600 border border-green-500 text-white p-1 h-fit"
-                    type="button"
-                    onClick={handleSubmit}
-                  >
-                    <CircleCheck className="size-3" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="text-red-500 border-red-500 hover:bg-red-500 hover:text-white p-1 h-fit"
-                    onClick={handleCancel}
-                  >
-                    <CircleX className="size-3" />
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-        <div className="flex items-center justify-between">
-          <div className=" p-1 rounded-md w-fit ">
-            <div className="flex gap-2">
-              <span className="bg-primary/20  p-1 rounded-md w-fit">
-                <Button
-                  onClick={() =>
-                    navigate({
-                      to: `/apfc`,
-                      search: { capable_motors: capableMotors },
-                    })
-                  }
-                  className={`text-xs 3xl:text-sm font-medium rounded-md px-3 py-1 h-auto ${location.pathname.includes("/apfc") ? "bg-05A155 text-white hover:bg-05A155" : "bg-transparent ring-0 text-black/60 hover:bg-transparent hover:text-black/80"}`}
-                >
-                  APFC
-                </Button>
-                <Button
-                  onClick={() =>
-                    navigate({
-                      to: `/devices`,
-                      search: { capable_motors: capableMotors },
-                    })
-                  }
-                  className={`text-xs 3xl:text-sm font-medium rounded-md px-3 py-1 h-auto ${location.pathname.includes("/devices") ? "bg-green-500 text-white hover:bg-green-600" : "bg-transparent ring-0 text-black/60 hover:bg-transparent hover:text-black/80"}`}
-                >
-                  Starter Box
-                </Button>
-              </span>
-              <span className="flex  space-x-4 items-center text-xs font-normal text-black">
-                <div className="">
-                  Total:{" "}
-                  <span className="text-blue-500">
-                    {devicesCount?.total_devices_count}
-                  </span>
-                </div>
-                <div className="">
-                  Active:{" "}
-                  <span className="text-green-500">
-                    {devicesCount?.active_devices_count}
-                  </span>
-                </div>
-              </span>
-            </div>
-          </div>
+        <div className="flex items-center justify-end">
+         
           <div className="flex items-center gap-2  justify-end ">
             <form
               onSubmit={handleSearchSubmit}
@@ -699,7 +566,7 @@ export function GetAllDevices() {
                 <button
                   type="button"
                   onClick={() => setIsSearchOpen(true)}
-                  className="text-gray-500 hover:text-gray-700 transition-all duration-200  border-2 rounded-md
+                  className="text-gray-500 hover:text-gray-700 transition-all duration-200  border-2 
                             p-1.5 rounded-full hover:bg-gray-100 active:scale-95"
                 >
                   <SearchIcon className="w-4 h-4" />
@@ -712,7 +579,6 @@ export function GetAllDevices() {
                   setSearchString={setSearchString}
                   title="Search devices"
                   className="h-full w-full"
-                  setIsSearchOpen={setIsSearchOpen}
                 />
               )}
             </form>
@@ -726,7 +592,6 @@ export function GetAllDevices() {
               selectedStatus={selectedStatus}
               selectedFiltersCount={selectedFiltersCount}
             />
-            {isUser() && <UserAddDevice />}
             {isSuperAdmin() && (
               <AddDevice
                 refetchDevices={refetchDevices}
@@ -737,7 +602,7 @@ export function GetAllDevices() {
         </div>
         <div
           id="devicesTable"
-          className="relative bg-inherit overflow-auto"
+          className="relative bg-inherit overflow-auto hide-scrollbar"
           style={{ maxHeight: "calc(100vh - 150px)" }}
         >
           <TanStackTable
@@ -786,14 +651,7 @@ export function GetAllDevices() {
         <Outlet />
       </div>
 
-      {isMotorDrawerOpen && (
-        <MotorDetailsDrawer
-          isOpen={isMotorDrawerOpen}
-          onClose={handleCloseMotorDrawer}
-          motor={selectedMotor}
-          singleData={selectedDeviceForDrawer ? [selectedDeviceForDrawer] : []}
-        />
-      )}
+    
       {isInfoDialogOpen && (
         <InfoDialogBox
           openOrNot={isInfoDialogOpen}
@@ -820,17 +678,7 @@ export function GetAllDevices() {
           buttonLabling="Deleting..."
         />
       )}
-      <StarterBoxSettings
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
-        hideTrigger={true}
-        hideTriggerOne={false}
-        setShowSettings={setShowSettings}
-        gateway={gateway}
-        deviceId={deviceId}
-        gatewayData={gatewayData}
-        isTestDevice={isTestDevice}
-      />
+    
     </div>
   );
 }

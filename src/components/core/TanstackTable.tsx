@@ -78,9 +78,9 @@ const TanStackTable: FC<any> = ({
     return widthObj ? widthObj?.width || widthObj?.size || "100px" : "100px";
   };
 
-  const { user_id, apfc_id, device_id, pond_id } = useParams({
-    strict: false,
-  });
+  // const { user_id,  device_id,  } = useParams({
+  //   strict: false,
+  // });
 
   const sortAndGetData = (header: Header<any, unknown>) => {
     if (
@@ -263,27 +263,13 @@ const TanStackTable: FC<any> = ({
                           key={row.id}
                           ref={isLastRow ? lastRowRef : null}
                           onClick={() => onRowClick?.(row.original)}
-                          className={`border-b border-slate-200 h-full w-full text-center hover:text-black ${
-                            user_id == row?.original?.id ||
-                            apfc_id == row?.original?.id ||
-                            device_id == row?.original?.id ||
-                            pond_id == row?.original?.id
-                              ? "bg-E4F5E3"
-                              : "hover:bg-gray-100"
-                          } transition-colors duration-0 cursor-pointer`}
+                          className={`border-b border-slate-200 h-full w-full text-center hover:text-black  transition-colors duration-0 cursor-pointer`}
                         >
                           {row
                             .getVisibleCells()
                             .map((cell: any, cellIndex: any) => (
                               <TableCell
-                                className={`p-0 !bg-transparent ${
-                                  user_id == row?.original?.id ||
-                                  apfc_id == row?.original?.id ||
-                                  device_id == row?.original?.id ||
-                                  pond_id == row?.original?.id
-                                    ? "selectedCell"
-                                    : "defaultCell"
-                                } transition-colors duration-0 cursor-pointer ${
+                                className={`p-0 !bg-transparent  transition-colors duration-0 cursor-pointer ${
                                   cell.column?.id === "full_name"
                                     ? "overflow-visible"
                                     : ""

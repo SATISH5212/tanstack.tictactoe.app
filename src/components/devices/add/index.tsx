@@ -41,56 +41,9 @@ import {
 } from "src/lib/services/deviceses";
 import { v4 as uuidv4 } from "uuid";
 
-// const BROKER_URL = import.meta.env.VITE_MQTT_BROKER_URL || "";
-
-// const getClientId = () => {
-//   if (typeof window === "undefined") return `mqtt_react_${uuidv4()}`;
-
-//   const storedClientId = localStorage.getItem("mqtt_client_id");
-//   if (storedClientId) return storedClientId;
-//   const newClientId = `mqtt_react_${uuidv4()}`;
-//   localStorage.setItem("mqtt_client_id", newClientId);
-//   return newClientId;
-// };
-
-// const MQTT_OPTIONS = {
-//   username: import.meta.env.VITE_MQTT_USERNAME || "",
-//   password: import.meta.env.VITE_MQTT_PASSWORD || "",
-//   clientId: getClientId(),
-//   keepalive: 60,
-//   reconnectPeriod: 1000,
-//   connectTimeout: 10000,
-//   clean: true,
-// };
-
-// Error Boundary Component
-// const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
-//   const [error, setError] = useState<Error | null>(null);
-
-//   useEffect(() => {
-//     const errorHandler = (err: ErrorEvent) => {
-//       console.error("Uncaught error:", err);
-//       setError(new Error(err.message || "An unexpected error occurred"));
-//     };
-//     window.addEventListener("error", errorHandler);
-//     return () => window.removeEventListener("error", errorHandler);
-//   }, []);
-
-//   if (error) {
-//     return (
-//       <div className="text-red-500 p-4">
-//         <h2>Error: {error.message}</h2>
-//         <Button onClick={() => setError(null)}>Retry</Button>
-//       </div>
-//     );
-//   }
-
-//   return <>{children}</>;
-// };
-
 const AddDevice = ({ refetchDevices, gatewayId }: any) => {
   const queryClient = useQueryClient();
-  const { user_id } = useParams({ strict: false });
+  // const { user_id } = useParams({ strict: false });
   const [isRefetching, setIsRefetching] = useState(false);
   const [gateways, setGateways] = useState<any[]>([]);
   const [searchTitle, setSearchTitle] = useState("");
@@ -106,19 +59,19 @@ const AddDevice = ({ refetchDevices, gatewayId }: any) => {
 
   const [isMounted, setIsMounted] = useState(false);
   const isInitialMount = useRef(true);
-  const lastUserId = useRef(user_id);
-  const initialDeviceData = useMemo(  
+  // const lastUserId = useRef(user_id);
+  const initialDeviceData = useMemo(
     () => ({
       title: "",
       mcu_serial_no: "",
       mac_address: "",
       pcb_number: "",
       starter_number: "",
-      user_id: user_id ? Number(user_id) : null,
+      // user_id: user_id ? Number(user_id) : null,
       gateway_id: "",
       capable_motors: null as number | null,
     }),
-    [user_id]
+    []
   );
 
   const [deviceData, setDeviceData] = useState(initialDeviceData);
@@ -126,20 +79,21 @@ const AddDevice = ({ refetchDevices, gatewayId }: any) => {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  useEffect(() => {
-    if (lastUserId.current !== user_id) {
-      lastUserId.current = user_id;
-      setDeviceData(initialDeviceData);
-      setGateways([]);
-      setErrors({});
-      if (!isInitialMount.current) {
-        queryClient.invalidateQueries({
-          queryKey: ["getAllgateways", user_id],
-        });
-      }
-    }
-    isInitialMount.current = false;
-  }, [user_id, initialDeviceData, queryClient]);
+
+  // useEffect(() => {
+  //   if (lastUserId.current !== user_id) {
+  //     lastUserId.current = user_id;
+  //     setDeviceData(initialDeviceData);
+  //     setGateways([]);
+  //     setErrors({});
+  //     if (!isInitialMount.current) {
+  //       queryClient.invalidateQueries({
+  //         queryKey: ["getAllgateways", user_id],
+  //       });
+  //     }
+  //   }
+  //   isInitialMount.current = false;
+  // }, [user_id, initialDeviceData, queryClient]);
   // useEffect(() => {
   //   if (!isMounted) return;
 
@@ -189,44 +143,6 @@ const AddDevice = ({ refetchDevices, gatewayId }: any) => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const {
-    data: gatewayData,
-    isLoading,
-    isError,
-    refetch: refetchGateways,
-  } = useQuery({
-    queryKey: ["getAllgateways", user_id],
-    queryFn: async () => {
-      if (!user_id) throw new Error("User ID is missing");
-      const response = await getAllGateWays(user_id);
-      return response.data;
-    },
-    enabled:
-      isOpen && !!user_id && !window.location.pathname.startsWith("/devices"),
-    refetchOnWindowFocus: false,
-    staleTime: 30 * 1000,
-  });
-
-  useEffect(() => {
-    if (!isOpen) {
-      if (gateways.length > 0) {
-        setGateways([]);
-      }
-      return;
-    }
-
-    if (isError) {
-      toast.error("Failed to fetch gateways");
-      if (gateways.length > 0) {
-        setGateways([]);
-      }
-    } else if (gatewayData?.data) {
-      const newGateways = gatewayData.data;
-      if (JSON.stringify(gateways) !== JSON.stringify(newGateways)) {
-        setGateways(newGateways);
-      }
-    }
-  }, [gatewayData, isOpen, isError]);
 
   const { mutateAsync: mutateAddDevice, isPending: isStatusPending } =
     useMutation({
@@ -476,13 +392,13 @@ const AddDevice = ({ refetchDevices, gatewayId }: any) => {
               toast.error(`Failed to publish MQTT message: ${error.message}`);
             }
           } else {
-            toast.error("MQTT client not connected after retries");
-            console.error(
-              "MQTT client not connected: client=",
-              !!client,
-              "isConnected=",
-              isConnected
-            );
+            // toast.error("MQTT client not connected after retries");
+            // console.error(
+            //   "MQTT client not connected: client=",
+            //   !!client,
+            //   "isConnected=",
+            //   isConnected
+            // );
           }
           setDeviceData(initialDeviceData);
           setErrors({});
@@ -515,22 +431,29 @@ const AddDevice = ({ refetchDevices, gatewayId }: any) => {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
-      const spacesAllowedFields = ["title"];
-      const noSpacesFields = ["mcu_serial_no", "pcb_number", "starter_number"];
-
+      const alphanumericFields = [
+        "title",
+        "mcu_serial_no",
+        "pcb_number",
+        "starter_number",
+      ];
       let filteredValue = value;
-      if (spacesAllowedFields.includes(name)) {
-        filteredValue = value
-          .replace(/[^a-zA-Z0-9\s]/g, "")
-          .replace(/\s+/g, " ")
-          .trimStart();
+      if (alphanumericFields.includes(name)) {
+        filteredValue = value.replace(/[^a-zA-Z0-9\s]/g, "");
+      }
+      if (name === "title") {
+        filteredValue = filteredValue.replace(/\s+/g, " ").trimStart();
 
-        if (filteredValue) {
-          filteredValue =
-            filteredValue.charAt(0).toUpperCase() + filteredValue.slice(1);
+        if (filteredValue.length > 0) {
+          const isAllCaps = filteredValue === filteredValue.toUpperCase();
+
+          if (isAllCaps) {
+            filteredValue = filteredValue;
+          } else {
+            filteredValue =
+              filteredValue.charAt(0).toUpperCase() + filteredValue.slice(1);
+          }
         }
-      } else if (noSpacesFields.includes(name)) {
-        filteredValue = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
       }
 
       if (name === "mcu_serial_no" && filteredValue) {
@@ -584,29 +507,32 @@ const AddDevice = ({ refetchDevices, gatewayId }: any) => {
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    if (!isConnected) {
-      toast.error("MQTT client is not connected");
-      return;
-    }
     try {
       const isDevicesRoute = window.location.pathname === `/devices`;
       const formattedData = {
         ...deviceData,
+        title: deviceData.title,
+        mcu_serial_no: deviceData.mcu_serial_no.toUpperCase(),
+        mac_address: deviceData.mac_address.toUpperCase(),
+        pcb_number: deviceData.pcb_number.toUpperCase(),
+        starter_number: deviceData.starter_number
+          ? deviceData.starter_number.toUpperCase()
+          : null,
+        capable_motors: deviceData.capable_motors,
         gateway_id: deviceData.gateway_id
           ? Number(deviceData.gateway_id)
           : gatewayId,
-        user_id: isDevicesRoute
-          ? null
-          : deviceData.user_id
-            ? Number(user_id)
-            : null,
-        starter_number: deviceData.starter_number || null,
+        // user_id: isDevicesRoute
+        //   ? null
+        //   : deviceData.user_id
+        //     ? Number(user_id)
+        //     : null,
       };
       await mutateAddDevice(formattedData);
     } catch (error) {
       console.error("Submit Error:", error);
     }
-  }, [isConnected, deviceData, gatewayId, user_id, mutateAddDevice]);
+  }, [deviceData, gatewayId,mutateAddDevice]);
 
   const handleDrawerClose = useCallback(() => {
     setErrors({});
@@ -638,280 +564,211 @@ const AddDevice = ({ refetchDevices, gatewayId }: any) => {
   const motorOptions = useMemo(() => ["1", "2"], []);
 
   return (
-    // <ErrorBoundary>  
-      <div className="add-device-container">
-        <Sheet
-          open={isOpen}
-          onOpenChange={(open) => {
-            if (open !== isOpen) {
-              setIsOpen(open);
-              if (!open) {
-                handleDrawerClose();
-              }
+    // <ErrorBoundary>
+    <div className="add-device-container">
+      <Sheet
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (open !== isOpen) {
+            setIsOpen(open);
+            if (!open) {
+              handleDrawerClose();
             }
-          }}
-        >
-          <SheetTrigger asChild>
+          }
+        }}
+      >
+        <SheetTrigger asChild>
+          <Button
+            onClick={handleOpenModal}
+            className="h-7 px-2 bg-blue-500 hover:bg-blue-600 rounded flex items-center gap-1 text-white text-xs 3xl:text-sm cursor-pointer font-normal"
+            disabled={isStatusPending}
+          >
+            <span>+ Add</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent className="bg-white w-custom_40per sm:max-w-custom_30per min-w-custom_30per max-w-custom_30per px-6 py-0 font-inter [&>button]:hidden overflow-y-auto">
+          <SheetHeader>
+            <div className="flex items-center justify-between pt-2">
+              <SheetTitle className="font-inter text-black/80 font-normal text-md 3xl:text-lg">
+                Add Device
+              </SheetTitle>
+              <button>
+                <X
+                  className="w-6 h-6 cursor-pointer text-red-500 p-1 rounded-full hover:bg-red-100 hover:text-red-600"
+                  onClick={() => handleDrawerClose()}
+                />
+              </button>
+            </div>
+          </SheetHeader>
+          <div className="grid gap-4 pt-2 pb-12">
+            <div className="flex flex-col space-y-1">
+              <Label className="text-sm 3xl:text-base font-normal">
+                Title <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                className="bg-gray-100 border-gray-200 shadow-none font-inter rounded-md focus-visible:ring-0 text-xs 3xl:text-md placeholder:font-inter placeholder:text-xs font-light"
+                placeholder="Enter Title"
+                id="title"
+                name="title"
+                value={deviceData.title}
+                onChange={handleChange}
+                maxLength={30}
+              />
+              {errors?.title && (
+                <span className="text-red-500 text-xs font-inter font-light mt-1">
+                  {errors.title}
+                </span>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1">
+              <Label className="text-sm 3xl:text-base font-normal">
+                MCU Serial Number <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="mcu_serial_no"
+                placeholder="Enter MCU Serial Number "
+                name="mcu_serial_no"
+                value={deviceData.mcu_serial_no.toUpperCase()}
+                onChange={handleChange}
+                className="font-inter shadow-none border border-gray-200 bg-gray-100 focus-visible:ring-0 placeholder:font-inter placeholder:text-xs font-light"
+              />
+              {errors?.mcu_serial_no && (
+                <span className="text-red-500 text-xs font-inter font-light mt-1">
+                  {errors.mcu_serial_no}
+                </span>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1">
+              <Label className="text-sm 3xl:text-base font-normal">
+                MAC Address <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="mac_address"
+                placeholder="Enter MAC Address"
+                name="mac_address"
+                value={deviceData.mac_address.toUpperCase() || ""}
+                className="font-inter shadow-none border border-gray-300 bg-gray-200 focus-visible:ring-0 placeholder:font-inter placeholder:text-xs font-light"
+                disabled
+              />
+              {errors?.mac_address && (
+                <span className="text-red-500 text-xs font-inter font-light mt-1">
+                  {errors.mac_address}
+                </span>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1">
+              <Label className="text-sm 3xl:text-base font-normal">
+                PCB Number <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                className="shadow-none border border-gray-200 rounded-md bg-gray-100 font-inter focus-visible:ring-0 placeholder:font-inter placeholder:text-xs font-light"
+                placeholder="Enter PCB Number"
+                id="pcb_number"
+                name="pcb_number"
+                value={deviceData.pcb_number.toUpperCase()}
+                onChange={handleChange}
+              />
+              {errors?.pcb_number && (
+                <span className="text-red-500 text-xs font-inter font-light mt-1">
+                  {errors.pcb_number}
+                </span>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1">
+              <Label className="text-sm 3xl:text-base font-normal">
+                Starter Box Number <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="starter_number"
+                placeholder="Enter Starter Box Number"
+                name="starter_number"
+                value={deviceData.starter_number.toUpperCase()}
+                onChange={handleChange}
+                className="font-inter shadow-none border border-gray-200 bg-gray-100 focus-visible:ring-0 placeholder:font-inter placeholder:text-xs font-light"
+              />
+              {errors?.starter_number && (
+                <span className="text-red-500 text-xs font-inter font-light mt-1">
+                  {errors.starter_number}
+                </span>
+              )}
+            </div>
+
+    
+            <div className="w-full space-y-1">
+              <Label className="text-sm 3xl:text-base font-normal">
+                Capable Motors <span className="text-red-500">*</span>
+              </Label>
+              <Popover open={motorsOpen} onOpenChange={setMotorsOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    role="combobox"
+                    aria-expanded={motorsOpen}
+                    className="bg-transparent border px-2 py-2 h-fit w-full font-inter border-gray-200 text-black bg-gray-100 hover:bg-opacity-50 justify-between font-light"
+                  >
+                    {deviceData.capable_motors !== null ? (
+                      <span className="text-xs">
+                        {deviceData.capable_motors}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400 font-inter">
+                        Capable Motors
+                      </span>
+                    )}
+                    <ChevronDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-custom_26dvh p-0">
+                  <Command>
+                    <CommandList className="font-inter">
+                      <CommandEmpty>No motors available.</CommandEmpty>
+                      <CommandGroup>
+                        {motorOptions.map((motor) => (
+                          <CommandItem
+                            key={motor}
+                            value={motor}
+                            onSelect={() => {
+                              handleMotorSelect(motor);
+                            }}
+                            className="hover:bg-gray-200"
+                          >
+                            <div>{motor}</div>
+                            <Check
+                              className={`ml-auto ${deviceData.capable_motors === Number(motor) ? "opacity-100" : "opacity-0"}`}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {errors?.capable_motors && (
+                <span className="text-red-500 text-xs font-inter font-light mt-1">
+                  {errors.capable_motors}
+                </span>
+              )}
+            </div>
+          </div>
+          <SheetFooter className="py-2 w-full">
             <Button
-              onClick={handleOpenModal}
-              className="h-7 px-2 bg-green-500 hover:bg-green-600 rounded flex items-center gap-1 text-white text-xs 3xl:text-sm cursor-pointer font-normal"
+              variant="outline"
+              onClick={handleDrawerClose}
+              className="text-center text-sm px-4 h-7 border border-gray-200 font-medium"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              className="text-center flex justify-center text-sm text-white px-6 h-7 bg-blue-500 hover:bg-blue-600 font-medium"
               disabled={isStatusPending}
             >
-              <span>+ Add</span>
+              {isStatusPending ? <Loader2 className="animate-spin" /> : "Add"}
             </Button>
-          </SheetTrigger>
-          <SheetContent className="bg-white w-custom_40per sm:max-w-custom_30per min-w-custom_30per max-w-custom_30per px-6 py-0 font-inter [&>button]:hidden overflow-y-auto">
-            <SheetHeader>
-              <div className="flex items-center justify-between pt-2">
-                <SheetTitle className="font-inter text-black/80 font-normal text-md 3xl:text-lg">
-                  Add Device
-                </SheetTitle>
-                <button>
-                  <X
-                    className="w-6 h-6 cursor-pointer text-red-500 p-1 rounded-full hover:bg-red-100 hover:text-red-600"
-                    onClick={() => handleDrawerClose()}
-                  />
-                </button>
-              </div>
-            </SheetHeader>
-            <div className="grid gap-4 pt-2 pb-12">
-              <div className="flex flex-col space-y-1">
-                <Label className="text-sm 3xl:text-base font-normal">
-                  Title <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  className="bg-gray-100 border-gray-200 shadow-none font-inter rounded-md focus-visible:ring-0 text-xs 3xl:text-md placeholder:font-inter placeholder:text-xs font-light"
-                  placeholder="Enter Title"
-                  id="title"
-                  name="title"
-                  value={deviceData.title}
-                  onChange={handleChange}
-                  maxLength={30}
-                />
-                {errors?.title && (
-                  <span className="text-red-500 text-xs font-inter font-light mt-1">
-                    {errors.title}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-col space-y-1">
-                <Label className="text-sm 3xl:text-base font-normal">
-                  MCU Serial Number <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="mcu_serial_no"
-                  placeholder="Enter MCU Serial Number "
-                  name="mcu_serial_no"
-                  value={deviceData.mcu_serial_no.toUpperCase()}
-                  onChange={handleChange}
-                  className="font-inter shadow-none border border-gray-200 bg-gray-100 focus-visible:ring-0 placeholder:font-inter placeholder:text-xs font-light"
-                />
-                {errors?.mcu_serial_no && (
-                  <span className="text-red-500 text-xs font-inter font-light mt-1">
-                    {errors.mcu_serial_no}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-col space-y-1">
-                <Label className="text-sm 3xl:text-base font-normal">
-                  MAC Address <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="mac_address"
-                  placeholder="Enter MAC Address"
-                  name="mac_address"
-                  value={deviceData.mac_address.toUpperCase() || ""}
-                  className="font-inter shadow-none border border-gray-300 bg-gray-200 focus-visible:ring-0 placeholder:font-inter placeholder:text-xs font-light"
-                  disabled
-                />
-                {errors?.mac_address && (
-                  <span className="text-red-500 text-xs font-inter font-light mt-1">
-                    {errors.mac_address}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-col space-y-1">
-                <Label className="text-sm 3xl:text-base font-normal">
-                  PCB Number <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  className="shadow-none border border-gray-200 rounded-md bg-gray-100 font-inter focus-visible:ring-0 placeholder:font-inter placeholder:text-xs font-light"
-                  placeholder="Enter PCB Number"
-                  id="pcb_number"
-                  name="pcb_number"
-                  value={deviceData.pcb_number.toUpperCase()}
-                  onChange={handleChange}
-                />
-                {errors?.pcb_number && (
-                  <span className="text-red-500 text-xs font-inter font-light mt-1">
-                    {errors.pcb_number}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-col space-y-1">
-                <Label className="text-sm 3xl:text-base font-normal">
-                  Starter Box Number <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="starter_number"
-                  placeholder="Enter Starter Box Number"
-                  name="starter_number"
-                  value={deviceData.starter_number.toUpperCase()}
-                  onChange={handleChange}
-                  className="font-inter shadow-none border border-gray-200 bg-gray-100 focus-visible:ring-0 placeholder:font-inter placeholder:text-xs font-light"
-                />
-                {errors?.starter_number && (
-                  <span className="text-red-500 text-xs font-inter font-light mt-1">
-                    {errors.starter_number}
-                  </span>
-                )}
-              </div>
-
-              {!window.location.pathname.startsWith("/devices") && (
-                <div className="w-full space-y-1">
-                  <Label className="text-sm 3xl:text-base font-normal">
-                    Select Gateway <span className="text-red-500">*</span>
-                  </Label>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        role="combobox"
-                        aria-expanded={open}
-                        className="bg-transparent border px-2 py-2 h-fit w-full font-inter border-gray-200 text-black bg-gray-100 hover:bg-opacity-50 justify-between font-light"
-                      >
-                        {deviceData.gateway_id && gateways.length > 0 ? (
-                          <span className="text-xs">
-                            {gateways.find(
-                              (gateway: any) =>
-                                gateway?.id.toString() === deviceData.gateway_id
-                            )?.title || "Select Gateway"}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-gray-400 font-inter">
-                            Select Gateway
-                          </span>
-                        )}
-                        <ChevronDown className="opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-custom_26dvh p-0">
-                      <Command>
-                        <CommandInput
-                          className="h-9"
-                          placeholder="Search gateways..."
-                          onValueChange={(val) => setSearchTitle(val)}
-                        />
-                        <CommandList className="font-inter">
-                          <CommandEmpty>
-                            {isLoading
-                              ? "Loading gateways..."
-                              : "No gateways available."}
-                          </CommandEmpty>
-                          <CommandGroup>
-                            {gateways.map((gateway: any) => (
-                              <CommandItem
-                                key={gateway.id}
-                                value={gateway?.title}
-                                onSelect={() => {
-                                  handleGatewaySelect(gateway.id.toString());
-                                  setOpen(false);
-                                }}
-                                className="hover:bg-gray-200"
-                              >
-                                <div>{gateway.title}</div>
-                                <Check
-                                  className={`ml-auto ${deviceData.gateway_id === gateway.id.toString() ? "opacity-100" : "opacity-0"}`}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  {errors?.gateway_id && (
-                    <span className="text-red-500 text-xs font-inter font-light mt-1">
-                      {errors.gateway_id}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              <div className="w-full space-y-1">
-                <Label className="text-sm 3xl:text-base font-normal">
-                  Capable Motors <span className="text-red-500">*</span>
-                </Label>
-                <Popover open={motorsOpen} onOpenChange={setMotorsOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      role="combobox"
-                      aria-expanded={motorsOpen}
-                      className="bg-transparent border px-2 py-2 h-fit w-full font-inter border-gray-200 text-black bg-gray-100 hover:bg-opacity-50 justify-between font-light"
-                    >
-                      {deviceData.capable_motors !== null ? (
-                        <span className="text-xs">
-                          {deviceData.capable_motors}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-gray-400 font-inter">
-                          Capable Motors
-                        </span>
-                      )}
-                      <ChevronDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-custom_26dvh p-0">
-                    <Command>
-                      <CommandList className="font-inter">
-                        <CommandEmpty>No motors available.</CommandEmpty>
-                        <CommandGroup>
-                          {motorOptions.map((motor) => (
-                            <CommandItem
-                              key={motor}
-                              value={motor}
-                              onSelect={() => {
-                                handleMotorSelect(motor);
-                              }}
-                              className="hover:bg-gray-200"
-                            >
-                              <div>{motor}</div>
-                              <Check
-                                className={`ml-auto ${deviceData.capable_motors === Number(motor) ? "opacity-100" : "opacity-0"}`}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                {errors?.capable_motors && (
-                  <span className="text-red-500 text-xs font-inter font-light mt-1">
-                    {errors.capable_motors}
-                  </span>
-                )}
-              </div>
-            </div>
-            <SheetFooter className="py-2 w-full">
-              <Button
-                variant="outline"
-                onClick={handleDrawerClose}
-                className="text-center text-sm px-7 h-7 border border-gray-200 font-medium"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                onClick={handleSubmit}
-                className="text-center flex justify-center text-sm text-white px-6 h-7 bg-green-500 hover:bg-green-600 font-medium"
-                disabled={isStatusPending}
-              >
-                {isStatusPending ? <Loader2 className="animate-spin" /> : "Add"}
-              </Button>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
-      </div>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+    </div>
     // {/* </ErrorBoundary> */}
   );
 };

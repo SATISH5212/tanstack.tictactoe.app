@@ -7,7 +7,6 @@ import { Loader2, SettingsIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { DeviceLogs } from "../core/DeviceLogs";
-import AddIcon from "../icons/apfc/AddIcon";
 import { DeleteDeviceIcon } from "../svg/DeletePond";
 import { EditDeviceIcon } from "../svg/EditDevice";
 import { GreenDot } from "../svg/GreenDot";
@@ -41,8 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import AssignUserToDevice from "./AssignUserToDevice";
-import ViewRawDataButton from "./ViewRawDataButton";
+
 
 interface DeviceColumnsProps {
   refetchDevices: () => void;
@@ -94,13 +92,13 @@ export const DeviceColumns = ({
             : formattedTitle;
 
         return (
-          <div className="p-2 h-[40px] flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left bg-white">
+          <div className="p-2 h-10 flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left bg-white">
             <span title={title}>{displayText}</span>
           </div>
         );
       },
       header: () => (
-        <span className="!text-left w-full block sticky top-0 z-11">
+        <span className=" w-full block sticky top-0 z-11 ">
           Device Name
         </span>
       ),
@@ -132,13 +130,13 @@ export const DeviceColumns = ({
         const value = info.getValue() || "-";
 
         return (
-          <div className="w-full h-[40px] justify-center items-center flex truncate p-2 overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left">
+          <div className="w-full h-10 justify-center items-center flex truncate p-2 overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left">
             <span>{value}</span>
           </div>
         );
       },
       header: () => (
-        <span className="!text-left w-full pl-5 h-[40px] flex items-center">
+        <span className=" w-full  h-10 flex items-center justify-center pl-10">
           MAC Address
         </span>
       ),
@@ -154,12 +152,12 @@ export const DeviceColumns = ({
           value?.length > 15 ? `${value.slice(0, 12)}...` : value;
 
         return (
-          <div className="p-2 h-[40px] justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left">
+          <div className="p-2 h-10  flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm ">
             <span title={value}>{displayText}</span>
           </div>
         );
       },
-      header: () => <span className="text-center w-full">Starter Number</span>,
+      header: () => <span className="text-center w-full flex items-center justify-center pl-7 ">Starter Number</span>,
       footer: (props: any) => props.column.id,
       size: 150,
     },
@@ -232,7 +230,7 @@ export const DeviceColumns = ({
 
         return (
           <div
-            className="p-2 h-[40px] flex justify-start items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm"
+            className="p-2 h-10 flex justify-center items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm"
             onClick={(e) => e.stopPropagation()}
           >
             {status === "ASSIGNED" ? (
@@ -313,7 +311,7 @@ export const DeviceColumns = ({
                     )}
                   </SelectContent>
                 </Select>
-                {status === "DEPLOYED" && (
+                {/* {status === "DEPLOYED" && (
                   <AddIcon
                     className="size-4 cursor-pointer ml-2"
                     onClick={(e: any) => {
@@ -321,7 +319,7 @@ export const DeviceColumns = ({
                       handleAssignUser();
                     }}
                   />
-                )}
+                )} */}
                 <div className="bg-white">
                   <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <AlertDialogContent className="bg-white">
@@ -358,7 +356,7 @@ export const DeviceColumns = ({
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <AssignUserToDevice
+                  {/* <AssignUserToDevice
                     open={assignDialogOpen}
                     onClose={() => {
                       setAssignDialogOpen(false);
@@ -366,7 +364,7 @@ export const DeviceColumns = ({
                     getData={refetchDevices}
                     device_id={deviceId}
                     deviceData={info.row.original}
-                  />
+                  /> */}
                 </div>
               </>
             )}
@@ -374,7 +372,7 @@ export const DeviceColumns = ({
         );
       },
       header: () => (
-        <span className="text-left w-full cursor-default">
+        <span className="text-left w-full cursor-default ">
           Deployment Status
         </span>
       ),
@@ -387,7 +385,7 @@ export const DeviceColumns = ({
       cell: (info: any) => {
         const status = info.getValue() || "--";
         return (
-          <div className="p-2 h-[40px] justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
+          <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
             <span
               className={
                 status === "ACTIVE" ? "text-green-600" : "text-red-600"
@@ -414,7 +412,7 @@ export const DeviceColumns = ({
       cell: (info: any) => {
         const powerPresent = info.getValue();
         return (
-          <div className="p-2 h-[40px] items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm flex justify-center">
+          <div className="p-2 h-10 items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm flex justify-center">
             <span>{powerPresent === "1" ? <PowerOn /> : <PowerOff />}</span>
           </div>
         );
@@ -434,7 +432,7 @@ export const DeviceColumns = ({
         const voltages = device.starterBoxParameters?.[0] || {};
 
         return (
-          <div className="p-2 h-[40px] text-xs 3xl:text-sm text-center leading-tight flex flex-col gap-1 justify-center items-center">
+          <div className="p-2 h-10 text-xs 3xl:text-sm text-center leading-tight flex flex-col gap-1 justify-center items-center">
             {params.length > 0 ? (
               <div className="flex flex-col items-center gap-1">
                 {voltages && (
@@ -479,7 +477,7 @@ export const DeviceColumns = ({
         );
 
         return (
-          <div className="p-2 h-[40px] justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col gap-1 items-center">
+          <div className="p-2 h-10 justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col gap-1 items-center">
             {params.length > 0 ? (
               <div className="flex flex-col items-center gap-1">
                 {device.capable_motors >= 1 && (
@@ -527,7 +525,7 @@ export const DeviceColumns = ({
         );
 
         return (
-          <div className="p-0 h-[40px] justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col items-center">
+          <div className="p-0 h-10 justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col items-center">
             {params.length > 0 ? (
               <div className="flex flex-col items-center gap-1">
                 {device.capable_motors >= 1 && (
@@ -599,7 +597,7 @@ export const DeviceColumns = ({
         );
 
         return (
-          <div className="p-2 h-[40px] text-xs 3xl:text-sm justify-center text-left leading-tight flex flex-col gap-1 items-center">
+          <div className="p-2 h-10 text-xs 3xl:text-sm justify-center text-left leading-tight flex flex-col gap-1 items-center">
             {params.length > 0 || device.capable_motors > 0 ? (
               <div className="flex flex-col items-center gap-1">
                 {device.capable_motors >= 1 && currents.m1 && (
@@ -651,7 +649,7 @@ export const DeviceColumns = ({
       cell: (info: any) => {
         const count = info.getValue() ?? "--";
         return (
-          <div className="p-2 h-[40px] flex justify-center text-xs 3xl:text-sm text-center leading-tight items-center">
+          <div className="p-2 h-10 flex justify-center text-xs 3xl:text-sm text-center leading-tight items-center">
             {count}
           </div>
         );
@@ -668,7 +666,7 @@ export const DeviceColumns = ({
       cell: (info: any) => {
         const count = info.getValue() ?? "--";
         return (
-          <div className="p-2 h-[40px] flex justify-center items-center text-xs 3xl:text-sm text-center leading-tight ">
+          <div className="p-2 h-10 flex justify-center items-center text-xs 3xl:text-sm text-center leading-tight ">
             {count}
           </div>
         );
@@ -749,14 +747,14 @@ export const DeviceColumns = ({
                 </DropdownMenuItem>
               )}
 
-              <ViewRawDataButton
+              {/* <ViewRawDataButton
                 device={info.row.original}
                 onOpenDrawer={() => {
                   if (onViewRawData) {
                     onViewRawData(info.row.original);
                   }
                 }}
-              />
+              /> */}
               <DropdownMenuItem
                 className="text-gray-500 cursor-pointer"
                 onClick={(e) => {
