@@ -203,22 +203,7 @@ export function AllDevices() {
     return devices;
   }, [data]);
 
-  const { data: gatewayData, refetch: refetchGateway } = useQuery({
-    queryKey: ["getgatewaytitle"],
-    queryFn: async () => {
-      const response = await getGatewayTitleAPI();
-      if (response?.status === 200 || response?.status === 201) {
-        setGatewayId(response.data?.data?.id);
-        return response.data?.data;
-      } else if (response?.status === 422) {
-        setErrors(response?.data?.errors || {});
-      }
-      throw new Error("Failed to fetch gateway");
-    },
-    enabled: isSuperAdmin(),
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000,
-  });
+  
   const { data: singleDeviceData } = useQuery({
     queryKey: ["single-device", deviceId],
     queryFn: async () => {
@@ -322,12 +307,7 @@ export function AllDevices() {
   const toggleShowIcons = () => {
     setShowIcons((prev) => !prev);
   };
-  useEffect(() => {
-    if (gatewayData?.title) {
-      setTitle(gatewayData.title);
-      setOriginalTitle(gatewayData.title);
-    }
-  }, [gatewayData?.title]);
+ 
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastRowRef = useCallback(
@@ -410,6 +390,7 @@ export function AllDevices() {
 
     setDebounceSearchString(searchString);
   };
+
   const handleRowClick = (device: any) => {
     setCapableMotors(Number(device.capable_motors));
     navigate({
@@ -437,23 +418,24 @@ export function AllDevices() {
     });
   }, []);
 
-  const handleSettingsClick = useCallback(
-    (device: any) => {
-      setDeviceId(device?.id);
-      setShowSettings(true);
-      setGateway(device?.gateways?.title || gatewayData?.title);
-    },
-    [gatewayData?.title]
-  );
+//   const handleSettingsClick = useCallback(
+//     (device: any) => {
+//       setDeviceId(device?.id);
+//       setShowSettings(true);
+//       setGateway(device?.gateways?.title || gatewayData?.title);
+//     },
+//     [gatewayData?.title]
+//   );
   const handleDeleteClick = useCallback((device: any) => {
     setIsDeleteDialogOpen(true);
     setDeviceToDelete(device);
   }, []);
-  useEffect(() => {
-    if (gatewayData?.id) {
-      setGatewayId(gatewayData.id);
-    }
-  }, [gatewayData?.id]);
+  
+//   useEffect(() => {
+//     if (gatewayData?.id) {
+//       setGatewayId(gatewayData.id);
+//     }
+//   }, [gatewayData?.id]);
 
   useEffect(() => {
     if (singleDeviceData?.device_status) {
@@ -550,8 +532,8 @@ export function AllDevices() {
   }, [selectedStatus, deviceStatusFilter]);
 
   return (
-    <div className="w-full flex justify-between text-xs 3xl:text-sm">
-      <div className="w-[65%] p-3 space-y-2 bg-white border-r border-slate-200">
+    <div className="w-full flex justify-between text-xs 3xl:text-sm  h-full bg-white">
+      <div className="w-[65%] p-3 space-y-2  border-r border-slate-200">
         <div className="flex items-center justify-end">
          
           <div className="flex items-center gap-2  justify-end ">
@@ -609,7 +591,7 @@ export function AllDevices() {
             columns={DeviceColumns({
               refetchDevices,
               handleInfoDialogClick,
-              handleSettingsClick,
+            //   handleSettingsClick,
               setEditState,
               handleDelete: handleDeleteClick,
               debounceSearchString,

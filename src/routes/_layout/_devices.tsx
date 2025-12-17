@@ -6,7 +6,7 @@ export const Route = createFileRoute('/_layout/_devices')({
 })
 
 function RouteComponent() {
-  return <div className="h-[91vh] overflow-hidden">
+  return <div className="h-[92vh] overflow-hidden px-1 rounded-md">
        <AllDevices />
   </div>
 }

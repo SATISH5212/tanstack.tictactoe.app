@@ -137,7 +137,7 @@ const AppSideBar = () => {
       <div className="w-full flex flex-col  ">
         <div className="px-2 sticky top-0 py-2 z-50">
           <div className="flex items-center justify-between">
-            <img src="/idhara_logo.svg" alt="Logo" className=" w-40 h-9 p-1" />
+            <img src="/idhara_logo.svg" alt="Logo" className=" w-32 h-10 p-2" />
 
             <div className="flex items-center justify-end w-1/4 gap-2  ">
               <UserProfileDropdown

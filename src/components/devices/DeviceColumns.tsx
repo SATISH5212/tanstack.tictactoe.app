@@ -45,7 +45,7 @@ import {
 interface DeviceColumnsProps {
   refetchDevices: () => void;
   handleInfoDialogClick: (device: any) => void;
-  handleSettingsClick: (device: any) => void;
+  // handleSettingsClick: (device: any) => void;
   setEditState: (state: { isOpen: boolean; device: any | null }) => void;
   handleDelete: (device: any) => void;
   debounceSearchString?: string;
@@ -57,7 +57,7 @@ interface DeviceColumnsProps {
 export const DeviceColumns = ({
   refetchDevices,
   handleInfoDialogClick,
-  handleSettingsClick,
+  // handleSettingsClick,
   setEditState,
   handleDelete,
   debounceSearchString,
@@ -73,11 +73,11 @@ export const DeviceColumns = ({
     {
       accessorFn: (row: any) =>
         isAdmin()
-          ? row.title
+          ? row.name
           : row.alias_starter_title != null
             ? row.alias_starter_title
-            : row.title,
-      id: "title",
+            : row.name,
+      id: "name",
       cell: (info: any) => {
     
         
@@ -710,7 +710,7 @@ export const DeviceColumns = ({
                 Info
               </DropdownMenuItem>
 
-              {isAdmin() && (
+              {/* {isAdmin() && (
                 <>
                   <DropdownMenuItem
                     className="text-gray-500 cursor-pointer"
@@ -733,7 +733,7 @@ export const DeviceColumns = ({
                     Edit
                   </DropdownMenuItem>
                 </>
-              )}
+              )} */}
               {(isOwner() || isAdmin()) && (
                 <DropdownMenuItem
                   className="text-gray-500 cursor-pointer"

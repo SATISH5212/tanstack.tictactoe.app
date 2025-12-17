@@ -20,7 +20,7 @@ export const getAllPaginatedDeviceData = async ({
       power,
       status
     };
-    return await $fetch.get("/starter/all", queryParams);
+    return await $fetch.get("/starters/web/all", queryParams);
   } catch (err) {
     throw err;
   }
@@ -199,7 +199,7 @@ export const getCurrentTestGraphAPI = async ({
 
 export const addDeviceAPI = async (payload: any) => {
   try {
-    const response = await $fetch.post("/starter", payload);
+    const response = await $fetch.post("/starters", payload);
     return response;
   } catch (err) {
     throw err;

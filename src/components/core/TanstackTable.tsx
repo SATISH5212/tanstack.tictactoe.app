@@ -64,7 +64,7 @@ const TanStackTable: FC<any> = ({
         setSortBy(newSorting[0].id);
         setSortType(newSorting[0].desc ? "desc" : "asc");
       } else {
-        setSortBy("title");
+        setSortBy("name");
         setSortType("desc");
       }
     },
