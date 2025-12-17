@@ -72,11 +72,12 @@ export function LoginPage() {
     mutationFn: loginAPI,
     onSuccess: (response) => {
       const { access_token, user_details } = response?.data?.data || {};
-      navigate({ to: "/dashboard" });
       setAuthTokens(access_token, user_details);
-      toast.success(response?.data?.message || "Login successful");
       reset();
+      navigate({ to: "/dashboard", replace: true });
+      toast.success(response?.data?.message || "Login successful");
     },
+
     onError: (error: ServerError) => {
       handleServerError(error, setValidations, setConflictError);
     },
@@ -92,12 +93,13 @@ export function LoginPage() {
     clearErrors(field);
   };
 
+
   useEffect(() => {
     const token = Cookies.get("token");
     if (token) {
-      navigate({ to: "/dashboard" });
+      navigate({ to: "/dashboard", replace: true });
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     reset({
@@ -109,114 +111,6 @@ export function LoginPage() {
     clearErrors();
   }, [reset, clearErrors]);
 
-  // return (
-  //   <div className="h-screen w-screen flex text-xs bg-white">
-  //     <div className="w-8/12 rounded-xl overflow-hidden m-4">
-  //       <img
-  //         className="w-full h-full object-cover-full"
-  //         src="/assets/iDhara_bgImage.png"
-  //         alt="Main Image"
-  //       />
-  //     </div>
-  //     <div className="w-4/12 flex flex-col items-center gap-10 h-50 px-24 justify-center  ">
-  //       <IdharaLogo />
-  //       <div className="w-full space-y-5 text-35353d">
-  //         <div className="text-center">
-  //           <div className="text-lg font-normal">Sign In</div>
-  //           <div className="text-gray-500 text-sm font-light">
-  //            Sign in to access your Account
-  //           </div>
-  //         </div>
-  //         <form
-  //           onSubmit={handleSubmit(onEmailSubmit)}
-
-  //           className="space-y-5"
-  //         >
-
-  //               <div className="space-y-1">
-  //                 <div className="font-normal">
-  //                   Email<span className="text-red-500"> *</span>
-  //                 </div>
-  //                 <div className="flex items-center w-full rounded-md border pl-2 bg-FAFAFA">
-  //                   <EmailSvg />
-  //                   <input
-  //                     placeholder="Enter your email"
-  //                     className="h-full outline-none p-2 w-full bg-inherit"
-  //                     type="text"
-  //                     autoComplete="off"
-  //                     {...register("email", {
-  //                       onChange: () => clearFieldError("email"),
-  //                     })}
-  //                   />
-  //                 </div>
-  //                 {errors.email && (
-  //                   <p className="text-red-500 text-xs">
-  //                     {errors.email.message}
-  //                   </p>
-  //                 )}
-  //                 {validation.email && (
-  //                   <p className="text-red-500 text-xs">{validation.email}</p>
-  //                 )}
-  //               </div>
-
-  //               <div className="space-y-1">
-  //                 <div className="font-normal">
-  //                   Password <span className="text-red-500">*</span>
-  //                 </div>
-  //                 <div className="flex items-center w-full rounded-md border pl-2 bg-f9f9f9">
-  //                   <PasswordSvg />
-  //                   <input
-  //                     placeholder="Enter your Password"
-  //                     className="h-full outline-none p-2 w-full bg-inherit font-light"
-  //                     type={showPassword ? "text" : "password"}
-  //                     autoComplete="new-password"
-  //                     {...register("password", {
-  //                       onChange: () => clearFieldError("password"),
-  //                     })}
-  //                   />
-  //                   <button
-  //                     type="button"
-  //                     onClick={() => setShowPassword(!showPassword)}
-  //                     className="pr-2.5"
-  //                   >
-  //                     {showPassword ? <OpenEye /> : <EyeSvg />}
-  //                   </button>
-  //                 </div>
-  //                 {errors.password && (
-  //                   <p className="text-red-500 text-xs">
-  //                     {errors.password.message}
-  //                   </p>
-  //                 )}
-  //                 {validation.password && (
-  //                   <p className="text-red-500 text-xs">
-  //                     {validation.password}
-  //                   </p>
-  //                 )}
-  //                 {conflictError?.message && (
-  //                   <p className="text-red-500 text-xs">
-  //                     {conflictError.message}
-  //                   </p>
-  //                 )}
-  //               </div>
-
-  //               <div className="text-center pt-5 space-y-8">
-  //                 <Button
-  //                   type="submit"
-  //                   className="w-full text-white bg-primary p-2 rounded-full hover:bg-primary/80"
-  //                   disabled={isPendingLogin}
-  //                 >
-  //                   {isPendingLogin && (
-  //                     <Loader2 className="h-4 w-4 animate-spin" />
-  //                   )}
-  //                   {isPendingLogin ? "Logging in..." : "Login"}
-  //                 </Button>
-  //               </div>
-
-  //         </form>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
   return (
     <div
       className="h-screen w-screen flex items-center justify-center bg-center bg-cover"
@@ -253,66 +147,70 @@ export function LoginPage() {
             <form onSubmit={handleSubmit(onEmailSubmit)} className="space-y-10">
               <div className="space-y-4">
                 <div className="space-y-1">
-                <div className="font-normal text-white text-xs">
-                  Email<span className="text-red-500 "> *</span>
+                  <div className="font-normal text-white text-xs">
+                    Email<span className="text-red-500 "> *</span>
+                  </div>
+                  <div className="flex items-center w-full rounded-md border  pl-2">
+                    <EmailSvg />
+                    <input
+                      placeholder="Enter your email"
+                      className="h-full outline-none p-2.5 w-full bg-transparent placeholder-white text-xs font-normal"
+                      type="text"
+                      autoComplete="off"
+                      {...register("email", {
+                        onChange: () => clearFieldError("email"),
+                      })}
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="text-red-500 text-xs">
+                      {errors.email.message}
+                    </p>
+                  )}
+                  {validation.email && (
+                    <p className="text-red-500 text-xs">{validation.email}</p>
+                  )}
                 </div>
-                <div className="flex items-center w-full rounded-md border  pl-2">
-                  <EmailSvg  />
-                  <input
-                    placeholder="Enter your email"
-                    className="h-full outline-none p-2.5 w-full bg-transparent placeholder-white text-xs font-normal"
-                    type="text"
-                    autoComplete="off"
-                    {...register("email", {
-                      onChange: () => clearFieldError("email"),
-                    })}
-                  />
-                </div>
-                {errors.email && (
-                  <p className="text-red-500 text-xs">{errors.email.message}</p>
-                )}
-                {validation.email && (
-                  <p className="text-red-500 text-xs">{validation.email}</p>
-                )}
-              </div>
 
-              <div className="space-y-1 ">
-                <div className="font-normal text-white text-xs">
-                  Password <span className="text-red-500 ">*</span>
+                <div className="space-y-1 ">
+                  <div className="font-normal text-white text-xs">
+                    Password <span className="text-red-500 ">*</span>
+                  </div>
+                  <div className="flex items-center w-full rounded-md border pl-2">
+                    <PasswordSvg />
+                    <input
+                      placeholder="Enter your Password"
+                      className="h-full outline-none p-2.5 w-full bg-transparent text-white placeholder-white text-xs"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      {...register("password", {
+                        onChange: () => clearFieldError("password"),
+                      })}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="pr-2.5 "
+                    >
+                      {showPassword ? <OpenEye /> : <EyeSvg />}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-red-500 text-xs">
+                      {errors.password.message}
+                    </p>
+                  )}
+                  {validation.password && (
+                    <p className="text-red-500 text-xs">
+                      {validation.password}
+                    </p>
+                  )}
+                  {conflictError?.message && (
+                    <p className="text-red-500 text-xs">
+                      {conflictError.message}
+                    </p>
+                  )}
                 </div>
-                <div className="flex items-center w-full rounded-md border pl-2">
-                  <PasswordSvg  />
-                  <input
-                    placeholder="Enter your Password"
-                    className="h-full outline-none p-2.5 w-full bg-transparent text-white placeholder-white text-xs"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="new-password"
-                    {...register("password", {
-                      onChange: () => clearFieldError("password"),
-                    })}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="pr-2.5 "
-                  >
-                    {showPassword ? <OpenEye /> : <EyeSvg />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-red-500 text-xs">
-                    {errors.password.message}
-                  </p>
-                )}
-                {validation.password && (
-                  <p className="text-red-500 text-xs">{validation.password}</p>
-                )}
-                {conflictError?.message && (
-                  <p className="text-red-500 text-xs">
-                    {conflictError.message}
-                  </p>
-                )}
-              </div>
               </div>
 
               <Button
