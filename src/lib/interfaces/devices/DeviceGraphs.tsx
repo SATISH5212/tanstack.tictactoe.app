@@ -1,19 +1,18 @@
-import * as React from "react";
+import HighCharts from "@/components/HighCharts";
+import { DetailsIcon } from "@/components/svg/DetailsIcon";
+import { MeterIcon } from "@/components/svg/MeterIcon";
+import { ThunderIcon } from "@/components/svg/ThunderIcon";
+import { WhiteMotorIcon } from "@/components/svg/WhiteMotor";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
+import { Loader, PlugIcon } from "lucide-react";
+import * as React from "react";
+import { DateRange } from "react-day-picker";
 import { capitalize } from "src/lib/helpers/capitalize";
 import {
-  getGatewayTitleAPI,
-  getSingleMotorAPI,
+  getSingleMotorAPI
 } from "src/lib/services/deviceses";
 import { EmptyMotorsGraph } from "./EmptyMotorsGraph";
-import HighCharts from "@/components/HighCharts";
-import { ThunderIcon } from "@/components/svg/ThunderIcon";
-import { MeterIcon } from "@/components/svg/MeterIcon";
-import { DetailsIcon } from "@/components/svg/DetailsIcon";
-import { PlugIcon } from "lucide-react";
-import { WhiteMotorIcon } from "@/components/svg/WhiteMotor";
-import {DateRange} from "react-day-picker"
 
 const DeviceGraphs = ({
   motor,
@@ -24,25 +23,10 @@ const DeviceGraphs = ({
 }: any) => {
   const { device_id} = useParams({ strict: false });
   const [motorData, setMotorData] = React.useState({});
-  // const [dateValue, setDateValue] = React.useState<Date[] | null>(null);
-  // const [dateRange, setDateRange] = React.useState<{
-  //   from_date: string;
-  //   to_date: string;
-  // } | null>(null);
   const [date, setDate] = React.useState<DateRange | undefined>(undefined);
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const capableMotorsFromSearch =
-    Number(searchParams.get("capable_motors")) || 0;
-  const capableMotors =
-    capableMotorsFromSearch ||
-    capable_motors ||
-    singleData?.[0]?.capable_motors ||
-    userMotorsData?.[0]?.capable_motors ||
-    1;
-  const pond_id = searchParams.get("pondId");
-  const ipv6 = searchParams.get("ipv6");
   const motor_ref_id = device_id || searchParams.get("motor_ref_id") || "mtr_1";
   const currentDevice = deviceData?.find(
     (device: any) => device.id === Number(device_id)
@@ -57,18 +41,6 @@ const DeviceGraphs = ({
       if (!device_id) {
         throw new Error("Device ID is missing");
       }
-      if (
-        (capableMotors === 1 || capableMotors === 2) &&
-        (!device_id || device_id === "mtr_1" || device_id === "mtr_2")
-      ) {
-        return {
-          title: motor_ref_id === "mtr_1" ? "Motor 1 (M1)" : "Motor 2 (M2)",
-          device_name: currentDevice?.title || "-",
-          pcb_number: currentDevice?.serial_no || "-",
-          ipv6: currentDevice?.ipv6 || "",
-          connected_motors: [],
-        };
-      }
       const response = await getSingleMotorAPI(device_id);
       if (response.success) {
         const data = response?.data?.data;
@@ -82,35 +54,23 @@ const DeviceGraphs = ({
     retry: 1,
   });
 
-  const { data: gatewayData } = useQuery({
-    queryKey: ["getgatewaytitle"],
-    queryFn: async () => {
-      const response = await getGatewayTitleAPI();
-      return response.data?.data;
-    },
-    staleTime: 10 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    retry: 1,
-  });
+
 
   // const sharedDateState = { date, setDate };
   return (
     <div className="py-2 h-[calc(100vh-120px)] overflow-auto">
       {isMotorLoading ? (
         <div className="flex justify-center items-center w-full h-device_graph text-gray-500">
-          <img src="/PeepulAgriLogo.svg" alt="Logo" className="w-32 h-32" />
+          <Loader className="animate-spin h-4 w-4" />
         </div>
       ) : !singleData?.[0]?.motors?.length &&
         !userMotorsData?.[0]?.motors?.length ? (
         <>
           <EmptyMotorsGraph
             device_id={device_id}
-            pond_id={pond_id}
             ipv6={singleMotorData?.ipv6 || currentDevice?.ipv6 || ""}
-            capableMotors={capableMotors}
             motor_ref_id={motor_ref_id}
             device_name={singleMotorData?.device_name || "-"}
-            motorCount={capableMotors}
           />
           <div className="px-6">
             <div className="pt-2">
@@ -258,11 +218,7 @@ const DeviceGraphs = ({
                                       //     ""
                                       // ),
                                       motor_ref_id: motor.motor_ref_id || "",
-                                      capable_motors:
-                                        capableMotors ||
-                                        singleMotorData?.connected_motors
-                                          ?.length ||
-                                        0,
+                                     
                                       // stop_runtime: "true",
                                     },
                                   });

@@ -3,7 +3,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100;200;300;400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
-@import "rsuite/dist/rsuite.css";
 
 @tailwind base;
 @tailwind components;
@@ -52,65 +51,6 @@ body {
 
 ::-webkit-scrollbar-track {
   @apply bg-f0f0f0 !rounded-md;
-}
-
-/* Users table sticky last child */
-#usersTable thead tr th:last-child {
-  @apply sticky right-0 bg-gray-200;
-}
-
-#usersTable tbody tr td:last-child {
-  @apply sticky right-0 bg-white;
-}
-
-#usersTable thead tr th:nth-last-child(2) {
-  @apply sticky right-59 bg-gray-200;
-}
-
-#usersTable tbody tr td:nth-last-child(2) {
-  @apply sticky right-59 bg-white;
-}
-
-#usersTable tbody tr td:last-child span {
-  @apply bg-white;
-}
-
-#usersTable tbody tr td:nth-last-child(2) span {
-  @apply bg-white;
-}
-
-/* Users Table - Hover for sticky columns */
-#usersTable tbody tr:hover td:last-child {
-  @apply bg-gray-100 !important;
-}
-
-#usersTable tbody tr:hover td:nth-last-child(2) {
-  @apply bg-gray-100 !important;
-}
-
-#usersTable tbody tr:hover td:last-child span {
-  @apply bg-gray-100 !important;
-}
-
-#usersTable tbody tr:hover td:nth-last-child(2) span {
-  @apply bg-gray-100 !important;
-}
-
-/* Users Table - Selected row sticky columns maintain green background */
-#usersTable tbody tr:hover td.selectedCell:last-child {
-  @apply bg-E4F5E3 !important;
-}
-
-#usersTable tbody tr:hover td.selectedCell:nth-last-child(2) {
-  @apply bg-E4F5E3 !important;
-}
-
-#usersTable tbody tr:hover td.selectedCell:last-child span {
-  @apply bg-E4F5E3 !important;
-}
-
-#usersTable tbody tr:hover td.selectedCell:nth-last-child(2) span {
-  @apply bg-E4F5E3 !important;
 }
 
 #devicesTable thead tr th:first-child {
@@ -218,9 +158,6 @@ body {
   @apply bg-E4F5E3 !important;
 } */
 
-#usersTable .selectedCell:nth-last-child(2) span {
-  @apply bg-E4F5E3 !important;
-}
 
 /* .defaultCell:nth-last-child(2) {
   @apply bg-white !important;
@@ -229,149 +166,6 @@ body {
 /* .defaultCell:nth-last-child(2):hover {
   @apply bg-white !important;
 } */
-
-#apfcTable thead tr th:first-child {
-  @apply sticky left-0 bg-gray-200;
-}
-
-#apfcTable tbody tr td:first-child {
-  @apply sticky left-0 bg-white z-10;
-}
-
-#apfcTable tbody tr td.selectedCell:first-child span {
-  @apply bg-E4F5E3 !important;
-}
-
-#apfcTable thead tr th:nth-child(2) {
-  @apply sticky left-[36px] bg-gray-200 z-30;
-}
-
-#apfcTable tbody tr td:nth-child(2) {
-  @apply sticky left-[36px] bg-white z-20;
-}
-
-#apfcTable tbody tr td.selectedCell:nth-child(2) div {
-  @apply bg-E4F5E3 !important;
-}
-
-#apfcTable thead tr th:last-child {
-  @apply sticky right-0 bg-gray-200;
-}
-
-#apfcTable tbody tr td:last-child {
-  @apply sticky right-0 bg-white;
-}
-
-/* APFC Table - Hover for sticky columns */
-#apfcTable tbody tr:hover td:first-child {
-  @apply bg-gray-100 !important;
-}
-
-#apfcTable tbody tr:hover td:nth-child(2) {
-  @apply bg-gray-100 !important;
-}
-
-#apfcTable tbody tr:hover td:last-child {
-  @apply bg-gray-100 !important;
-}
-
-#apfcTable tbody tr:hover td:first-child span {
-  @apply bg-gray-100 !important;
-}
-
-#apfcTable tbody tr:hover td:nth-child(2) div {
-  @apply bg-gray-100 !important;
-}
-
-/* APFC Table - Selected row sticky columns maintain green background */
-#apfcTable tbody tr:hover td.selectedCell:first-child {
-  @apply bg-E4F5E3 !important;
-}
-
-#apfcTable tbody tr:hover td.selectedCell:nth-child(2) {
-  @apply bg-E4F5E3 !important;
-}
-
-#apfcTable tbody tr:hover td.selectedCell:last-child {
-  @apply bg-E4F5E3 !important;
-}
-
-#apfcTable tbody tr:hover td.selectedCell:first-child span {
-  @apply bg-E4F5E3 !important;
-}
-
-#apfcTable tbody tr:hover td.selectedCell:nth-child(2) div {
-  @apply bg-E4F5E3 !important;
-}
-
-/* Ponds Table - Hover for action and control mode columns */
-/* Ponds Table - Hover for action and control mode columns */
-#pondsTable tbody tr:hover td:last-child {
-  @apply bg-gray-100 !important;
-}
-
-#pondsTable tbody tr:hover td:last-child div:not(.rounded-full) {
-  @apply bg-gray-100 !important;
-}
-
-#pondsTable tbody tr:hover td:last-child span {
-  @apply bg-gray-100 !important;
-}
-
-#pondsTable tbody tr:hover td:last-child button {
-  @apply bg-gray-100 !important;
-}
-
-#pondsTable tbody tr:hover td:nth-last-child(2) {
-  @apply bg-gray-100 !important;
-}
-
-#pondsTable tbody tr:hover td:nth-last-child(2) div:not(.rounded-full) {
-  @apply bg-gray-100 !important;
-}
-
-#pondsTable tbody tr:hover td:nth-last-child(2) span {
-  @apply bg-gray-100 !important;
-}
-
-/* Selected row hover styles */
-#pondsTable tbody tr:hover td.selectedCell:last-child {
-  @apply bg-E4F5E3 !important;
-}
-
-#pondsTable tbody tr:hover td.selectedCell:last-child div:not(.rounded-full) {
-  @apply bg-E4F5E3 !important;
-}
-
-#pondsTable tbody tr:hover td.selectedCell:last-child span {
-  @apply bg-E4F5E3 !important;
-}
-
-#pondsTable tbody tr:hover td.selectedCell:last-child button {
-  @apply bg-E4F5E3 !important;
-}
-
-#pondsTable tbody tr:hover td.selectedCell:nth-last-child(2) {
-  @apply bg-E4F5E3 !important;
-}
-
-#pondsTable tbody tr:hover td.selectedCell:nth-last-child(2) div:not(.rounded-full) {
-  @apply bg-E4F5E3 !important;
-}
-
-#pondsTable tbody tr:hover td.selectedCell:nth-last-child(2) span {
-  @apply bg-E4F5E3 !important;
-}
-
-/* Preserve pond avatar background color */
-#pondsTable tbody tr:hover td div.rounded-full.bg-\[#B0C4DE\] {
-  @apply bg-[#B0C4DE] !important;
-}
-
-#pondsTable tbody tr:hover td.selectedCell div.rounded-full.bg-\[#B0C4DE\] {
-  @apply bg-[#B0C4DE] !important;
-}
-
 
 td a {
   @apply text-black no-underline hover:text-black hover:no-underline focus:text-black focus:no-underline active:text-black active:no-underline visited:text-black;
@@ -399,9 +193,6 @@ button {
   @apply outline-none focus-within:outline-none focus-within:ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 !important;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* Clockwise Rotation */
 @keyframes rotateOrbit {

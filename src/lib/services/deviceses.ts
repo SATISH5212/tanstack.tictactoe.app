@@ -95,19 +95,16 @@ export const getStatusGraphAPI = async ({
   }
 };
 export const getVoltageGraphAPI = async ({
-
   starter_id,
-  motor_id,
   queryParams,
 }: {
 
   starter_id: any;
-  motor_id: any;
   queryParams: any;
 }) => {
   try {
     return await $fetch.get(
-      `/starter/${starter_id}/motors/${motor_id}/power-voltage-consumption`,
+      `/starters/${starter_id}/analytics`,
       queryParams
     );
   } catch (err) {
@@ -177,26 +174,6 @@ export const getRunTimeGraphCountAPI = async ({
   }
 };
 
-export const getCurrentTestGraphAPI = async ({
-
-  device_id,
-  motor_ref_id,
-  queryParams,
-}: {
-  device_id: any;
-  motor_ref_id: any;
-  queryParams: any;
-}) => {
-  try {
-    return await $fetch.get(
-      `/test-starters/${device_id}/motors/${motor_ref_id}/voltage-current`,
-      queryParams
-    );
-  } catch (err) {
-    throw err;
-  }
-};
-
 export const addDeviceAPI = async (payload: any) => {
   try {
     const response = await $fetch.post("/starters", payload);
@@ -205,23 +182,8 @@ export const addDeviceAPI = async (payload: any) => {
     throw err;
   }
 };
-export const getAllGateWays = async (userId: any) => {
-  try {
-    const response = await $fetch.get(`/users/${userId}/gateways`);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-};
 
-export const getSinglePondDeviceAPI = async (userId: any, id: any) => {
-  try {
-    const response = await $fetch.get(`/starter/${id}`);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-};
+
 
 export const getInfoDeviceAPI = async (userId: any, id: any) => {
   try {
@@ -248,24 +210,6 @@ export const assignUserForDeviceAPI = async (payload: any) => {
 }
 
 
-
-export const getPondBasedMotorsSettingsAPI = async () => {
-  try {
-    return await $fetch.get(`/starter-settings/default`);
-  } catch (err) {
-    throw err;
-  }
-}
-export const updatePondBasedMotorsSettingsAPI = async (
-
-  payload: any
-) => {
-  try {
-    return await $fetch.patch(`/starter-settings/default/1`, payload);
-  } catch (err) {
-    throw err;
-  }
-};
 export const getAllUsersForDeviceAPI = async (queryParams: any) => {
   try {
     return await $fetch.get(`/users/drop-down`, queryParams);

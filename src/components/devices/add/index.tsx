@@ -316,7 +316,7 @@ const AddDevice = ({ refetchDevices, gatewayId }: any) => {
             </div>
 
           </div>
-          <SheetFooter className="py-2 w-full">
+          <SheetFooter className="absolute bottom-2 right-4 py-2 w-full">
             <Button
               variant="outline"
               onClick={handleDrawerClose}

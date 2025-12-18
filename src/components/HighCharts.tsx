@@ -108,38 +108,38 @@ useEffect(() => {
   //   [setDateValue, setDateRange]
   // );
 
-  const { data: durationCount } = useQuery({
-    queryKey: [
-      "durationCount",
-      date?.from,
-      date?.to,
-      memoizedMotorData?.motor_id,
-      memoizedMotorData?.motor_ref_id,
-    ],
-    queryFn: async () => {
-      if (!date?.from || !date?.to) {
-        return null;
-      }
-      const queryParams = {
-        from_date: date?.from
-          ? dayjs(date?.from).format("YYYY-MM-DD")
-          : undefined,
-        to_date: date?.to ? dayjs(date?.to).format("YYYY-MM-DD") : undefined,
-      };
+  // const { data: durationCount } = useQuery({
+  //   queryKey: [
+  //     "durationCount",
+  //     date?.from,
+  //     date?.to,
+  //     memoizedMotorData?.motor_id,
+  //     memoizedMotorData?.motor_ref_id,
+  //   ],
+  //   queryFn: async () => {
+  //     if (!date?.from || !date?.to) {
+  //       return null;
+  //     }
+  //     const queryParams = {
+  //       from_date: date?.from
+  //         ? dayjs(date?.from).format("YYYY-MM-DD")
+  //         : undefined,
+  //       to_date: date?.to ? dayjs(date?.to).format("YYYY-MM-DD") : undefined,
+  //     };
 
-      const response = await getRunTimeGraphCountAPI({
-        motor_id: memoizedMotorData.motor_id,
-        queryParams,
-      });
+  //     const response = await getRunTimeGraphCountAPI({
+  //       motor_id: memoizedMotorData.motor_id,
+  //       queryParams,
+  //     });
 
-      return response?.data?.data?.total_runtime_hours;
-    },
-    enabled:
-      !isDeviceGraph &&
-      !!memoizedMotorData.motor_id &&
-      !!date?.from &&
-      !!date?.to,
-  });
+  //     return response?.data?.data?.total_runtime_hours;
+  //   },
+  //   enabled:
+  //     !isDeviceGraph &&
+  //     !!memoizedMotorData.motor_id &&
+  //     !!date?.from &&
+  //     !!date?.to,
+  // });
 
   const fetchGraphData = useCallback(async () => {
     if (!date?.from || !date?.to) {
@@ -202,7 +202,6 @@ useEffect(() => {
       if (memoizedMotorData?.starter_id) {
         response = await getVoltageGraphAPI({
           starter_id: memoizedMotorData.starter_id,
-          motor_id: memoizedMotorData.motor_id,
           queryParams,
         });
 
@@ -1068,11 +1067,11 @@ useEffect(() => {
             )}
             <div className="capitalize">{paramater}</div>
           </div>
-          {paramater === "runtime" && durationCount && (
+          {/* {paramater === "runtime" && durationCount && (
             <div className="text-xs text-gray-600 font-medium">
               Runtime: <span className="text-green-600">{durationCount}</span>
             </div>
-          )}
+          )} */}
         </div>
         {((paramater === "runtime" &&
           (!data?.run_Time_data || data?.run_Time_data?.length === 0)) ||

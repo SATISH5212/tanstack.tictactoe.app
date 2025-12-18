@@ -1,4 +1,9 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { Loader2, X } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "src/components/ui/button";
+import { Input } from "src/components/ui/input";
+import { Label } from "src/components/ui/label";
 import {
   Sheet,
   SheetContent,
@@ -6,31 +11,21 @@ import {
   SheetHeader,
   SheetTitle,
 } from "src/components/ui/sheet";
-import { Button } from "src/components/ui/button";
-import { Input } from "src/components/ui/input";
-import { Label } from "src/components/ui/label";
-import { Check, ChevronDown, Loader2, X } from "lucide-react";
-import { toast } from "sonner";
-import { useLocation, useParams } from "@tanstack/react-router";
+import { EditDeviceSheetProps } from "src/lib/interfaces";
 import {
-  getSinglePondDeviceAPI,
   updateDeviceUsersAPI,
 } from "src/lib/services/deviceses";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { EditDeviceSheetProps } from "src/lib/interfaces";
 const EditDeviceSheet: React.FC<EditDeviceSheetProps> = ({
   device,
   onClose,
   refetch,
 }) => {
-  const { user_id } = useParams({ strict: false });
   const [deviceData, setDeviceData] = useState({
     title: "",
     mcu_serial_no: "",
     mac_address: "",
     pcb_number: "",
     starter_number: "",
-    user_id: user_id ? Number(user_id) : null,
     gateway_id: "",
     gateway_name: "",
   });
@@ -84,31 +79,6 @@ const EditDeviceSheet: React.FC<EditDeviceSheetProps> = ({
       }));
     }
   };
-  const { mutate, data: singledata } = useMutation({
-    mutationFn: async () => {
-      try {
-        const response = await getSinglePondDeviceAPI(user_id, device?.id);
-        if (response.success) {
-          const data = response?.data?.data;
-          setDeviceData({
-            title: data?.title || "",
-            mcu_serial_no: data?.mcu_serial_no || "",
-            pcb_number: data?.pcb_number || "",
-            starter_number: data?.starter_number || "",
-            mac_address: data?.mac_address || "",
-            user_id: data?.user_id || user_id,
-            gateway_id: data?.gateway_id ? data.gateway_id.toString() : "",
-            gateway_name: data?.gateway_name,
-          });
-        } else {
-          throw response;
-        }
-      } catch (errData) {
-        console.error(errData);
-      } finally {
-      }
-    },
-  });
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -118,7 +88,6 @@ const EditDeviceSheet: React.FC<EditDeviceSheetProps> = ({
         mcu_serial_no: deviceData.mcu_serial_no,
         title: deviceData.title,
         mac_address: deviceData.mac_address,
-        user_id: Number(deviceData.user_id),
         gateway_id: deviceData.gateway_id
           ? Number(deviceData.gateway_id)
           : null,
@@ -163,11 +132,7 @@ const EditDeviceSheet: React.FC<EditDeviceSheetProps> = ({
     setOpen(false);
   };
 
-  useEffect(() => {
-    if (device?.id) {
-      mutate();
-    }
-  }, [device?.id]);
+ 
 
   return (
     <Sheet open={!!device} onOpenChange={onClose}>

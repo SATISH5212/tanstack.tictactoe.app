@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { ChevronDown } from "lucide-react";
 
 export function CustomSelectDropdown(props: DropdownProps) {
   const { options, value, onChange } = props;
@@ -19,12 +20,10 @@ export function CustomSelectDropdown(props: DropdownProps) {
   };
 
   return (
-    <Select
-      value={value?.toString()}
-      onValueChange={handleValueChange}
-    >
+    <Select value={value?.toString()} onValueChange={handleValueChange}>
       <SelectTrigger className="h-8 cursor-pointer">
         <SelectValue />
+        <ChevronDown className="h-4 w-4 opacity-50" />
       </SelectTrigger>
 
       <SelectContent
