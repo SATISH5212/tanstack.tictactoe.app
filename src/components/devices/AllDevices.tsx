@@ -577,10 +577,7 @@ export function AllDevices() {
               selectedFiltersCount={selectedFiltersCount}
             />
             {isSuperAdmin() && (
-              <AddDevice
-                refetchDevices={refetchDevices}
-                gatewayId={gatewayId}
-              />
+              <AddDevice/>
             )}
           </div>
         </div>

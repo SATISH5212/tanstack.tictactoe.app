@@ -95,7 +95,7 @@ export const getSingleUserMotersAPI = async (device_id: string) => {
 // create user api
 export const createUserAPI = async (payload: any) => {
   try {
-    const response = await $fetch.post("/users", payload);
+    const response = await $fetch.post("/auth/register", payload);
     return response;
   } catch (err) {
     throw err;
