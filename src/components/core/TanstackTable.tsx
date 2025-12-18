@@ -239,7 +239,7 @@ const TanStackTable: FC<any> = ({
                     </TableRow>
                   ))
                 ) : !data.length && tableType === "ponds" ? (
-                  <TableRow className="pointer-events-none hover:bg-transparent">
+                  <TableRow className="pointer-events-none hover:bg-red-200 ">
                     <TableCell
                       colSpan={columns.length}
                       className="h-[600px] text-center align-middle "
@@ -262,7 +262,7 @@ const TanStackTable: FC<any> = ({
                           key={row.id}
                           ref={isLastRow ? lastRowRef : null}
                           onClick={() => onRowClick?.(row.original)}
-                          className={`border-b border-slate-200 h-full w-full text-center hover:text-black  transition-colors duration-0 cursor-pointer`}
+                          className={`border-b border-slate-200 h-full w-full text-center hover:bg-[#eef5f8] transition-colors duration-0 cursor-pointer`}
                         >
                           {row
                             .getVisibleCells()

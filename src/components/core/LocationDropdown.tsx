@@ -44,9 +44,9 @@ const LocationDropdown: React.FC<any> = (props) => {
       // }}
     >
       <SelectTrigger
-        className={`${ispondsRoute && "!border-0 !border-b-2 "}  bg-white w-full border rounded-lg text-sm py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500 gap-1 h-full`}
+        className={`${ispondsRoute && "!border-0 !border-b-2 "}  bg-white w-full border rounded-lg text-sm py-1.5 focus:outline-none focus:ring-2 gap-1 h-full`}
       >
-        <div className="flex items-center gap-1 capitalize text-xs gap-2 ">
+        <div className="flex items-center capitalize text-xs gap-2 ">
           <LocationIcon /> 
           <SelectValue placeholder="Select Location">
             {selectedLocation ? selectedLocation.title : "Select Location"}

@@ -212,6 +212,8 @@ export function AllDevices() {
     staleTime: 5 * 60 * 1000,
   });
 
+  
+
   const deletedeviceMutation = useMutation({
     mutationFn: (deviceId: string) => deleteUsersDeviceAPI(deviceId),
     onMutate: async (deviceId) => {
@@ -429,6 +431,9 @@ export function AllDevices() {
     }
   }, [singleDeviceData?.device_status]);
 
+  console.log(deviceData,"device data ");
+  
+
   //   useEffect(() => {
   //     const targetDeviceId = Number(device_id);
   //     if (
@@ -618,6 +623,7 @@ export function AllDevices() {
               "power_present",
               "line_voltages",
               "state",
+              "signal_quality",
               "mode",
               "currents",
               "alert_count",

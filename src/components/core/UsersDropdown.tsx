@@ -40,7 +40,7 @@ const UserDropdown: React.FC<any> = ({
       //   }
       // }}
     >
-      <SelectTrigger className="!border-0 !border-b-2  w-full border rounded-lg text-sm py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500 gap-1 h-full">
+      <SelectTrigger className="!border-0 !border-b-2  w-full  rounded-lg text-sm py-1.5 gap-1 h-full">
         <div className="flex items-center gap-1 capitalize">
           <UsersSvg className="w-5 h-5" />
           <SelectValue placeholder="Select User">

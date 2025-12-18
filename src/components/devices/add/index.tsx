@@ -115,6 +115,7 @@ const AddDevice = ({ refetchDevices, gatewayId }: any) => {
       const { name, value } = e.target;
       const alphanumericFields = [
         "name",
+        "mac_address",
         "pcb_number",
         "starter_number",
       ];

@@ -40,6 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import DeviceSignalIcon from "../icons/device/DevicesignalIcon";
 
 interface DeviceColumnsProps {
   refetchDevices: () => void;
@@ -78,6 +79,7 @@ export const DeviceColumns = ({
             : row.name,
       id: "name",
       cell: (info: any) => {
+        // console.log(info,"info");
         const title = info.getValue() || "-";
         const formattedTitle =
           title !== "-"
@@ -94,9 +96,7 @@ export const DeviceColumns = ({
           </div>
         );
       },
-      header: () => (
-        <span className=" w-full block ">Device Name</span>
-      ),
+      header: () => <span className=" w-full block ">Device Name</span>,
       footer: (props: any) => props.column.id,
       size: 100,
     },
@@ -164,15 +164,15 @@ export const DeviceColumns = ({
       accessorFn: (row: any) => row,
       id: "user",
       cell: (info: any) => {
-        const username = info.getValue() || "--";
+        const username = info.row.original || "--";
         return (
           <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
-            {username?.user?.full_name || "--" }
+            {username?.user?.full_name || "--"}
           </div>
         );
       },
       header: () => (
-        <span className="text-center w-full cursor-default">User</span>
+        <span className="text-center w-full cursor-default pl-4">User</span>
       ),
       footer: (props: any) => props.column.id,
       size: 100,
@@ -181,16 +181,13 @@ export const DeviceColumns = ({
       accessorFn: (row: any) => row,
       id: "location",
       cell: (info: any) => {
-        console.log(info.getValue())
-        
-    
-        
+        console.log(info.getValue());
+
         const location = info.getValue() || "--";
-            console.log(location.motors);
+        console.log(location.motors);
         return (
           <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
-            {location?.motors[0]?.location?.name || "--"
-            }
+            {location?.motors[0]?.location?.name || "--"}
           </div>
         );
       },
@@ -418,33 +415,6 @@ export const DeviceColumns = ({
       footer: (props: any) => props.column.id,
       size: 110,
     },
-    // {
-    //   accessorFn: (row: any) => row.status,
-    //   id: "status",
-    //   cell: (info: any) => {
-    //     const status = info.getValue() || "--";
-    //     return (
-    //       <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
-    //         <span
-    //           className={
-    //             status === "ACTIVE" ? "text-green-600" : "text-red-600"
-    //           }
-    //         >
-    //           {status === "ACTIVE"
-    //             ? "Active"
-    //             : status === "INACTIVE"
-    //               ? "Inactive"
-    //               : "--"}
-    //         </span>
-    //       </div>
-    //     );
-    //   },
-    //   header: () => (
-    //     <span className="text-center w-full cursor-default">Device Status</span>
-    //   ),
-    //   footer: (props: any) => props.column.id,
-    //   size: 100,
-    // },
     {
       accessorFn: (row: any) => row.starterBoxParameters?.[0]?.power_present,
       id: "power_present",
@@ -634,34 +604,43 @@ export const DeviceColumns = ({
       ),
       footer: (props: any) => props.column.id,
       size: 100,
+    }, 
+   {
+      id: "signal_quality",
+      accessorFn: (row: any) => row?.signal_quality ?? null,
+      cell: ({ row }: any) => {
+        const signalValue = row?.original?.signal_quality;
+
+        if (!signalValue && signalValue !== 0) {
+          return (
+            <div className="p-2 h-10 flex items-center justify-center text-xs 3xl:text-sm">
+              --
+            </div>
+          );
+        }
+
+        return (
+          <div className="p-2 h-10 flex items-center justify-center gap-2 text-xs 3xl:text-sm">
+            <DeviceSignalIcon strength={Number(signalValue)} />
+          </div>
+        );
+      },
+      header: () => (
+        <span className="text-center w-full cursor-default">Signal</span>
+      ),
+      footer: (props: any) => props.column.id,
+      size: 100,
     },
-    //   {
-    //   accessorFn: (row: any) => row,
-    //   id: "signal",
-    //   cell: (info: any) => {
-    //     // console.log(info.getValue())
-        
-    
-        
-    //     const signal = info.getValue() || "--";
-           
-    //     return (
-    //       <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
-    //         {signal || "--"
-    //         }
-    //       </div>
-    //     );
-    //   },
-    //   header: () => (
-    //     <span className="text-center w-full cursor-default">signal</span>
-    //   ),
-    //   footer: (props: any) => props.column.id,
-    //   size: 100,
-    // },
+
     {
-      accessorFn: (row: any) => row.starterBoxParameters,
+      accessorFn: (row: any) => {
+        row.starterBoxParameters
+        console.log(row,"row dea");
+        
+      },
       id: "mode",
       cell: (info: any) => {
+        
         const params = info.getValue() || [];
         const device = info.row.original;
         const modes = params.reduce(
@@ -705,17 +684,14 @@ export const DeviceColumns = ({
       size: 100,
     },
 
-    
     {
       id: "actions",
       header: () => (
-        <span className="text-center w-full block  z-11">
-          Actions
-        </span>
+        <span className="text-center w-full block  z-11">Actions</span>
       ),
       cell: (info: any) => (
         <div
-          className="w-full flex justify-center p-2   bg-white z-10"
+          className="w-full flex justify-center p-2 z-10"
           style={{
             position: "sticky",
             right: 0,
@@ -738,7 +714,7 @@ export const DeviceColumns = ({
                 <InfoDeviceIcon />
                 Info
               </DropdownMenuItem>
-{/* 
+
               {isAdmin() && (
                 <>
                   <DropdownMenuItem
@@ -762,7 +738,7 @@ export const DeviceColumns = ({
                     Edit
                   </DropdownMenuItem>
                 </>
-              )} */}
+              )}
               {(isOwner() || isAdmin()) && (
                 <DropdownMenuItem
                   className="text-gray-500 cursor-pointer"
@@ -788,13 +764,13 @@ export const DeviceColumns = ({
                 className="text-gray-500 cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setSelectedDeviceId(info.row.original.id);
-                  setSelectedDeviceName(() => {
-                    return info.row.original.alias_starter_title
-                      ? info.row.original.alias_starter_title
-                      : info.row.original.title;
-                  });
-                  setLogsSheetOpen(true);
+                  // setSelectedDeviceId(info.row.original.id);
+                  // setSelectedDeviceName(() => {
+                  //   return info.row.original.alias_starter_title
+                  //     ? info.row.original.alias_starter_title
+                  //     : info.row.original.title;
+                  // });
+                  // setLogsSheetOpen(true);
                 }}
               >
                 <LogsIcon />

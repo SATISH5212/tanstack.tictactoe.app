@@ -61,7 +61,7 @@ const DeviceGraphs = ({
     <div className="py-2 h-[calc(100vh-120px)] overflow-auto">
       {isMotorLoading ? (
         <div className="flex justify-center items-center w-full h-device_graph text-gray-500">
-          <Loader className="animate-spin h-4 w-4" />
+          <Loader className="animate-spin h-6 w-6" />
         </div>
       ) : !singleData?.[0]?.motors?.length &&
         !userMotorsData?.[0]?.motors?.length ? (
