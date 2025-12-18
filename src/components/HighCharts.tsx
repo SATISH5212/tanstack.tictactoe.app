@@ -17,6 +17,7 @@ import {
   getRunTimeGraphCountAPI,
   getVoltageGraphAPI,
 } from "src/lib/services/deviceses";
+import CustomDateCalendar from "./customDateCalendar";
 import { ClockIcon } from "./svg/ClockIcon";
 import { MeterIcon } from "./svg/MeterIcon";
 import { ThunderIcon } from "./svg/ThunderIcon";
@@ -24,12 +25,23 @@ import { ThunderIcon } from "./svg/ThunderIcon";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const getDefaultRange = () => {
+  const from = dayjs().subtract(1, "day").startOf("day").toDate();
+  const to = dayjs().endOf("day").toDate();
+  return { from, to };
+};
+
 const HighCharts: FC<any> = (props: any) => {
   const { afterToday } = DateRangePicker;
   const location = useLocation();
-  const isPondsRoute = location.pathname.includes("/ponds/");
-  const isDashboardRoute = location.pathname.includes("/dashboard");
-  const isDeviceGraph = location.pathname.includes("/mtr_1")  || location.pathname.includes("/mtr_2"); // stop the runtime graph at view raw data
+  const searchParams = new URLSearchParams(location.search);
+  const isDashboardRoute = location.pathname.includes("/devices");
+
+  const isDeviceGraph =
+    location.pathname.includes("/mtr_1") ||
+    location.pathname.includes("/mtr_2") 
+    
+
   const {
     motorData,
     paramater,
@@ -44,32 +56,20 @@ const HighCharts: FC<any> = (props: any) => {
     selectedMotorsPayload,
     hideDatePicker,
     isMultipleMotorsSelected,
+    date,
+    setDate,
   } = props;
 
   const hasInitializedRef = useRef(false);
- 
 
-  useEffect(() => {
-    if (
-      !hasInitializedRef.current &&
-      !dateValue &&
-      setDateValue &&
-      setDateRange
-    ) {
-      const fromDate = dayjs()
-        .subtract(24, "hour")
-        .startOf("minute")
-        .format("YYYY-MM-DD");
-      const toDate = dayjs().format("YYYY-MM-DD");
-      const defaultDateArray = [
-        dayjs(fromDate).toDate(),
-        dayjs(toDate).toDate(),
-      ];
-      setDateValue(defaultDateArray);
-      setDateRange({ from_date: fromDate, to_date: toDate });
-      hasInitializedRef.current = true;
-    }
-  }, [dateValue, setDateValue, setDateRange]);
+
+useEffect(() => {
+  if (!hasInitializedRef.current && !date) {
+    setDate(getDefaultRange());
+    hasInitializedRef.current = true;
+  } 
+}, [date, setDate]);
+
 
   const memoizedMotorData = useMemo(
     () => ({
@@ -86,41 +86,45 @@ const HighCharts: FC<any> = (props: any) => {
       motor_ref_id,
     ]
   );
+  const prevMotorIdRef = useRef(memoizedMotorData.motor_id);
 
-
-  
-  const updateDateValues = useCallback(
-    (newDate: any) => {
-      if (
-        Array.isArray(newDate) &&
-        newDate.length === 2 &&
-        newDate[0] &&
-        newDate[1]
-      ) {
-        const fromDate = dayjs(newDate[0]).format("YYYY-MM-DD");
-        const toDate = dayjs(newDate[1]).format("YYYY-MM-DD");
-        setDateValue(newDate);
-        setDateRange({ from_date: fromDate, to_date: toDate });
-      } else {
-        setDateValue([]);
-        setDateRange(null);
-      }
-    },
-    [setDateValue, setDateRange]
-  );
+  // const updateDateValues = useCallback(
+  //   (newDate: any) => {
+  //     if (
+  //       Array.isArray(newDate) &&
+  //       newDate.length === 2 &&
+  //       newDate[0] &&
+  //       newDate[1]
+  //     ) {
+  //       const fromDate = dayjs(newDate[0]).format("YYYY-MM-DD");
+  //       const toDate = dayjs(newDate[1]).format("YYYY-MM-DD");
+  //       setDateValue(newDate);
+  //       setDateRange({ from_date: fromDate, to_date: toDate });
+  //     } else {
+  //       setDateValue([]);
+  //       setDateRange(null);
+  //     }
+  //   },
+  //   [setDateValue, setDateRange]
+  // );
 
   const { data: durationCount } = useQuery({
     queryKey: [
       "durationCount",
-      dateRange?.from_date,
-      dateRange?.to_date,
+      date?.from,
+      date?.to,
       memoizedMotorData?.motor_id,
       memoizedMotorData?.motor_ref_id,
     ],
     queryFn: async () => {
+      if (!date?.from || !date?.to) {
+        return null;
+      }
       const queryParams = {
-        from_date: dateRange?.from_date || "",
-        to_date: dateRange?.to_date || "",
+        from_date: date?.from
+          ? dayjs(date?.from).format("YYYY-MM-DD")
+          : undefined,
+        to_date: date?.to ? dayjs(date?.to).format("YYYY-MM-DD") : undefined,
       };
 
       const response = await getRunTimeGraphCountAPI({
@@ -133,21 +137,30 @@ const HighCharts: FC<any> = (props: any) => {
     enabled:
       !isDeviceGraph &&
       !!memoizedMotorData.motor_id &&
-      !!dateRange?.from_date &&
-      !!dateRange?.to_date,
+      !!date?.from &&
+      !!date?.to,
   });
 
   const fetchGraphData = useCallback(async () => {
+    if (!date?.from || !date?.to) {
+      return null;
+    }
     const queryParams = {
-      from_date: dateRange.from_date || "",
-      to_date: dateRange.to_date || "",
+      from_date: date?.from
+        ? dayjs(date?.from).format("YYYY-MM-DD")
+        : undefined,
+      to_date: date?.to ? dayjs(date?.to).format("YYYY-MM-DD") : undefined,
     };
 
     try {
       let response;
 
       // Handle runtime parameter separately (doesn't support multiple motors)
-      if (paramater === "runtime" && selectedMotorsPayload == null && !isDeviceGraph) {
+      if (
+        paramater === "runtime" &&
+        selectedMotorsPayload == null &&
+        !isDeviceGraph
+      ) {
         response = await getRunTimeGraphAPI({
           motor_id: memoizedMotorData.motor_id,
           queryParams,
@@ -184,11 +197,9 @@ const HighCharts: FC<any> = (props: any) => {
         });
         return response?.data?.data || [];
       }
-  
-    
+
+      // Handle single motor (voltage/current)
       if (memoizedMotorData?.starter_id) {
-       
-        
         response = await getVoltageGraphAPI({
           starter_id: memoizedMotorData.starter_id,
           motor_id: memoizedMotorData.motor_id,
@@ -208,12 +219,12 @@ const HighCharts: FC<any> = (props: any) => {
     memoizedMotorData.motor_id,
     memoizedMotorData.motor_ref_id,
     paramater,
-    dateRange?.from_date,
-    dateRange?.to_date,
+    date?.from,
+    date?.to,
     noMotors,
     selectedMotorsPayload,
     isMultipleMotorsSelected,
-    isDeviceGraph
+    isDeviceGraph,
   ]);
 
   const {
@@ -226,8 +237,8 @@ const HighCharts: FC<any> = (props: any) => {
       paramater,
       memoizedMotorData.starter_id,
       memoizedMotorData.motor_id,
-      dateRange?.from_date,
-      dateRange?.to_date,
+      date?.from ,
+      date?.to ,
       selectedMotorsPayload,
       isMultipleMotorsSelected,
     ],
@@ -235,8 +246,8 @@ const HighCharts: FC<any> = (props: any) => {
     enabled:
       (!!memoizedMotorData.starter_id &&
         !!memoizedMotorData.motor_id &&
-        !!dateRange?.from_date &&
-        !!dateRange?.to_date) ||
+        !!date?.from &&
+        !!date?.to) ||
       isMultipleMotorsSelected,
     retry: false,
     staleTime: 2 * 60 * 1000,
@@ -442,8 +453,9 @@ const HighCharts: FC<any> = (props: any) => {
 
               return `
                 <div style="font-size: 10px;">
-                  <div style="font-weight: bold; color: #6b7280;">Offline</div>
+                  <div style="font-weight: bold; color: #6b7280;">OFFLINE</div>
                   <div>Start: ${startTime}</div>
+                  <div>End: ${endTime}</div>
                   <div>Duration: ${duration}</div>
                 </div>`;
             }
@@ -466,69 +478,217 @@ const HighCharts: FC<any> = (props: any) => {
                   : "Neutral");
 
             const duration = record.duration || "N/A";
+
             return `
-            <div style="font-size: 10px;">
-              <div style="font-weight: bold;">${state}</div>
-              <div>End: ${endTime}</div>
-              <div>Duration: ${duration}</div>
-            </div>`;
+          <div style="font-size: 10px;">
+            <div style="font-weight: bold; color: ${record.motor_state === 1 ? "#16A34A" : "#FF0000"};">${state}</div>
+            <div>Start: ${startTime}</div>
+            <div>End: ${endTime}</div>
+            <div>Duration: ${duration}</div>
+          </div>`;
           },
         },
+
         series: (() => {
-          const seriesData: any[] = [];
+          const seriesData: any = [];
 
           if (!Array.isArray(runtimeData) || runtimeData.length === 0) {
             return seriesData;
           }
 
+          const segments: any[] = [];
+
+          const offlinePeriods = (data?.off_line_periods || []).map(
+            (period: any) => ({
+              start: dayjs.utc(period.start).valueOf(),
+              end: period.ongoing
+                ? dayjs.utc().valueOf()
+                : dayjs.utc(period.end).valueOf(),
+              record: period,
+            })
+          );
+
+          offlinePeriods.forEach((offline: any) => {
+            const duration = offline.end - offline.start;
+            segments.push({
+              start: offline.start,
+              end: offline.end,
+              type: "OFFLINE",
+              duration: duration,
+              record: offline.record,
+            });
+          });
+
+          runtimeData.forEach((item: any) => {
+            const runStart = dayjs.utc(item.start_time).valueOf();
+            const runEnd = dayjs.utc(item.end_time).valueOf();
+            const motorState =
+              item.motor_state === 1
+                ? "ON"
+                : item.motor_state === 0
+                  ? "OFF"
+                  : "Neutral";
+
+            const overlappingOfflines = offlinePeriods
+              .filter(
+                (offline: any) =>
+                  runStart < offline.end && runEnd > offline.start
+              )
+              .sort((a: any, b: any) => a.start - b.start);
+
+            let currentStart = runStart;
+
+            overlappingOfflines.forEach((offline: any) => {
+              if (currentStart < offline.start) {
+                const duration = offline.start - currentStart;
+                const durationSeconds = Math.floor(duration / 1000);
+                const durationHours = Math.floor(durationSeconds / 3600);
+                const durationMinutes = Math.floor(
+                  (durationSeconds % 3600) / 60
+                );
+                const durationSecs = durationSeconds % 60;
+                const durationText = `${durationHours} h ${durationMinutes} m ${durationSecs} sec`;
+
+                segments.push({
+                  start: currentStart,
+                  end: offline.start,
+                  type: motorState,
+                  duration: duration,
+                  durationText: durationText,
+                  record: {
+                    ...item,
+                    start_time: dayjs(currentStart).utc().format(),
+                    end_time: dayjs(offline.start).utc().format(),
+                    duration: durationText,
+                  },
+                });
+              }
+
+              currentStart = offline.end;
+
+              if (currentStart > runEnd) {
+                return;
+              }
+            });
+
+            if (currentStart < runEnd) {
+              const duration = runEnd - currentStart;
+              const durationSeconds = Math.floor(duration / 1000);
+              const durationHours = Math.floor(durationSeconds / 3600);
+              const durationMinutes = Math.floor((durationSeconds % 3600) / 60);
+              const durationSecs = durationSeconds % 60;
+              const durationText = `${durationHours} h ${durationMinutes} m ${durationSecs} sec`;
+
+              segments.push({
+                start: currentStart,
+                end: runEnd,
+                type: motorState,
+                duration: duration,
+                durationText: durationText,
+                record: {
+                  ...item,
+                  start_time: dayjs(currentStart).utc().format(),
+                  end_time: dayjs(runEnd).utc().format(),
+                  duration: durationText,
+                },
+              });
+            }
+          });
+
+          segments.sort((a, b) => a.start - b.start);
+
+          const uniqueSegments: any[] = [];
+          const offlineSegs = segments.filter((seg) => seg.type === "OFFLINE");
+
+          segments.forEach((segment) => {
+            const isDuplicate = uniqueSegments.some(
+              (existing) =>
+                existing.start === segment.start &&
+                existing.end === segment.end &&
+                existing.type === segment.type
+            );
+
+            if (!isDuplicate) {
+              if (segment.type !== "OFFLINE") {
+                const isWithinOffline = offlineSegs.some(
+                  (offline) =>
+                    segment.start >= offline.start && segment.end <= offline.end
+                );
+
+                if (!isWithinOffline) {
+                  uniqueSegments.push(segment);
+                }
+              } else {
+                uniqueSegments.push(segment);
+              }
+            }
+          });
+
           const onPoints: any[] = [];
           const offPoints: any[] = [];
           const offlinePoints: any[] = [];
 
-          // --- BUILD ON & OFF ---
-          runtimeData.forEach((item: any) => {
-            const start = dayjs.utc(item.start_time).valueOf();
-            const end = dayjs.utc(item.end_time).valueOf();
-
-            const range = [
-              { x: start, y: 3, record: item, marker: { enabled: false } },
-              { x: end, y: 3, record: item, marker: { enabled: true } },
-            ];
-
-            if (item.motor_state === 1) {
-              onPoints.push(...range);
-            } else if (item.motor_state === 0) {
-              offPoints.push(...range);
+          uniqueSegments.forEach((segment) => {
+            if (segment.type === "OFFLINE") {
+              offlinePoints.push(
+                {
+                  x: segment.start,
+                  y: 2,
+                  offlineRecord: segment.record,
+                  marker: { enabled: true },
+                },
+                {
+                  x: segment.end,
+                  y: 2,
+                  offlineRecord: segment.record,
+                  marker: { enabled: true },
+                },
+                {
+                  x: segment.end,
+                  y: null,
+                }
+              );
+            } else if (segment.type === "ON") {
+              onPoints.push(
+                {
+                  x: segment.start,
+                  y: 3,
+                  record: segment.record,
+                  marker: { enabled: true },
+                },
+                {
+                  x: segment.end,
+                  y: 3,
+                  record: segment.record,
+                  marker: { enabled: true },
+                },
+                {
+                  x: segment.end,
+                  y: null,
+                }
+              );
+            } else if (segment.type === "OFF") {
+              offPoints.push(
+                {
+                  x: segment.start,
+                  y: 3,
+                  record: segment.record,
+                  marker: { enabled: true },
+                },
+                {
+                  x: segment.end,
+                  y: 3,
+                  record: segment.record,
+                  marker: { enabled: true },
+                },
+                {
+                  x: segment.end,
+                  y: null,
+                }
+              );
             }
           });
 
-          const offlinePeriods = data?.off_line_periods || [];
-
-          offlinePeriods.forEach((period: any) => {
-            const start = dayjs.utc(period.start).valueOf();
-            const end = period.ongoing
-              ? dayjs.utc().valueOf()
-              : dayjs.utc(period.end).valueOf();
-
-            const range = [
-              {
-                x: start,
-                y: 2,
-                offlineRecord: period,
-                marker: { enabled: false },
-              },
-              {
-                x: end,
-                y: 2,
-                offlineRecord: period,
-                marker: { enabled: true },
-              },
-            ];
-
-            offlinePoints.push(...range);
-          });
-
-          // ------------ ADD SERIES CLEANLY -----------
           if (offlinePoints.length > 0) {
             seriesData.push({
               name: "OFFLINE",
@@ -536,8 +696,7 @@ const HighCharts: FC<any> = (props: any) => {
               step: "left",
               data: offlinePoints,
               showInLegend: true,
-              lineWidth: 3,
-              zIndex: 1,
+              lineWidth: 2,
               marker: {
                 radius: 5,
                 fillColor: "#6b7280",
@@ -553,7 +712,6 @@ const HighCharts: FC<any> = (props: any) => {
               data: onPoints,
               showInLegend: true,
               lineWidth: 3,
-              zIndex: 3,
               marker: { radius: 5, fillColor: "#16A34A" },
             });
           }
@@ -566,7 +724,6 @@ const HighCharts: FC<any> = (props: any) => {
               data: offPoints,
               showInLegend: true,
               lineWidth: 3,
-              zIndex: 2,
               marker: { radius: 5, fillColor: "#FF0000" },
             });
           }
@@ -859,39 +1016,15 @@ const HighCharts: FC<any> = (props: any) => {
     };
   }, [data, paramater]);
 
-  if (error) {
-    return (
-      <div className="relative">
-        {paramater === "voltage" &&  (
-          <div className="text-end mb-2">
-            <DateRangePicker
-              value={dateValue}
-              onChange={updateDateValues}
-              placement="bottomEnd"
-            />
-          </div>
-        )}
-        <figure className="highcharts-figure rounded-xl w-full overflow-hidden bg-white border border-gray-200">
-          <div className="flex items-center justify-between px-4 py-2">
-            <div className="flex items-center gap-2">
-              {paramater === "voltage" ? (
-                <ThunderIcon className="h-4 w-4" />
-              ) : paramater === "current" ? (
-                <MeterIcon className="h-4 w-4" />
-              ) : (
-                <ClockIcon className="h-4 w-4" />
-              )}
-              <div className="capitalize">{paramater}</div>
-            </div>
-          </div>
 
-          <div className="h-[175px] flex items-center justify-center">
-            <span>No Data Available </span>
-          </div>
-        </figure>
-      </div>
-    );
+  useEffect(() => {
+  if (prevMotorIdRef.current !== memoizedMotorData.motor_id) {
+    setDate(getDefaultRange());
+    prevMotorIdRef.current = memoizedMotorData.motor_id;
   }
+}, [memoizedMotorData.motor_id, setDate]);
+
+  
   return (
     <div className="relative">
       {!hideDatePicker &&
@@ -899,38 +1032,31 @@ const HighCharts: FC<any> = (props: any) => {
         hideDatePicker ||
         (paramater === "voltage" &&
           (noMotors ||
-            isPondsRoute ||
             isDashboardRoute ||
             memoizedMotorData.motor_id === "mtr_1" ||
             memoizedMotorData.motor_id === "mtr_2")) ? (
-          <div className="text-end mb-2">
-            <DateRangePicker
+          <div className="mb-2 flex justify-end ">
+            {/* <DateRangePicker
+              key={memoizedMotorData?.motor_id}
               value={dateValue}
               onChange={updateDateValues}
               placement="bottomEnd"
               size="sm"
               shouldDisableDate={afterToday()}
+            /> */}
+            <CustomDateCalendar
+              date={date}
+              setDate={setDate}
+              align={"start"}
+              title={"Select Date"}
+              disablePast={false}
+              disableFuture={true}
+              isTimePicker={false}
             />
           </div>
         ) : null)}
-      {/* {!hideDatePicker &&
-      (paramater === "runtime" ||
-        (paramater === "voltage" &&
-          (noMotors ||
-            isPondsRoute ||
-            isDashboardRoute ||
-            memoizedMotorData.motor_id === "mtr_1" ||
-            memoizedMotorData.motor_id === "mtr_2"))) ? (
-        <div className="text-end mb-2">
-          <DateRangePicker
-            value={dateValue}
-            onChange={updateDateValues}
-            placement="bottomEnd"
-            size="sm"
-          />
-        </div>
-      ) : null} */}
-      <figure className="highcharts-figure rounded-xl w-full overflow-hidden bg-white border border-gray-200">
+
+      <figure className="highcharts-figure rounded-xl w-full overflow-hidden bg-white border border-gray-200 ">
         <div className="flex items-center justify-between px-4 py-2">
           <div className="flex items-center gap-2">
             {paramater === "voltage" ? (

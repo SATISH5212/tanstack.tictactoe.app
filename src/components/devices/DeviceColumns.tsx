@@ -138,28 +138,28 @@ export const DeviceColumns = ({
       footer: (props: any) => props.column.id,
       size: 150,
     },
-    {
-      accessorFn: (row: any) => row.starter_number,
-      id: "starter_number",
-      cell: (info: any) => {
-        const value = info.getValue() || "-";
-        const displayText =
-          value?.length > 15 ? `${value.slice(0, 12)}...` : value;
+    // {
+    //   accessorFn: (row: any) => row.starter_number,
+    //   id: "starter_number",
+    //   cell: (info: any) => {
+    //     const value = info.getValue() || "-";
+    //     const displayText =
+    //       value?.length > 15 ? `${value.slice(0, 12)}...` : value;
 
-        return (
-          <div className="p-2 h-10  flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm ">
-            <span title={value}>{displayText}</span>
-          </div>
-        );
-      },
-      header: () => (
-        <span className="text-center w-full flex items-center justify-center pl-7 ">
-          Starter Number
-        </span>
-      ),
-      footer: (props: any) => props.column.id,
-      size: 150,
-    },
+    //     return (
+    //       <div className="p-2 h-10  flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm ">
+    //         <span title={value}>{displayText}</span>
+    //       </div>
+    //     );
+    //   },
+    //   header: () => (
+    //     <span className="text-center w-full flex items-center justify-center pl-7 ">
+    //       Starter Number
+    //     </span>
+    //   ),
+    //   footer: (props: any) => props.column.id,
+    //   size: 150,
+    // },
     {
       accessorFn: (row: any) => row,
       id: "user",
@@ -418,33 +418,33 @@ export const DeviceColumns = ({
       footer: (props: any) => props.column.id,
       size: 110,
     },
-    {
-      accessorFn: (row: any) => row.status,
-      id: "status",
-      cell: (info: any) => {
-        const status = info.getValue() || "--";
-        return (
-          <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
-            <span
-              className={
-                status === "ACTIVE" ? "text-green-600" : "text-red-600"
-              }
-            >
-              {status === "ACTIVE"
-                ? "Active"
-                : status === "INACTIVE"
-                  ? "Inactive"
-                  : "--"}
-            </span>
-          </div>
-        );
-      },
-      header: () => (
-        <span className="text-center w-full cursor-default">Device Status</span>
-      ),
-      footer: (props: any) => props.column.id,
-      size: 100,
-    },
+    // {
+    //   accessorFn: (row: any) => row.status,
+    //   id: "status",
+    //   cell: (info: any) => {
+    //     const status = info.getValue() || "--";
+    //     return (
+    //       <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
+    //         <span
+    //           className={
+    //             status === "ACTIVE" ? "text-green-600" : "text-red-600"
+    //           }
+    //         >
+    //           {status === "ACTIVE"
+    //             ? "Active"
+    //             : status === "INACTIVE"
+    //               ? "Inactive"
+    //               : "--"}
+    //         </span>
+    //       </div>
+    //     );
+    //   },
+    //   header: () => (
+    //     <span className="text-center w-full cursor-default">Device Status</span>
+    //   ),
+    //   footer: (props: any) => props.column.id,
+    //   size: 100,
+    // },
     {
       accessorFn: (row: any) => row.starterBoxParameters?.[0]?.power_present,
       id: "power_present",
@@ -635,6 +635,29 @@ export const DeviceColumns = ({
       footer: (props: any) => props.column.id,
       size: 100,
     },
+    //   {
+    //   accessorFn: (row: any) => row,
+    //   id: "signal",
+    //   cell: (info: any) => {
+    //     // console.log(info.getValue())
+        
+    
+        
+    //     const signal = info.getValue() || "--";
+           
+    //     return (
+    //       <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
+    //         {signal || "--"
+    //         }
+    //       </div>
+    //     );
+    //   },
+    //   header: () => (
+    //     <span className="text-center w-full cursor-default">signal</span>
+    //   ),
+    //   footer: (props: any) => props.column.id,
+    //   size: 100,
+    // },
     {
       accessorFn: (row: any) => row.starterBoxParameters,
       id: "mode",
