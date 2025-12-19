@@ -1,4 +1,4 @@
-import { LoginPage } from 'src/components/auth/mobile-login'
+import { LoginPage } from '@/components/auth/login'
 import { authMiddleware } from 'src/lib/helpers/middleware'
 import { createFileRoute } from '@tanstack/react-router'
 

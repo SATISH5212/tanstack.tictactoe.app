@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import { DateRange } from "react-day-picker";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { CustomSelectDropdown } from "../core/CustomSelectDropdown";
+import { CustomSelectDropdown } from "./CustomSelectDropdown";
 import { Calendar } from "../ui/calendar";
 
 interface CustomDateRangePickerProps {
@@ -110,8 +110,8 @@ const CustomDateCalendar = ({
     setEndTime(undefined);
   };
 
-  console.log(selectedDate,"selectedDate",date,"date");
-  
+  console.log(selectedDate, "selectedDate", date, "date");
+
 
   return (
     <div>
@@ -122,7 +122,7 @@ const CustomDateCalendar = ({
           setOpen(open);
           if (open) {
             setSelectedDate(date);
-          } 
+          }
         }}
       >
         <PopoverTrigger asChild>
@@ -204,14 +204,13 @@ const CustomDateCalendar = ({
                   setSelectedDate(range);
                   onChange?.(range);
                 }}
-                className={`px-3 py-1 text-xs font-medium rounded transition-colors cursor-pointer ${
-                  selectedDate?.from &&
-                  selectedDate?.to &&
-                  dayjs(selectedDate.from).isSame(dayjs(), "day") &&
-                  dayjs(selectedDate.to).isSame(dayjs(), "day")
+                className={`px-3 py-1 text-xs font-medium rounded transition-colors cursor-pointer ${selectedDate?.from &&
+                    selectedDate?.to &&
+                    dayjs(selectedDate.from).isSame(dayjs(), "day") &&
+                    dayjs(selectedDate.to).isSame(dayjs(), "day")
                     ? "bg-green-400 text-white hover:bg-green-500"
                     : "bg-white hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 Today
               </button>
@@ -227,17 +226,16 @@ const CustomDateCalendar = ({
                   setSelectedDate(range);
                   onChange?.(range);
                 }}
-                className={`px-3 py-1 text-xs font-medium rounded transition-colors cursor-pointer ${
-                  selectedDate?.from &&
-                  selectedDate?.to &&
-                  dayjs(selectedDate.from).isSame(
-                    dayjs().subtract(5, "day"),
-                    "day"
-                  ) &&
-                  dayjs(selectedDate.to).isSame(dayjs(), "day")
+                className={`px-3 py-1 text-xs font-medium rounded transition-colors cursor-pointer ${selectedDate?.from &&
+                    selectedDate?.to &&
+                    dayjs(selectedDate.from).isSame(
+                      dayjs().subtract(5, "day"),
+                      "day"
+                    ) &&
+                    dayjs(selectedDate.to).isSame(dayjs(), "day")
                     ? "bg-green-400 text-white hover:bg-green-500"
                     : "bg-white hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 Last 5 Days
               </button>
@@ -253,17 +251,16 @@ const CustomDateCalendar = ({
                   setSelectedDate(range);
                   onChange?.(range);
                 }}
-                className={`px-3 py-1 text-xs font-medium rounded transition-colors cursor-pointer ${
-                  selectedDate?.from &&
-                  selectedDate?.to &&
-                  dayjs(selectedDate.from).isSame(
-                    dayjs().subtract(10, "day"),
-                    "day"
-                  ) &&
-                  dayjs(selectedDate.to).isSame(dayjs(), "day")
+                className={`px-3 py-1 text-xs font-medium rounded transition-colors cursor-pointer ${selectedDate?.from &&
+                    selectedDate?.to &&
+                    dayjs(selectedDate.from).isSame(
+                      dayjs().subtract(10, "day"),
+                      "day"
+                    ) &&
+                    dayjs(selectedDate.to).isSame(dayjs(), "day")
                     ? "bg-green-400 text-white hover:bg-green-500"
                     : "bg-white hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 Last 10 Days
               </button>
@@ -279,17 +276,16 @@ const CustomDateCalendar = ({
                   setSelectedDate(range);
                   onChange?.(range);
                 }}
-                className={`px-3 py-1 text-xs font-medium rounded transition-colors cursor-pointer ${
-                  selectedDate?.from &&
-                  selectedDate?.to &&
-                  dayjs(selectedDate.from).isSame(
-                    dayjs().subtract(1, "month"),
-                    "day"
-                  ) &&
-                  dayjs(selectedDate.to).isSame(dayjs(), "day")
+                className={`px-3 py-1 text-xs font-medium rounded transition-colors cursor-pointer ${selectedDate?.from &&
+                    selectedDate?.to &&
+                    dayjs(selectedDate.from).isSame(
+                      dayjs().subtract(1, "month"),
+                      "day"
+                    ) &&
+                    dayjs(selectedDate.to).isSame(dayjs(), "day")
                     ? "bg-green-400 text-white hover:bg-green-500"
                     : "bg-white hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 Last Month
               </button>

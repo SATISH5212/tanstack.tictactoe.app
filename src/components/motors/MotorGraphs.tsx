@@ -1,7 +1,7 @@
 import { useLocation, useParams } from "@tanstack/react-router";
 import * as React from "react";
 import { DateRange } from "react-day-picker";
-import CustomDateCalendar from "../customDateCalendar";
+import CustomDateCalendar from "../core/CustomDateCalendar";
 import Graphs from "../graphs";
 
 const GRAPH_PARAMS = ["runtime", "voltage", "current"] as const;

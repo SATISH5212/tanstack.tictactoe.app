@@ -1,9 +1,8 @@
 import { UserProfileDropdownProps } from "@/lib/interfaces/users";
-import DownArrowIcon from "../svg/DownArrow";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
 import { LogoutIcon } from "../svg/LogoutIcon";
 import PondEditIcon from "../svg/PondEditIcon";
-import { SettingsSvg } from "../svg/SettingsSvg";
-import { ViewProfileIcon } from "../svg/ViewProfileIcon";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -11,8 +10,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
 
 const UserProfileDropdown = ({
   menuRef,
