@@ -26,3 +26,8 @@ export interface RunTimeData {
     motor_state: number
 }
 
+export interface ChartPoint {
+    x: number;
+    y: number | null;
+    duration?: string | null;
+}

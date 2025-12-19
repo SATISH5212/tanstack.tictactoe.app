@@ -34,7 +34,7 @@ const AddDevice = () => {
             <TabsList className="flex gap-1 bg-gray-200 rounded-lg p-1 mb-5 w-fit ">
               <TabsTrigger
                 value="addDevice"
-                className={`px-4 py-1 text-xs font-medium rounded-md transition-all
+                className={`px-4 py-1 text-sm font-medium rounded-md transition-all
                 ${activeTab === "addDevice"
                     ? "bg-blue-500 text-white shadow-sm"
                     : "text-gray-600 hover:bg-gray-300"
@@ -45,7 +45,7 @@ const AddDevice = () => {
 
               <TabsTrigger
                 value="addUser"
-                className={`px-4 py-1 text-xs font-medium rounded-md transition-all
+                className={`px-4 py-1 text-sm font-medium rounded-md transition-all
                 ${activeTab === "addUser"
                     ? "bg-blue-500 text-white shadow-sm"
                     : "text-gray-600 hover:bg-gray-300"
@@ -56,7 +56,7 @@ const AddDevice = () => {
             </TabsList>
             <div
               onClick={handleCloseAddSideBar}
-              className="flex rounded-full hover:bg-red-100 text-red-500 "
+              className="flex rounded-full hover:bg-red-100 text-red-500 cursor-pointer mt-2"
             >
               <X size={14} strokeWidth={2.5} />
             </div>

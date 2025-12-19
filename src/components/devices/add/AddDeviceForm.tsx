@@ -1,11 +1,10 @@
-import { FC, useCallback, useState } from "react";
+import { useDeviceMutation } from "@/hooks/devices/useDeviceMutation";
+import { DeviceFormData, IAddDeviceOrUserFormProps } from "@/lib/interfaces/devices";
 import { Loader2 } from "lucide-react";
+import { FC, useCallback, useState } from "react";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
-import { SheetFooter } from "src/components/ui/sheet";
-import { useDeviceMutation } from "@/hooks/devices/useDeviceMutation";
-import { DeviceFormData, IAddDeviceOrUserFormProps } from "@/lib/interfaces/devices";
 const INITIAL_DEVICE_DATA: DeviceFormData = {
     name: "",
     mac_address: "",
@@ -59,7 +58,7 @@ const AddDeviceForm: FC<IAddDeviceOrUserFormProps> = (props) => {
                     { key: "name", label: "Device Name" },
                     { key: "mac_address", label: "MAC Address" },
                     { key: "pcb_number", label: "PCB Number" },
-                    { key: "starter_number", label: "Starter Box Number" },
+                    { key: "starter_number", label: "Serial Number" },
                 ].map(({ key, label }) => (
                     <div key={key} className="space-y-1">
                         <Label className="text-gray-700">
