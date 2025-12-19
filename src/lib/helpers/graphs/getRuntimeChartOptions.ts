@@ -1,14 +1,15 @@
+import { RunTimeData } from "@/lib/interfaces/graphs";
 import Highcharts from "highcharts";
 
 export function getRuntimeChartOptions(
-    data: any[]
+    data: RunTimeData[]
 ): Highcharts.Options {
     const runtimeData = Array.isArray(data) ? data : [];
 
     const onSeries: (number | null)[][] = [];
     const offSeries: (number | null)[][] = [];
 
-    runtimeData.forEach((item: any) => {
+    runtimeData.forEach((item: RunTimeData) => {
         const start = new Date(item.start_time).getTime();
         const end = new Date(item.end_time).getTime();
 
@@ -31,6 +32,9 @@ export function getRuntimeChartOptions(
         chart: {
             type: "line",
             height: 120,
+        },
+        credits: {
+            enabled: false,
         },
         title: { text: "" },
         xAxis: {

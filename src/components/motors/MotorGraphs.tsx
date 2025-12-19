@@ -45,11 +45,10 @@ const MotorGraphs = () => {
   //   );
   // }
 
-  console.log(device_id, motor_id, "data001")
   return (
-    <div className="py-2 h-[calc(100vh-120px)] overflow-auto">
-      <div className="flex flex-row justify-between">
-        <div>DeviceTitle</div>
+    <div className="py-2 h-[calc(100vh-50px)]  ">
+      <div className="flex flex-row justify-between  items-center px-2 py-2">
+        <div className="text-md ">DeviceTitle</div>
         <CustomDateCalendar
           date={date}
           setDate={setDate}
@@ -61,7 +60,7 @@ const MotorGraphs = () => {
         />
       </div>
       {GRAPH_PARAMS.map((param: GraphParam) => (
-        <div key={param} className="pt-2 px-2">
+        <div key={param} className="px-2 pt-1 overflow-y-auto">
           <Graphs
             starterId={device_id}
             motorId={motor_id}

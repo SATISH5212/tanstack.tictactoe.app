@@ -1,10 +1,11 @@
-import Highcharts from "highcharts";
+import { VCData } from "@/lib/interfaces/graphs";
 import dayjs from "dayjs";
+import Highcharts from "highcharts";
 
 type GraphType = "voltage" | "current";
 
 export function getVCChartOptions(
-  data: any[],
+  data: VCData[],
   graphType: GraphType
 ): Highcharts.Options {
   const safeData = Array.isArray(data) ? data : [];
@@ -14,29 +15,28 @@ export function getVCChartOptions(
       type: "line",
       height: 200,
     },
+    credits: {
+      enabled: false,
+    },
     title: { text: "" },
     xAxis: {
-      categories: safeData.map((d: any) =>
-        dayjs(d.time_stamp).format("HH:mm")
-      ),
+      categories: safeData.map((d: VCData) => dayjs(d.time_stamp).format("HH:mm")),
     },
     yAxis: {
       title: {
-        text: graphType === "voltage"
-          ? "Voltage (V)"
-          : "Current (A)",
+        text: graphType === "voltage" ? "Voltage (V)" : "Current (A)",
       },
     },
     series:
       graphType === "voltage"
         ? [
-          { type: "line", name: "R", data: safeData.map((d: any) => d.line_voltage_r), },
-          { type: "line", name: "Y", data: safeData.map((d: any) => d.line_voltage_y), },
-          { type: "line", name: "B", data: safeData.map((d: any) => d.line_voltage_b), },
+          { type: "line", name: "R", color: 'red', data: safeData.map((d: VCData) => d.line_voltage_r), },
+          { type: "line", name: "Y", color: "yellow", data: safeData.map((d: VCData) => d.line_voltage_y), },
+          { type: "line", name: "B", color: "blue", data: safeData.map((d: VCData) => d.line_voltage_b), },
         ] : [
-          { type: "line", name: "R", data: safeData.map((d: any) => d.current_r), },
-          { type: "line", name: "Y", data: safeData.map((d: any) => d.current_y), },
-          { type: "line", name: "B", data: safeData.map((d: any) => d.current_b), },
+          { type: "line", name: "R", color: "red", data: safeData.map((d: VCData) => d.current_r), },
+          { type: "line", name: "Y", color: "yellow", data: safeData.map((d: VCData) => d.current_y), },
+          { type: "line", name: "B", color: "blue", data: safeData.map((d: VCData) => d.current_b), },
         ],
   };
 }

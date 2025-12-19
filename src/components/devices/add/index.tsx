@@ -1,11 +1,4 @@
 "use client";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useUserDetails } from "@/lib/helpers/userpermission";
 import { createUserAPI } from "@/lib/services/users";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
@@ -28,30 +21,24 @@ const AddDevice = () => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("addDevice");
-
   const { userId } = useUserDetails();
 
   const initialFormData = {
     full_name: "",
     email: "",
     phone: "",
-    user_type: "",
     address: "",
     created_by: Number(userId),
   };
   const [errors, setErrors] = useState<any>({});
   const [formData, setFormData] = useState<any>(initialFormData);
-  const initialDeviceData = useMemo(
-    () => ({
-      name: "",
-      mac_address: "",
-      pcb_number: "",
-      starter_number: "",
-    }),
-    []
-  );
+  const initialDeviceData = useMemo(() => ({
+    name: "",
+    mac_address: "",
+    pcb_number: "",
+    starter_number: "",
+  }), []);
   const [deviceData, setDeviceData] = useState(initialDeviceData);
-
   const { mutateAsync: mutateAddDevice, isPending: isStatusPending } =
     useMutation({
       mutationKey: ["add-device"],
@@ -152,12 +139,12 @@ const AddDevice = () => {
       email: formData.email,
       phone: formData.phone,
       address: formData.address,
-      user_type: formData.user_type ? formData.user_type : null,
+      user_type: "USER",
       created_by: Number(userId),
     };
     try {
       await mutateUser(submissionData);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleChange = useCallback(
@@ -239,12 +226,7 @@ const AddDevice = () => {
     }
   };
 
-  const handleUserTypeChange = (value: string) => {
-    setFormData({ ...formData, user_type: value });
-    if (errors.user_type) {
-      setErrors({ ...errors, user_type: "" });
-    }
-  };
+
 
   const handleDrawerClose = () => {
     setErrors({});
@@ -299,22 +281,20 @@ const AddDevice = () => {
               <div className="flex bg-gray-200 rounded-lg overflow-hidden p-1 shadow-sm">
                 <TabsTrigger
                   value="addDevice"
-                  className={`px-4 py-1 text-sm font-medium rounded-md transition-all ${
-                    activeTab === "addDevice"
-                      ? "bg-blue-400 text-white shadow-sm"
-                      : "text-gray-600 hover:bg-gray-200"
-                  }`}
+                  className={`px-4 py-1 text-sm font-medium rounded-md transition-all ${activeTab === "addDevice"
+                    ? "bg-blue-400 text-white shadow-sm"
+                    : "text-gray-600 hover:bg-gray-200"
+                    }`}
                 >
                   Add Device
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="addUser"
-                  className={`px-4 py-1 text-sm font-medium rounded-md transition-all ${
-                    activeTab === "addUser"
-                      ? "bg-blue-400 text-white shadow-sm"
-                      : "text-gray-600 hover:bg-gray-200"
-                  }`}
+                  className={`px-4 py-1 text-sm font-medium rounded-md transition-all ${activeTab === "addUser"
+                    ? "bg-blue-400 text-white shadow-sm"
+                    : "text-gray-600 hover:bg-gray-200"
+                    }`}
                 >
                   Add User
                 </TabsTrigger>
@@ -454,33 +434,6 @@ const AddDevice = () => {
                       </span>
                     )}
                   </div>
-                  <div>
-                    <div className="space-y-1">
-                      <Label
-                        htmlFor="user_type"
-                        className="text-smd 3xl:text-base font-lexend font-normal text-gray-700"
-                      >
-                        User Type <span className="text-red-500">*</span>
-                      </Label>
-                      <Select
-                        value={formData.user_type}
-                        onValueChange={handleUserTypeChange}
-                      >
-                        <SelectTrigger className="bg-gray-100 border-gray-200 shadow-none font-inter rounded-md focus-visible:ring-0 text-xs 3xl:text-md placeholder:font-inter placeholder:text-xs font-light">
-                          <SelectValue placeholder="Select user type" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          <SelectItem value="USER">USER</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    {errors?.user_type && (
-                      <span className="text-red-500 text-xs">
-                        {errors.user_type}
-                      </span>
-                    )}
-                  </div>
-
                   <div>
                     <div className="space-y-1">
                       <Label

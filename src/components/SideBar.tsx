@@ -135,7 +135,7 @@ const AppSideBar = () => {
   return (
     <div className="flex min-h-screen ">
       <div className="w-full flex flex-col  ">
-        <div className="px-2 sticky top-0 py-2 z-50">
+        <div className="px-2 sticky top-0 py-2 z-50 h-[50px]">
           <div className="flex items-center justify-between">
             <img src="/idhara_logo.svg" alt="Logo" className=" w-32 h-10 p-2" />
 

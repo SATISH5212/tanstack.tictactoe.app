@@ -1,5 +1,6 @@
 import { getRuntimeChartOptions } from "@/lib/helpers/graphs/getRuntimeChartOptions";
 import { getVCChartOptions } from "@/lib/helpers/graphs/getVCChartOptions";
+import { IGraphsProps } from "@/lib/interfaces/graphs";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import Highcharts from "highcharts";
@@ -10,45 +11,27 @@ import { ClockIcon } from "../svg/ClockIcon";
 import { MeterIcon } from "../svg/MeterIcon";
 import { ThunderIcon } from "../svg/ThunderIcon";
 
-export interface IGraphsProps {
-    starterId: string;
-    motorId: string;
-    date?: { from?: Date; to?: Date };
-    graphType: "runtime" | "voltage" | "current";
-    rawDataGraphs: boolean;
-};
-
 const Graphs: FC<IGraphsProps> = (props) => {
     const {
         starterId,
         motorId,
         date,
         graphType,
-        rawDataGraphs, } = props
-
-    if (rawDataGraphs && graphType === "runtime") { return null; }
+        rawDataGraphs,
+    } = props
+    if (rawDataGraphs && graphType === "runtime") return null;
 
     const queryParams = useMemo(() => ({
-        from_date: date?.from
-            ? dayjs(date.from).format("YYYY-MM-DD")
-            : undefined,
-        to_date: date?.to
-            ? dayjs(date.to).format("YYYY-MM-DD")
-            : undefined,
+        from_date: date?.from ? dayjs(date.from).format("YYYY-MM-DD") : undefined,
+        to_date: date?.to ? dayjs(date.to).format("YYYY-MM-DD") : undefined,
     }), [date]);
 
+    const isRuntime = graphType === "runtime";
+    const isVC = graphType === "voltage" || graphType === "current";
+
     const vcQuery = useQuery({
-        enabled:
-            (graphType === "voltage" || graphType === "current") &&
-            !!starterId &&
-            (!rawDataGraphs ? !!motorId : true),
-        queryKey: [
-            "vc-graph",
-            graphType,
-            starterId,
-            rawDataGraphs ? "raw" : motorId,
-            queryParams,
-        ],
+        enabled: isVC && Boolean(starterId) && (rawDataGraphs || Boolean(motorId)),
+        queryKey: ["vc-graph", graphType, starterId, rawDataGraphs ? "raw" : motorId, queryParams,],
         queryFn: async () => {
             const res = await getVoltageAndCurrentGraphAPI({
                 starter_id: starterId,
@@ -63,35 +46,33 @@ const Graphs: FC<IGraphsProps> = (props) => {
     });
 
     const runtimeQuery = useQuery({
-        enabled:
-            !rawDataGraphs &&
-            graphType === "runtime" &&
-            !!starterId &&
-            !!motorId,
-        queryKey: ["runtime-graph", motorId, queryParams],
+        enabled: isRuntime && !rawDataGraphs && Boolean(starterId) && Boolean(motorId),
+        queryKey: ["runtime-graph", starterId, motorId, queryParams],
         queryFn: async () => {
             const res = await getRunTimeGraphAPI({
                 starter_id: starterId,
-                queryParams: { ...queryParams, motor_id: motorId },
+                queryParams: {
+                    ...queryParams,
+                    motor_id: motorId,
+                },
             });
             return res?.data?.data ?? [];
         },
     });
 
-    const data = graphType === "runtime" ? runtimeQuery.data : vcQuery.data;
-    const isLoading = vcQuery.isLoading || runtimeQuery.isLoading;
+    const data = isRuntime ? runtimeQuery.data : vcQuery.data;
+    const isLoading = isRuntime ? runtimeQuery.isLoading : vcQuery.isLoading;
 
     const chartOptions = useMemo(() => {
-        if (graphType === "runtime") {
-            return getRuntimeChartOptions(data);
-        }
-        return getVCChartOptions(data, graphType);
-    }, [data, graphType]);
+        return isRuntime ? getRuntimeChartOptions(data) : getVCChartOptions(data, graphType);
+    }, [data, graphType, isRuntime]);
+
+    const Icon = graphType === "voltage" ? ThunderIcon : graphType === "current" ? MeterIcon : ClockIcon;
 
     return (
         <div className="relative bg-white border rounded-xl">
             <div className="flex items-center gap-2 px-4 py-2">
-                {graphType === "voltage" ? (<ThunderIcon />) : graphType === "current" ? (<MeterIcon />) : (<ClockIcon />)}
+                <Icon />
                 <span className="capitalize">{graphType}</span>
             </div>
 
@@ -99,13 +80,14 @@ const Graphs: FC<IGraphsProps> = (props) => {
                 <div className="h-40 flex items-center justify-center">
                     Loading…
                 </div>
-            ) : !data || (Array.isArray(data) && data.length === 0) ? (
+            ) : !Array.isArray(data) || data.length === 0 ? (
                 <div className="h-40 flex items-center justify-center">
                     No data
                 </div>
-            ) : (<HighchartsReact highcharts={Highcharts} options={chartOptions} />)}
+            ) : (
+                <HighchartsReact highcharts={Highcharts} options={chartOptions} />
+            )}
         </div>
     );
 };
-
 export default Graphs;
