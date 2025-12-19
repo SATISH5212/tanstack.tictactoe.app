@@ -94,7 +94,7 @@ export const getStatusGraphAPI = async ({
     throw err;
   }
 };
-export const getVoltageGraphAPI = async ({
+export const getVoltageAndCurrentGraphAPI = async ({
   starter_id,
   queryParams,
 }: {
@@ -123,18 +123,16 @@ export const getMultipleMotorsGraphAPI = async ({ payload, queryParams }: {
   }
 };
 
-export const getEmptyMotorGraphAPI = async ({
+export const getRawDataGraphAPI = async ({
   starter_id,
-  motor_id,
   queryParams,
 }: {
   starter_id: any;
-  motor_id: any;
   queryParams: any;
 }) => {
   try {
     return await $fetch.get(
-      `/starter/${starter_id}/motors/${motor_id}/power-voltage-consumption-motor-ref`,
+      `/starters/${starter_id}/analytics`,
       queryParams
     );
   } catch (err) {
@@ -142,17 +140,16 @@ export const getEmptyMotorGraphAPI = async ({
   }
 };
 export const getRunTimeGraphAPI = async ({
-
-  motor_id,
+  starter_id,
   queryParams,
 }: {
+  starter_id: any,
 
-  motor_id: any;
   queryParams: any;
 }) => {
   try {
     return await $fetch.get(
-      `/motors/${motor_id}/run-time`,
+      `/starters/${starter_id}/run-time`,
       queryParams
     );
   } catch (err) {

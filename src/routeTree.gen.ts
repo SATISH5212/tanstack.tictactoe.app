@@ -8,19 +8,14 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LayoutDevicesRouteImport } from './routes/_layout/_devices'
 import { Route as LayoutDevicesDevicesIndexRouteImport } from './routes/_layout/_devices/devices/index'
-import { Route as LayoutDevicesDevicesDevice_idDevicegraphRouteImport } from './routes/_layout/_devices/devices/$device_id/_devicegraph'
-import { Route as LayoutDevicesDevicesDevice_idDevicegraphIndexRouteImport } from './routes/_layout/_devices/devices/$device_id/_devicegraph/index'
-
-const LayoutDevicesDevicesDevice_idRouteImport = createFileRoute(
-  '/_layout/_devices/devices/$device_id',
-)()
+import { Route as LayoutDevicesDevicesDevice_idMotorsRouteImport } from './routes/_layout/_devices/devices/$device_id/_motors'
+import { Route as LayoutDevicesDevicesDevice_idMotorsMotorsIndexRouteImport } from './routes/_layout/_devices/devices/$device_id/_motors/motors/index'
+import { Route as LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRouteImport } from './routes/_layout/_devices/devices/$device_id/_motors/motors/$motor_id/index'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -35,40 +30,44 @@ const LayoutDevicesRoute = LayoutDevicesRouteImport.update({
   id: '/_devices',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutDevicesDevicesDevice_idRoute =
-  LayoutDevicesDevicesDevice_idRouteImport.update({
-    id: '/devices/$device_id',
-    path: '/devices/$device_id',
-    getParentRoute: () => LayoutDevicesRoute,
-  } as any)
 const LayoutDevicesDevicesIndexRoute =
   LayoutDevicesDevicesIndexRouteImport.update({
     id: '/devices/',
     path: '/devices/',
     getParentRoute: () => LayoutDevicesRoute,
   } as any)
-const LayoutDevicesDevicesDevice_idDevicegraphRoute =
-  LayoutDevicesDevicesDevice_idDevicegraphRouteImport.update({
-    id: '/_devicegraph',
-    getParentRoute: () => LayoutDevicesDevicesDevice_idRoute,
+const LayoutDevicesDevicesDevice_idMotorsRoute =
+  LayoutDevicesDevicesDevice_idMotorsRouteImport.update({
+    id: '/devices/$device_id/_motors',
+    path: '/devices/$device_id',
+    getParentRoute: () => LayoutDevicesRoute,
   } as any)
-const LayoutDevicesDevicesDevice_idDevicegraphIndexRoute =
-  LayoutDevicesDevicesDevice_idDevicegraphIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => LayoutDevicesDevicesDevice_idDevicegraphRoute,
+const LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute =
+  LayoutDevicesDevicesDevice_idMotorsMotorsIndexRouteImport.update({
+    id: '/motors/',
+    path: '/motors/',
+    getParentRoute: () => LayoutDevicesDevicesDevice_idMotorsRoute,
+  } as any)
+const LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute =
+  LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRouteImport.update({
+    id: '/motors/$motor_id/',
+    path: '/motors/$motor_id/',
+    getParentRoute: () => LayoutDevicesDevicesDevice_idMotorsRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/devices': typeof LayoutDevicesDevicesIndexRoute
-  '/devices/$device_id': typeof LayoutDevicesDevicesDevice_idDevicegraphRouteWithChildren
-  '/devices/$device_id/': typeof LayoutDevicesDevicesDevice_idDevicegraphIndexRoute
+  '/devices/$device_id': typeof LayoutDevicesDevicesDevice_idMotorsRouteWithChildren
+  '/devices/$device_id/motors': typeof LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute
+  '/devices/$device_id/motors/$motor_id': typeof LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/devices': typeof LayoutDevicesDevicesIndexRoute
-  '/devices/$device_id': typeof LayoutDevicesDevicesDevice_idDevicegraphIndexRoute
+  '/devices/$device_id': typeof LayoutDevicesDevicesDevice_idMotorsRouteWithChildren
+  '/devices/$device_id/motors': typeof LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute
+  '/devices/$device_id/motors/$motor_id': typeof LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -76,24 +75,34 @@ export interface FileRoutesById {
   '/_layout': typeof LayoutRouteWithChildren
   '/_layout/_devices': typeof LayoutDevicesRouteWithChildren
   '/_layout/_devices/devices/': typeof LayoutDevicesDevicesIndexRoute
-  '/_layout/_devices/devices/$device_id': typeof LayoutDevicesDevicesDevice_idRouteWithChildren
-  '/_layout/_devices/devices/$device_id/_devicegraph': typeof LayoutDevicesDevicesDevice_idDevicegraphRouteWithChildren
-  '/_layout/_devices/devices/$device_id/_devicegraph/': typeof LayoutDevicesDevicesDevice_idDevicegraphIndexRoute
+  '/_layout/_devices/devices/$device_id/_motors': typeof LayoutDevicesDevicesDevice_idMotorsRouteWithChildren
+  '/_layout/_devices/devices/$device_id/_motors/motors/': typeof LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute
+  '/_layout/_devices/devices/$device_id/_motors/motors/$motor_id/': typeof LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/devices' | '/devices/$device_id' | '/devices/$device_id/'
+  fullPaths:
+    | '/'
+    | '/devices'
+    | '/devices/$device_id'
+    | '/devices/$device_id/motors'
+    | '/devices/$device_id/motors/$motor_id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/devices' | '/devices/$device_id'
+  to:
+    | '/'
+    | '/devices'
+    | '/devices/$device_id'
+    | '/devices/$device_id/motors'
+    | '/devices/$device_id/motors/$motor_id'
   id:
     | '__root__'
     | '/'
     | '/_layout'
     | '/_layout/_devices'
     | '/_layout/_devices/devices/'
-    | '/_layout/_devices/devices/$device_id'
-    | '/_layout/_devices/devices/$device_id/_devicegraph'
-    | '/_layout/_devices/devices/$device_id/_devicegraph/'
+    | '/_layout/_devices/devices/$device_id/_motors'
+    | '/_layout/_devices/devices/$device_id/_motors/motors/'
+    | '/_layout/_devices/devices/$device_id/_motors/motors/$motor_id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -124,13 +133,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutDevicesRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/_devices/devices/$device_id': {
-      id: '/_layout/_devices/devices/$device_id'
-      path: '/devices/$device_id'
-      fullPath: '/devices/$device_id'
-      preLoaderRoute: typeof LayoutDevicesDevicesDevice_idRouteImport
-      parentRoute: typeof LayoutDevicesRoute
-    }
     '/_layout/_devices/devices/': {
       id: '/_layout/_devices/devices/'
       path: '/devices'
@@ -138,62 +140,57 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutDevicesDevicesIndexRouteImport
       parentRoute: typeof LayoutDevicesRoute
     }
-    '/_layout/_devices/devices/$device_id/_devicegraph': {
-      id: '/_layout/_devices/devices/$device_id/_devicegraph'
+    '/_layout/_devices/devices/$device_id/_motors': {
+      id: '/_layout/_devices/devices/$device_id/_motors'
       path: '/devices/$device_id'
       fullPath: '/devices/$device_id'
-      preLoaderRoute: typeof LayoutDevicesDevicesDevice_idDevicegraphRouteImport
-      parentRoute: typeof LayoutDevicesDevicesDevice_idRoute
+      preLoaderRoute: typeof LayoutDevicesDevicesDevice_idMotorsRouteImport
+      parentRoute: typeof LayoutDevicesRoute
     }
-    '/_layout/_devices/devices/$device_id/_devicegraph/': {
-      id: '/_layout/_devices/devices/$device_id/_devicegraph/'
-      path: '/'
-      fullPath: '/devices/$device_id/'
-      preLoaderRoute: typeof LayoutDevicesDevicesDevice_idDevicegraphIndexRouteImport
-      parentRoute: typeof LayoutDevicesDevicesDevice_idDevicegraphRoute
+    '/_layout/_devices/devices/$device_id/_motors/motors/': {
+      id: '/_layout/_devices/devices/$device_id/_motors/motors/'
+      path: '/motors'
+      fullPath: '/devices/$device_id/motors'
+      preLoaderRoute: typeof LayoutDevicesDevicesDevice_idMotorsMotorsIndexRouteImport
+      parentRoute: typeof LayoutDevicesDevicesDevice_idMotorsRoute
+    }
+    '/_layout/_devices/devices/$device_id/_motors/motors/$motor_id/': {
+      id: '/_layout/_devices/devices/$device_id/_motors/motors/$motor_id/'
+      path: '/motors/$motor_id'
+      fullPath: '/devices/$device_id/motors/$motor_id'
+      preLoaderRoute: typeof LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRouteImport
+      parentRoute: typeof LayoutDevicesDevicesDevice_idMotorsRoute
     }
   }
 }
 
-interface LayoutDevicesDevicesDevice_idDevicegraphRouteChildren {
-  LayoutDevicesDevicesDevice_idDevicegraphIndexRoute: typeof LayoutDevicesDevicesDevice_idDevicegraphIndexRoute
+interface LayoutDevicesDevicesDevice_idMotorsRouteChildren {
+  LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute: typeof LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute
+  LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute: typeof LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute
 }
 
-const LayoutDevicesDevicesDevice_idDevicegraphRouteChildren: LayoutDevicesDevicesDevice_idDevicegraphRouteChildren =
+const LayoutDevicesDevicesDevice_idMotorsRouteChildren: LayoutDevicesDevicesDevice_idMotorsRouteChildren =
   {
-    LayoutDevicesDevicesDevice_idDevicegraphIndexRoute:
-      LayoutDevicesDevicesDevice_idDevicegraphIndexRoute,
+    LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute:
+      LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute,
+    LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute:
+      LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute,
   }
 
-const LayoutDevicesDevicesDevice_idDevicegraphRouteWithChildren =
-  LayoutDevicesDevicesDevice_idDevicegraphRoute._addFileChildren(
-    LayoutDevicesDevicesDevice_idDevicegraphRouteChildren,
-  )
-
-interface LayoutDevicesDevicesDevice_idRouteChildren {
-  LayoutDevicesDevicesDevice_idDevicegraphRoute: typeof LayoutDevicesDevicesDevice_idDevicegraphRouteWithChildren
-}
-
-const LayoutDevicesDevicesDevice_idRouteChildren: LayoutDevicesDevicesDevice_idRouteChildren =
-  {
-    LayoutDevicesDevicesDevice_idDevicegraphRoute:
-      LayoutDevicesDevicesDevice_idDevicegraphRouteWithChildren,
-  }
-
-const LayoutDevicesDevicesDevice_idRouteWithChildren =
-  LayoutDevicesDevicesDevice_idRoute._addFileChildren(
-    LayoutDevicesDevicesDevice_idRouteChildren,
+const LayoutDevicesDevicesDevice_idMotorsRouteWithChildren =
+  LayoutDevicesDevicesDevice_idMotorsRoute._addFileChildren(
+    LayoutDevicesDevicesDevice_idMotorsRouteChildren,
   )
 
 interface LayoutDevicesRouteChildren {
   LayoutDevicesDevicesIndexRoute: typeof LayoutDevicesDevicesIndexRoute
-  LayoutDevicesDevicesDevice_idRoute: typeof LayoutDevicesDevicesDevice_idRouteWithChildren
+  LayoutDevicesDevicesDevice_idMotorsRoute: typeof LayoutDevicesDevicesDevice_idMotorsRouteWithChildren
 }
 
 const LayoutDevicesRouteChildren: LayoutDevicesRouteChildren = {
   LayoutDevicesDevicesIndexRoute: LayoutDevicesDevicesIndexRoute,
-  LayoutDevicesDevicesDevice_idRoute:
-    LayoutDevicesDevicesDevice_idRouteWithChildren,
+  LayoutDevicesDevicesDevice_idMotorsRoute:
+    LayoutDevicesDevicesDevice_idMotorsRouteWithChildren,
 }
 
 const LayoutDevicesRouteWithChildren = LayoutDevicesRoute._addFileChildren(

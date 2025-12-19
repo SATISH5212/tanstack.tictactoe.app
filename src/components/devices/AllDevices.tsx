@@ -212,7 +212,7 @@ export function AllDevices() {
     staleTime: 5 * 60 * 1000,
   });
 
-  
+
 
   const deletedeviceMutation = useMutation({
     mutationFn: (deviceId: string) => deleteUsersDeviceAPI(deviceId),
@@ -267,7 +267,7 @@ export function AllDevices() {
       );
       toast.error(
         error?.message ||
-          "Starter box was connected to motors and cannot be deleted"
+        "Starter box was connected to motors and cannot be deleted"
       );
     },
   });
@@ -379,8 +379,18 @@ export function AllDevices() {
   };
 
   const handleRowClick = (device: any) => {
+    const deviceId = device?.id;
+    const firstMotorId = device?.motors?.[0]?.id;
+
+    if (!deviceId || !firstMotorId) {
+      console.warn("Missing deviceId or motorId", { deviceId, firstMotorId });
+      return;
+    }
+    const starterAndMotorId = `${deviceId}@${firstMotorId}`;
+    console.log(starterAndMotorId);
+
     navigate({
-      to: `/devices/${device?.id}`,
+      to: `/devices/${deviceId}/motors/${firstMotorId}`,
       search: {
         search_string: debounceSearchString || undefined,
       },
@@ -426,13 +436,13 @@ export function AllDevices() {
     if (singleDeviceData?.device_status) {
       setIsTestDevice(
         singleDeviceData.device_status === "TEST" ||
-          singleDeviceData.device_status === "DEPLOYED"
+        singleDeviceData.device_status === "DEPLOYED"
       );
     }
   }, [singleDeviceData?.device_status]);
 
-  console.log(deviceData,"device data ");
-  
+  console.log(deviceData, "device data ");
+
 
   //   useEffect(() => {
   //     const targetDeviceId = Number(device_id);
@@ -510,30 +520,30 @@ export function AllDevices() {
           <div className="flex items-center gap-4 ">
             <div className="w-[250px]">
               <UserDropdown
-                // users={users}
-                // selectedUser={selectedUser}
-                // isUsersLoading={isUsersLoading}
-                // searchString={userSearchString}
-                // setSearchString={setUserSearchString}
-                // setIsSelectOpen={setIsUserSelectOpen}
-                // handleUserChange={handleUserChange}
-                // handleClearUser={handleClearUser}
-                // ispondsRoute={ispondsRoute}
+              // users={users}
+              // selectedUser={selectedUser}
+              // isUsersLoading={isUsersLoading}
+              // searchString={userSearchString}
+              // setSearchString={setUserSearchString}
+              // setIsSelectOpen={setIsUserSelectOpen}
+              // handleUserChange={handleUserChange}
+              // handleClearUser={handleClearUser}
+              // ispondsRoute={ispondsRoute}
               />
             </div>
 
             <div className="w-[250px]">
               <LocationDropdown
-                // pond={{ location: selectedLocation?.id }}
-                // locations={locations}
-                // isLocationsLoading={isLocationsLoading}
-                // searchString={locationSearchString}
-                // setSearchString={setLocationSearchString}
-                // setIsSelectOpen={setIsLocationSelectOpen}
-                // handlePondLocationChange={handleLocationChange}
-                // selectedLocation={selectedLocation}
-                // handleClearLocation={handleClearLocation}
-                // ispondsRoute={ispondsRoute}
+              // pond={{ location: selectedLocation?.id }}
+              // locations={locations}
+              // isLocationsLoading={isLocationsLoading}
+              // searchString={locationSearchString}
+              // setSearchString={setLocationSearchString}
+              // setIsSelectOpen={setIsLocationSelectOpen}
+              // handlePondLocationChange={handleLocationChange}
+              // selectedLocation={selectedLocation}
+              // handleClearLocation={handleClearLocation}
+              // ispondsRoute={ispondsRoute}
               />
             </div>
           </div>
@@ -577,7 +587,7 @@ export function AllDevices() {
               selectedFiltersCount={selectedFiltersCount}
             />
             {isSuperAdmin() && (
-              <AddDevice/>
+              <AddDevice />
             )}
           </div>
         </div>
