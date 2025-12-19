@@ -1,4 +1,27 @@
 import { RefObject } from "react";
+
+export interface UsersList {
+    id: number;
+    full_name: string
+}
+
+export interface UserDropdownProps {
+    users: UsersList[];
+    selectedUser: UsersList | null;
+    isUsersLoading: boolean;
+
+    searchString: string;
+    setSearchString: (value: string) => void;
+    setIsSelectOpen: (open: boolean) => void;
+    handleUserChange: (value: string) => void;
+    handleClearUser: () => void;
+    ispondsRoute?: boolean
+
+
+
+}
+
+
 export interface UserProfileDropdownProps {
     menuRef: RefObject<HTMLDivElement | null>;
     isSuperAdmin: boolean;

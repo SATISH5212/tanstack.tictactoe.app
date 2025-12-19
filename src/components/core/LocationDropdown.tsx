@@ -1,5 +1,5 @@
-import { LocationDropdownProps } from "@/lib/interfaces/users";
 import { Check, Loader2, X } from "lucide-react";
+import { useEffect, useRef } from "react";
 import {
   Select,
   SelectContent,
@@ -9,7 +9,6 @@ import {
 } from "src/components/ui/select";
 import LocationIcon from "../icons/users/location";
 import DownArrowIcon from "../svg/DownArrow";
-import { useEffect, useRef, useState } from "react";
 
 const LocationDropdown: React.FC<any> = (props) => {
   const {
@@ -35,21 +34,21 @@ const LocationDropdown: React.FC<any> = (props) => {
     <Select
       value={pond?.location ? pond.location.toString() : ""}
       onValueChange={handlePondLocationChange}
-      // onOpenChange={(open) => {
-      //   setIsSelectOpen(open);
+      onOpenChange={(open) => {
+        setIsSelectOpen(open);
 
-      //   if (!open) {
-      //     setSearchString("");
-      //   }
-      // }}
+        if (!open) {
+          setSearchString("");
+        }
+      }}
     >
       <SelectTrigger
         className={`${ispondsRoute && "!border-0 !border-b-2 "}  bg-white w-full border rounded-lg text-sm py-1.5 focus:outline-none focus:ring-2 gap-1 h-full`}
       >
         <div className="flex items-center capitalize text-xs gap-2 ">
-          <LocationIcon /> 
+          <LocationIcon />
           <SelectValue placeholder="Select Location">
-            {selectedLocation ? selectedLocation.title : "Select Location"}
+            {selectedLocation ? selectedLocation.name : "Select Location"}
           </SelectValue>
         </div>
 
@@ -105,7 +104,7 @@ const LocationDropdown: React.FC<any> = (props) => {
                   <span
                     className={`${pond?.location?.toString() === location.id.toString() ? "font-medium text-[#059669]" : ""}`}
                   >
-                    {location.title}
+                    {location.name}
                   </span>
                   {pond?.location?.toString() === location.id.toString() && (
                     <Check className="w-4 h-4 text-[#059669] ml-4" />

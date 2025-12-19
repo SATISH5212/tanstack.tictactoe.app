@@ -110,8 +110,6 @@ const CustomDateCalendar = ({
     setEndTime(undefined);
   };
 
-  console.log(selectedDate, "selectedDate", date, "date");
-
 
   return (
     <div>

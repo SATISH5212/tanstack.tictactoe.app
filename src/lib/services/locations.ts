@@ -56,9 +56,9 @@ export const fetchLocationsAPI = async (queryParams: any) => {
 };
 
 
-export const getAdminUserLocationsAPI = async (user_id: number) => {
+export const getAdminUserLocationsAPI = async (queryParams : any) => {
   try {
-    const response = await $fetch.get(`/users/${user_id}/locations`);
+    const response = await $fetch.get(`/locations/basic`, queryParams);
     return response;
   } catch (err) {
     throw err;

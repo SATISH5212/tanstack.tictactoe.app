@@ -1,4 +1,5 @@
 import { Check, Loader2, X } from "lucide-react";
+import { useEffect, useRef } from "react";
 import {
   Select,
   SelectContent,
@@ -6,10 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "src/components/ui/select";
-import { UserDropdownProps, UsersList } from "src/lib/interfaces/users";
+import { UsersList } from "src/lib/interfaces/users";
 import DownArrowIcon from "../svg/DownArrow";
 import { UsersSvg } from "../svg/UsersSvg";
-import { useEffect, useRef } from "react";
 
 const UserDropdown: React.FC<any> = ({
   users,
@@ -21,7 +21,6 @@ const UserDropdown: React.FC<any> = ({
   setIsSelectOpen,
   handleUserChange,
   handleClearUser,
-  ispondsRoute,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -29,16 +28,17 @@ const UserDropdown: React.FC<any> = ({
     inputRef.current?.focus();
   }, [searchString]);
 
+
   return (
     <Select
       value={selectedUser?.id ? selectedUser.id.toString() : ""}
       onValueChange={handleUserChange}
-      // onOpenChange={(open) => {
-      //   setIsSelectOpen(open);
-      //   if (!open) {
-      //     setSearchString("");
-      //   }
-      // }}
+      onOpenChange={(open) => {
+        setIsSelectOpen(open);
+        if (!open) {
+          setSearchString("");
+        }
+      }}
     >
       <SelectTrigger className="!border-0 !border-b-2  w-full  rounded-lg text-sm py-1.5 gap-1 h-full">
         <div className="flex items-center gap-1 capitalize">
@@ -48,7 +48,7 @@ const UserDropdown: React.FC<any> = ({
           </SelectValue>
         </div>
 
-        {!ispondsRoute && selectedUser ? (
+        {selectedUser ? (
           <X
             className="w-3 h-3 cursor-pointer"
             onPointerDown={(e) => {
