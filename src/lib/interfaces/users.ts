@@ -1,6 +1,9 @@
 import React, { Dispatch, RefObject, SetStateAction } from "react";
-import { IUserLocation } from "./maps/ponds";
 
+export interface IUserLocation {
+  id: number;
+  title: string;
+}
 export interface User {
     id: number;
     full_name: string;
@@ -21,21 +24,7 @@ export interface LocationFormData {
     location_coordinates: { lat: number; lng: number };
 }
 
-export interface GatewayFormData {
-    id?: number;
-    title: string;
-    location_id: number;
-    user_id: any;
-    status: "ACTIVE" | "INACTIVE";
-}
 
-export interface StarterBox {
-    id: number;
-    title: string;
-    ipv6: string;
-    serial_no: string;
-    gateway_id: number;
-}
 
 export interface Gateway {
     id: number;
@@ -82,27 +71,6 @@ export interface ILocationBlock {
     setErrors: Dispatch<SetStateAction<Record<string, string | null>>>
 }
 
-export interface IGateWaySettingsBlock {
-    gatewayData: any,
-    selectedLocation: Location | null
-    setSelectedLocation: React.Dispatch<React.SetStateAction<Location | null>>;
-    handleAddGateway: (e: React.MouseEvent, locationId: number) => void
-    editingGatewayId: number | null, gatewayFormData: GatewayFormData,
-    handleGatewayChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    isStatusPendingUpdate: boolean,
-    handleCancelEditGateway: (e: React.MouseEvent) => void,
-    expandedGateway: number | null
-    toggleGatewayExpand: (gatewayId: number) => void,
-    gatewayErrors: Record<string, string | null>
-    handleDeleteGateway: (gatewayId: number) => void,
-    addingGatewayRow: number | null,
-    handleSubmitNewGateway: (e: React.FormEvent) => void
-    handleSubmitUpdateGateway: (e: React.FormEvent) => void
-    handleEditGateway: (gatewayId: number) => void
-    gatewayErrormessage: string
-    handleCancelAddGateway: (e: React.MouseEvent) => void
-    isStatusPendingGateway: boolean
-}
 
 
 export interface LocationDropdownProps {
@@ -117,9 +85,6 @@ export interface LocationDropdownProps {
     selectedLocation?: IUserLocation | null
     handleClearLocation: () => void;
     ispondsRoute?: boolean
-
-
-
 }
 
 

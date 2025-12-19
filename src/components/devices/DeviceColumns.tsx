@@ -79,7 +79,6 @@ export const DeviceColumns = ({
             : row.name,
       id: "name",
       cell: (info: any) => {
-        // console.log(info,"info");
         const title = info.getValue() || "-";
         const formattedTitle =
           title !== "-"
@@ -181,10 +180,8 @@ export const DeviceColumns = ({
       accessorFn: (row: any) => row,
       id: "location",
       cell: (info: any) => {
-        console.log(info.getValue());
 
         const location = info.getValue() || "--";
-        console.log(location.motors);
         return (
           <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
             {location?.motors[0]?.location?.name || "--"}
@@ -635,7 +632,6 @@ export const DeviceColumns = ({
     {
       accessorFn: (row: any) => {
         row.starterBoxParameters
-        console.log(row,"row dea");
         
       },
       id: "mode",

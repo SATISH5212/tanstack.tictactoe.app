@@ -4,6 +4,8 @@ export const getAllPaginatedDeviceData = async ({
   pageSize,
   search_string,
   device_status,
+  user_id,
+  location_id,
   sort_by,
   sort_type,
   power,
@@ -15,6 +17,8 @@ export const getAllPaginatedDeviceData = async ({
       limit: pageSize,
       search_string,
       device_status,
+      user_id,
+      location_id,
       sort_by,
       sort_type,
       power,
@@ -210,9 +214,9 @@ export const assignUserForDeviceAPI = async (payload: any) => {
 }
 
 
-export const getAllUsersForDeviceAPI = async (queryParams: any) => {
+export const getAllUsersForDeviceAPI = async () => {
   try {
-    return await $fetch.get(`/users/drop-down`, queryParams);
+    return await $fetch.get(`/users/basic`);
   } catch (err) {
     throw err;
   }

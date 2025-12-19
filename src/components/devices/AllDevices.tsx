@@ -18,7 +18,6 @@ import React, {
 import { toast } from "sonner";
 import {
   getAllPaginatedDeviceData,
-  getGatewayTitleAPI,
   getSingleDeviceAPI,
 } from "src/lib/services/deviceses";
 import DeleteDialog from "../core/DeleteDialog";
@@ -27,11 +26,12 @@ import InfoDialogBox from "../core/InfoDialogBox";
 import SearchFilter from "../core/SearchFilter";
 import TanStackTable from "../core/TanstackTable";
 
+import LocationDropdown from "../core/LocationDropdown";
+import UserDropdown from "../core/UsersDropdown";
 import { DeviceColumns } from "./DeviceColumns";
 import DevicesFilter from "./DevicesFilter";
 import AddDevice from "./add";
-import UserDropdown from "../core/UsersDropdown";
-import LocationDropdown from "../core/LocationDropdown";
+import { useLocationContext } from "../context/LocationContext";
 
 export function AllDevices() {
   const { isUser, isSuperAdmin } = useUserDetails();
@@ -47,6 +47,7 @@ export function AllDevices() {
   const pageIndexParam = Number(searchParams.get("current_page")) || 1;
   const pageSizeParam = Number(searchParams.get("page_size")) || 20;
 
+ 
   const [searchString, setSearchString] = useState(
     searchParams.get("search_string") || ""
   );
@@ -97,6 +98,25 @@ export function AllDevices() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const {
+    locations,
+    selectedLocation,
+    locationSearchString,
+    setLocationSearchString,
+    isLocationsLoading,
+    setIsLocationSelectOpen,
+    handleLocationChange,
+    handleClearLocation,
+    users,
+    selectedUser,
+    userSearchString,
+    setUserSearchString,
+    isUsersLoading,
+    setIsUserSelectOpen,
+    handleUserChange,
+    handleClearUser,
+  } = useLocationContext();
+
+  const {
     data,
     fetchNextPage,
     hasNextPage,
@@ -109,6 +129,8 @@ export function AllDevices() {
       debounceSearchString,
       pageSizeParam,
       selectedStatus,
+      selectedUser,
+      selectedLocation,
       powerStatus,
       sortBy,
       sortType,
@@ -126,7 +148,8 @@ export function AllDevices() {
         ...(deviceStatusFilter && deviceStatusFilter !== "ALL"
           ? { status: deviceStatusFilter }
           : {}),
-
+        ...(selectedUser && { user_id: selectedUser?.id }),
+        ...(selectedLocation && { location_id: selectedLocation?.id }),
         ...(sortBy && { sort_by: sortBy }),
         ...(sortType && { sort_type: sortType }),
       };
@@ -211,8 +234,6 @@ export function AllDevices() {
     enabled: !!deviceId,
     staleTime: 5 * 60 * 1000,
   });
-
-  
 
   const deletedeviceMutation = useMutation({
     mutationFn: (deviceId: string) => deleteUsersDeviceAPI(deviceId),
@@ -357,21 +378,6 @@ export function AllDevices() {
     [navigate, debounceSearchString, selectedStatus, powerStatus]
   );
 
-  const handleCloseMotorDrawer = useCallback(() => {
-    setIsMotorDrawerOpen(false);
-    setSelectedMotor(null);
-    setSelectedDeviceForDrawer(null);
-  }, []);
-
-  const handleCancel = () => {
-    setTitle(originalTitle);
-    setShowIcons(false);
-    setErrors((prevErrors: any) => ({
-      ...prevErrors,
-      gateway_title: "",
-    }));
-  };
-
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -416,12 +422,6 @@ export function AllDevices() {
     setDeviceToDelete(device);
   }, []);
 
-  //   useEffect(() => {
-  //     if (gatewayData?.id) {
-  //       setGatewayId(gatewayData.id);
-  //     }
-  //   }, [gatewayData?.id]);
-
   useEffect(() => {
     if (singleDeviceData?.device_status) {
       setIsTestDevice(
@@ -430,9 +430,6 @@ export function AllDevices() {
       );
     }
   }, [singleDeviceData?.device_status]);
-
-  console.log(deviceData,"device data ");
-  
 
   //   useEffect(() => {
   //     const targetDeviceId = Number(device_id);
@@ -458,13 +455,14 @@ export function AllDevices() {
 
   useEffect(() => {
     const currentSearchParams = new URLSearchParams(location.search);
-    const currentCapableMotors = currentSearchParams.get("capable_motors");
     navigate({
       to: "/devices",
       search: {
         search_string: debounceSearchString || undefined,
         device_status: selectedStatus !== "ALL" ? selectedStatus : undefined,
         status: deviceStatusFilter !== "ALL" ? deviceStatusFilter : undefined,
+        user_id: selectedUser?.id || undefined,
+        location_id: selectedLocation?.id || undefined,
         power_status: powerStatus || undefined,
         sort_by: sortBy || undefined,
         sort_type: sortType || undefined,
@@ -473,6 +471,8 @@ export function AllDevices() {
     });
   }, [
     debounceSearchString,
+    selectedLocation,
+    selectedUser,
     selectedStatus,
     sortBy,
     sortType,
@@ -510,30 +510,28 @@ export function AllDevices() {
           <div className="flex items-center gap-4 ">
             <div className="w-[250px]">
               <UserDropdown
-                // users={users}
-                // selectedUser={selectedUser}
-                // isUsersLoading={isUsersLoading}
-                // searchString={userSearchString}
-                // setSearchString={setUserSearchString}
-                // setIsSelectOpen={setIsUserSelectOpen}
-                // handleUserChange={handleUserChange}
-                // handleClearUser={handleClearUser}
-                // ispondsRoute={ispondsRoute}
+                users={users}
+                selectedUser={selectedUser}
+                isUsersLoading={isUsersLoading}
+                searchString={userSearchString}
+                setSearchString={setUserSearchString}
+                setIsSelectOpen={setIsUserSelectOpen}
+                handleUserChange={handleUserChange}
+                handleClearUser={handleClearUser}
               />
             </div>
 
             <div className="w-[250px]">
               <LocationDropdown
-                // pond={{ location: selectedLocation?.id }}
-                // locations={locations}
-                // isLocationsLoading={isLocationsLoading}
-                // searchString={locationSearchString}
-                // setSearchString={setLocationSearchString}
-                // setIsSelectOpen={setIsLocationSelectOpen}
-                // handlePondLocationChange={handleLocationChange}
-                // selectedLocation={selectedLocation}
-                // handleClearLocation={handleClearLocation}
-                // ispondsRoute={ispondsRoute}
+                pond={{ location: selectedLocation?.id }}
+                locations={locations}
+                isLocationsLoading={isLocationsLoading}
+                searchString={locationSearchString}
+                setSearchString={setLocationSearchString}
+                setIsSelectOpen={setIsLocationSelectOpen}
+                handlePondLocationChange={handleLocationChange}
+                selectedLocation={selectedLocation}
+                handleClearLocation={handleClearLocation}
               />
             </div>
           </div>
@@ -576,9 +574,7 @@ export function AllDevices() {
               selectedStatus={selectedStatus}
               selectedFiltersCount={selectedFiltersCount}
             />
-            {isSuperAdmin() && (
-              <AddDevice/>
-            )}
+            {isSuperAdmin() && <AddDevice />}
           </div>
         </div>
         <div
