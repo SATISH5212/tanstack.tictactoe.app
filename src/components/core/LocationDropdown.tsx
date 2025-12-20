@@ -106,9 +106,7 @@ const LocationDropdown: React.FC<any> = (props) => {
                   >
                     {location.name}
                   </span>
-                  {pond?.location?.toString() === location.id.toString() && (
-                    <Check className="w-4 h-4 text-[#059669] ml-4" />
-                  )}
+                
                 </div>
               </SelectItem>
             ))}

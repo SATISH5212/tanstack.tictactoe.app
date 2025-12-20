@@ -48,7 +48,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
   const { data: usersData, isLoading: isUsersLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const response = await getAllUsersForDeviceAPI();
+      const response = await getAllUsersForDeviceAPI({ get_all: true });
       return response?.data?.data;
     },
     enabled: pondsRoute,

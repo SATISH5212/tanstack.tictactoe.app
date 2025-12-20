@@ -1,14 +1,16 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { addDeviceAPI } from "@/lib/services/deviceses";
 
-export const useDeviceMutation = (onSuccessCallback: () => void, setErrors: (e: any) => void) =>
-    useMutation({
+export const useDeviceMutation = (onSuccessCallback: () => void, setErrors: (e: any) => void) => {
+    const queryClient = useQueryClient();
+    return useMutation({
         mutationKey: ["add-device"],
         retry: false,
         mutationFn: addDeviceAPI,
         onSuccess: () => {
             toast.success("Device added successfully");
+            queryClient.invalidateQueries({ queryKey: ["devices"] });
             onSuccessCallback();
         },
         onError: (error: any) => {
@@ -27,3 +29,5 @@ export const useDeviceMutation = (onSuccessCallback: () => void, setErrors: (e: 
             toast.error(error?.data?.message || "Something went wrong");
         },
     });
+
+}

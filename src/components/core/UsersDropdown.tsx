@@ -102,9 +102,7 @@ const UserDropdown: React.FC<any> = ({
                   >
                     {user.full_name}
                   </span>
-                  {selectedUser?.id?.toString() === user.id.toString() && (
-                    <Check className="w-4 h-4 text-[#9333EA] ml-4" />
-                  )}
+               
                 </div>
               </SelectItem>
             ))}

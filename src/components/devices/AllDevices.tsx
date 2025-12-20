@@ -165,21 +165,7 @@ export function AllDevices() {
           );
         return [...prevMembers, ...newUsers];
       });
-      //   if (device_id && pageParam === 1) {
-      //     const selectedDevice = devices.find(
-      //       (device: any) => device.id == device_id
-      //     );
-      //     if (selectedDevice) {
-      //       const gatewayTitle = selectedDevice?.gateways?.title || null;
-      //       setIsTestDevice(
-      //         selectedDevice.device_status === "TEST" ||
-      //           selectedDevice.device_status === "DEPLOYED"
-      //       );
-      //       if (selectedDevice.capable_motors) {
-      //         setCapableMotors(Number(selectedDevice.capable_motors));
-      //       }
-      //     }
-      //   }
+   
 
       return {
         data: devices,
@@ -220,6 +206,9 @@ export function AllDevices() {
     const devices = data?.pages.flatMap((page) => page.data) || [];
     return devices;
   }, [data]);
+
+  console.log(deviceData,"devicedata");
+  
 
   const { data: singleDeviceData } = useQuery({
     queryKey: ["single-device", deviceId],
@@ -272,16 +261,7 @@ export function AllDevices() {
       return { previousData };
     },
     onSuccess: (response, deviceId) => {
-      //   if (response?.status === 200 || response?.status === 201) {
-      //     if (deviceId === device_id) {
-      //       navigate({ to: "/devices" });
-      //     }
-      //   } else if (response?.status === 409) {
-      //     toast.error(
-      //       response?.data?.message ||
-      //         "Starter box was connected to motors and cannot be deleted"
-      //     );
-      //   }
+     toast.success("device deleted successfully")
     },
     onError: (error: any, deviceId, context) => {
       queryClient.setQueryData(
@@ -298,16 +278,9 @@ export function AllDevices() {
     if (deviceToDelete) {
       setDeleteLoading(true);
       deletedeviceMutation.mutate(deviceToDelete?.id, {
-        // onSuccess: (response, deviceId) => {
-        //   if (response?.status === 200 || response?.status === 201) {
-        //     toast.success(response?.data?.message);
-        //     if (deviceId === device_id) {
-        //       navigate({ to: "/devices" });
-        //     }
-
-        //     refetchDevices();
-        //   }
-        // },
+        onSuccess: (response) => {
+           toast.success(response?.data?.message);
+        },
         onSettled: () => {
           setDeleteLoading(false);
           setIsDeleteDialogOpen(false);
@@ -419,14 +392,7 @@ export function AllDevices() {
     });
   }, []);
 
-  //   const handleSettingsClick = useCallback(
-  //     (device: any) => {
-  //       setDeviceId(device?.id);
-  //       setShowSettings(true);
-  //       setGateway(device?.gateways?.title || gatewayData?.title);
-  //     },
-  //     [gatewayData?.title]
-  //   );
+ 
   const handleDeleteClick = useCallback((device: any) => {
     setIsDeleteDialogOpen(true);
     setDeviceToDelete(device);
@@ -441,27 +407,7 @@ export function AllDevices() {
     }
   }, [singleDeviceData?.device_status]);
 
-  //   useEffect(() => {
-  //     const targetDeviceId = Number(device_id);
-  //     if (
-  //       device_id &&
-  //       !deviceData.find((d: any) => d.id === targetDeviceId) &&
-  //       hasNextPage &&
-  //       !isFetchingNextPage &&
-  //       !isFetching &&
-  //       data?.pages?.[0]?.pagination?.total_records &&
-  //       deviceData?.length < data.pages[0].pagination.total_records
-  //     ) {
-  //       fetchNextPage();
-  //     }
-  //   }, [
-  //     device_id,
-  //     deviceData,
-  //     hasNextPage,
-  //     isFetchingNextPage,
-  //     isFetching,
-  //     data,
-  //   ]);
+
 
   useEffect(() => {
     const currentSearchParams = new URLSearchParams(location.search);
@@ -520,15 +466,6 @@ export function AllDevices() {
           <div className="flex items-center gap-4 ">
             <div className="w-[250px]">
               <UserDropdown
-                // users={users}
-                // selectedUser={selectedUser}
-                // isUsersLoading={isUsersLoading}
-                // searchString={userSearchString}
-                // setSearchString={setUserSearchString}
-                // setIsSelectOpen={setIsUserSelectOpen}
-                // handleUserChange={handleUserChange}
-                // handleClearUser={handleClearUser}
-                // ispondsRoute={ispondsRoute}
                 users={users}
                 selectedUser={selectedUser}
                 isUsersLoading={isUsersLoading}
@@ -542,16 +479,6 @@ export function AllDevices() {
 
             <div className="w-[250px]">
               <LocationDropdown
-                // pond={{ location: selectedLocation?.id }}
-                // locations={locations}
-                // isLocationsLoading={isLocationsLoading}
-                // searchString={locationSearchString}
-                // setSearchString={setLocationSearchString}
-                // setIsSelectOpen={setIsLocationSelectOpen}
-                // handlePondLocationChange={handleLocationChange}
-                // selectedLocation={selectedLocation}
-                // handleClearLocation={handleClearLocation}
-                // ispondsRoute={ispondsRoute}
                 pond={{ location: selectedLocation?.id }}
                 locations={locations}
                 isLocationsLoading={isLocationsLoading}
@@ -643,11 +570,10 @@ export function AllDevices() {
 
               "status",
               "power_present",
-              "line_voltages",
+              "voltage_current",
               "state",
               "signal_quality",
               "mode",
-              "currents",
               "alert_count",
               "fault_count",
             ]}

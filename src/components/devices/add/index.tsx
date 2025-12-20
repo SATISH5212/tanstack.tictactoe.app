@@ -56,9 +56,9 @@ const AddDevice = () => {
             </TabsList>
             <div
               onClick={handleCloseAddSideBar}
-              className="flex rounded-full hover:bg-red-100 text-red-500 cursor-pointer mt-2"
+              className="flex rounded-full hover:bg-red-100 text-red-500 cursor-pointer mt-2 p-1"
             >
-              <X size={14} strokeWidth={2.5} />
+              <X size={16} strokeWidth={2.5} />
             </div>
           </div>
           <TabsContent value="addDevice" className="">

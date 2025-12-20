@@ -204,16 +204,16 @@ export const updateDeviceUsersAPI = async (id: any, payload: any) => {
 };
 export const assignUserForDeviceAPI = async (payload: any) => {
   try {
-    return await $fetch.patch(`/starter/assign-device-to-user`, payload);
+    return await $fetch.patch(`/starters/assign-web`, payload);
   } catch (err) {
     throw err;
   }
 }
 
 
-export const getAllUsersForDeviceAPI = async () => {
+export const getAllUsersForDeviceAPI = async (queryParams : any) => {
   try {
-    return await $fetch.get(`/users/basic`);
+    return await $fetch.get(`/users/basic`, queryParams);
   } catch (err) {
     throw err;
   }

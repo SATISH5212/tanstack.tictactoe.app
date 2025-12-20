@@ -5,6 +5,11 @@ export interface UsersList {
     full_name: string
 }
 
+export interface Location {
+    id: number;
+    title: string;
+}
+
 export interface UserDropdownProps {
     users: UsersList[];
     selectedUser: UsersList | null;

@@ -3,7 +3,7 @@ import { useUserDetails } from "@/lib/helpers/userpermission";
 import { updateDeviceStatusAPI } from "@/lib/services/deviceses";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Loader2, SettingsIcon } from "lucide-react";
+import { Divide, Loader2, SettingsIcon, SpaceIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { DeviceLogs } from "../core/DeviceLogs";
@@ -41,6 +41,8 @@ import {
   SelectValue,
 } from "../ui/select";
 import DeviceSignalIcon from "../icons/device/DevicesignalIcon";
+import AddIcon from "../icons/device/AddIcon";
+import AssignUserToDevice from "./AssignUserToDevice";
 
 interface DeviceColumnsProps {
   refetchDevices: () => void;
@@ -137,28 +139,6 @@ export const DeviceColumns = ({
       footer: (props: any) => props.column.id,
       size: 150,
     },
-    // {
-    //   accessorFn: (row: any) => row.starter_number,
-    //   id: "starter_number",
-    //   cell: (info: any) => {
-    //     const value = info.getValue() || "-";
-    //     const displayText =
-    //       value?.length > 15 ? `${value.slice(0, 12)}...` : value;
-
-    //     return (
-    //       <div className="p-2 h-10  flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm ">
-    //         <span title={value}>{displayText}</span>
-    //       </div>
-    //     );
-    //   },
-    //   header: () => (
-    //     <span className="text-center w-full flex items-center justify-center pl-7 ">
-    //       Starter Number
-    //     </span>
-    //   ),
-    //   footer: (props: any) => props.column.id,
-    //   size: 150,
-    // },
     {
       accessorFn: (row: any) => row,
       id: "user",
@@ -180,7 +160,6 @@ export const DeviceColumns = ({
       accessorFn: (row: any) => row,
       id: "location",
       cell: (info: any) => {
-
         const location = info.getValue() || "--";
         return (
           <div className="p-2 h-10 justify-center flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-center">
@@ -344,7 +323,7 @@ export const DeviceColumns = ({
                     )}
                   </SelectContent>
                 </Select>
-                {/* {status === "DEPLOYED" && (
+                {status === "DEPLOYED" && (
                   <AddIcon
                     className="size-4 cursor-pointer ml-2"
                     onClick={(e: any) => {
@@ -352,7 +331,7 @@ export const DeviceColumns = ({
                       handleAssignUser();
                     }}
                   />
-                )} */}
+                )}
                 <div className="bg-white">
                   <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <AlertDialogContent className="bg-white">
@@ -389,7 +368,7 @@ export const DeviceColumns = ({
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  {/* <AssignUserToDevice
+                  <AssignUserToDevice
                     open={assignDialogOpen}
                     onClose={() => {
                       setAssignDialogOpen(false);
@@ -397,7 +376,7 @@ export const DeviceColumns = ({
                     getData={refetchDevices}
                     device_id={deviceId}
                     deviceData={info.row.original}
-                  /> */}
+                  />
                 </div>
               </>
             )}
@@ -416,6 +395,8 @@ export const DeviceColumns = ({
       accessorFn: (row: any) => row.starterBoxParameters?.[0]?.power_present,
       id: "power_present",
       cell: (info: any) => {
+        console.log(info, "power presetn ");
+
         const powerPresent = info.getValue();
         return (
           <div className="p-2 h-10 items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm flex justify-center">
@@ -430,113 +411,48 @@ export const DeviceColumns = ({
       size: 50,
     },
     {
-      accessorFn: (row: any) => row.starterBoxParameters,
-      id: "line_voltages",
+      accessorFn: (row: any) => row.motors?.[0]?.starterParameters ?? [],
+      id: "voltage_current",
       cell: (info: any) => {
         const params = info.getValue() || [];
+
         const device = info.row.original;
-        const voltages = device.starterBoxParameters?.[0] || {};
+
+        const voltages = device.motors?.[0]?.starterParameters?.[0] || {};
 
         return (
           <div className="p-2 h-10 text-xs 3xl:text-sm text-center leading-tight flex flex-col gap-1 justify-center items-center">
             {params.length > 0 ? (
               <div className="flex flex-col items-center gap-1">
                 {voltages && (
-                  <div className="flex gap-1">
-                    <div className="text-red-500 w-[32px] text-center">
-                      {voltages?.line_voltage_vry?.toFixed(1)}
+                  <div className="flex flex-col gap-1">
+                    <div className="flex gap-1">
+                      <div className="text-red-500">
+                        V
+                      </div>
+                      <div className="text-red-500 w-[32px] text-center">
+                        {voltages?.line_voltage_b?.toFixed(1) || 0}
+                      </div>
+                      <div className="text-yellow-500 w-[32px] text-center">
+                        {voltages?.line_voltage_r?.toFixed(1) || 0}
+                      </div>
+                      <div className="text-blue-500 w-[32px] text-center">
+                        {voltages?.line_voltage_y?.toFixed(1) || 0}
+                      </div>
                     </div>
-                    <div className="text-yellow-500 w-[32px] text-center">
-                      {voltages?.line_voltage_vyb?.toFixed(1)}
-                    </div>
-                    <div className="text-blue-500 w-[32px] text-center">
-                      {voltages?.line_voltage_vbr?.toFixed(1)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              "--"
-            )}
-          </div>
-        );
-      },
-      header: () => (
-        <span className="text-center w-full cursor-default">Volts</span>
-      ),
-      footer: (props: any) => props.column.id,
-      size: 100,
-    },
-    {
-      accessorFn: (row: any) => row.starterBoxParameters,
-      id: "currents",
-      cell: (info: any) => {
-        const params = info.getValue() || [];
-        const device = info.row.original;
-        const currents = params.reduce(
-          (acc: any, param: any) => {
-            if (param.motor_ref_id === "mtr_1") {
-              acc.m1 = {
-                i1:
-                  param.current_i1 != null ? param.current_i1.toFixed(1) : "0",
-                i2:
-                  param.current_i2 != null ? param.current_i2.toFixed(1) : "0",
-                i3:
-                  param.current_i3 != null ? param.current_i3.toFixed(1) : "0",
-              };
-            }
-            if (param.motor_ref_id === "mtr_2") {
-              acc.m2 = {
-                i1:
-                  param.current_i1 != null ? param.current_i1.toFixed(1) : "0",
-                i2:
-                  param.current_i2 != null ? param.current_i2.toFixed(1) : "0",
-                i3:
-                  param.current_i3 != null ? param.current_i3.toFixed(1) : "0",
-              };
-            }
-            return acc;
-          },
-          {
-            m1:
-              device.capable_motors >= 1 ? { i1: "0", i2: "0", i3: "0" } : null,
-            m2:
-              device.capable_motors === 2
-                ? { i1: "0", i2: "0", i3: "0" }
-                : null,
-          }
-        );
 
-        return (
-          <div className="p-2 h-10 text-xs 3xl:text-sm justify-center text-left leading-tight flex flex-col gap-1 items-center">
-            {params.length > 0 || device.capable_motors > 0 ? (
-              <div className="flex flex-col items-center gap-1">
-                {device.capable_motors >= 1 && currents.m1 && (
-                  <div className="flex items-center gap-1">
-                    <div className="flex gap-1 min-w-[80px] justify-between">
+                    <div className="flex gap-1">
+                       <div className="text-blue-500">
+                        A
+                      </div>
                       <div className="text-red-500 w-[32px] text-center">
-                        {currents?.m1.i1}
+                        {voltages?.current_b?.toFixed(1) || 0}
                       </div>
                       <div className="text-yellow-500 w-[32px] text-center">
-                        {currents?.m1.i2}
+                        {voltages?.current_r?.toFixed(1) || 0}
                       </div>
                       <div className="text-blue-500 w-[32px] text-center">
-                        {currents?.m1.i3}
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {device.capable_motors === 2 && currents.m2 && (
-                  <div className="flex items-center gap-1">
-                    <div className="flex gap-1 min-w-[80px] justify-between">
-                      <div className="text-red-500 w-[32px] text-center">
-                        {currents?.m2.i1}
-                      </div>
-                      <div className="text-yellow-500 w-[32px] text-center">
-                        {currents?.m2.i2}
-                      </div>
-                      <div className="text-blue-500 w-[32px] text-center">
-                        {currents?.m2.i3}
+                        {voltages?.current_y?.toFixed(1) || 0}
                       </div>
                     </div>
                   </div>
@@ -549,44 +465,28 @@ export const DeviceColumns = ({
         );
       },
       header: () => (
-        <span className="text-center w-full cursor-default">Currents</span>
+        <span className="text-center w-full cursor-default">
+          Voltage & Current
+        </span>
       ),
       footer: (props: any) => props.column.id,
-      size: 100,
+      size: 150,
     },
     {
-      accessorFn: (row: any) => row.starterBoxParameters,
+      accessorFn: (row: any) => row.motors,
       id: "state",
       cell: (info: any) => {
         const params = info.getValue() || [];
         const device = info.row.original;
-        const states = params.reduce(
-          (acc: any, param: any) => {
-            if (param.motor_ref_id === "mtr_1") acc.m1 = param.motor_state;
-            if (param.motor_ref_id === "mtr_2") acc.m2 = param.motor_state;
-            return acc;
-          },
-          { m1: null, m2: null }
-        );
+        const state_value = device?.motors?.[0]?.state;
 
         return (
           <div className="p-2 h-10 justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col gap-1 items-center">
             {params.length > 0 ? (
               <div className="flex flex-col items-center gap-1">
-                {device.capable_motors >= 1 && (
+                {device && (
                   <div className="flex items-center gap-1">
-                    <span className="text-[11px] 3xl:!text-sm font-medium">
-                      M1:
-                    </span>
-                    {states.m1 === 1 ? <GreenDot /> : <RedDot />}
-                  </div>
-                )}
-                {device.capable_motors === 2 && (
-                  <div className="flex items-center gap-1">
-                    <span className="text-[11px] 3xl:!text-sm font-medium">
-                      M2:
-                    </span>
-                    {states.m2 === 1 ? <GreenDot /> : <RedDot />}
+                    {state_value === 1 ? <span className="text-green-500">ON</span> : <span className="text-red-500">OFF</span> }
                   </div>
                 )}
               </div>
@@ -601,10 +501,10 @@ export const DeviceColumns = ({
       ),
       footer: (props: any) => props.column.id,
       size: 100,
-    }, 
-   {
+    },
+    {
       id: "signal_quality",
-      accessorFn: (row: any) => row?.signal_quality ?? null,
+      accessorFn: (row: any) => row?.signal_quality,
       cell: ({ row }: any) => {
         const signalValue = row?.original?.signal_quality;
 
@@ -631,44 +531,24 @@ export const DeviceColumns = ({
 
     {
       accessorFn: (row: any) => {
-        row.starterBoxParameters
-        
+        row.motors;
       },
       id: "mode",
       cell: (info: any) => {
-        
-        const params = info.getValue() || [];
         const device = info.row.original;
-        const modes = params.reduce(
-          (acc: any, param: any) => {
-            if (param.motor_ref_id === "mtr_1") acc.m1 = param.motor_mode;
-            if (param.motor_ref_id === "mtr_2") acc.m2 = param.motor_mode;
-            return acc;
-          },
-          { m1: null, m2: null }
-        );
-
+        const mode_value = device?.motors?.[0]?.mode;
         return (
-          <div className="p-0 h-10 justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col items-center">
-            {params.length > 0 ? (
-              <div className="flex flex-col items-center gap-1">
-                {device.capable_motors >= 1 && (
-                  <div className="flex items-center gap-1">
-                    <span>
-                      {modes.m1 ? capitalize(modes.m1.toLowerCase()) : "--"}
-                    </span>
-                  </div>
-                )}
-                {device.capable_motors === 2 && (
-                  <div className="flex items-center gap-1">
-                    <span>
-                      {modes.m2 ? capitalize(modes.m2.toLowerCase()) : "--"}
-                    </span>
-                  </div>
-                )}
+          <div className={`p-0 h-10 justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col items-center text-blue-500
+            ${mode_value === "AUTO" && "text-orange-500"}
+          `}>
+            {device ? (
+              <div className="flex items-center gap-1">
+                <span>
+                  {mode_value ? capitalize(mode_value.toLowerCase()) : "--"}
+                </span>
               </div>
             ) : (
-              "--"
+             "--"
             )}
           </div>
         );

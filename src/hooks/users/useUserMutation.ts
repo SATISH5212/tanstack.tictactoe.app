@@ -1,14 +1,16 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createUserAPI } from "@/lib/services/users";
 
-export const useUserMutation = (onSuccessCallback: () => void, setErrors: (e: any) => void) =>
-    useMutation({
+export const useUserMutation = (onSuccessCallback: () => void, setErrors: (e: any) => void) => {
+    const queryClient = useQueryClient();
+    return useMutation({
         mutationKey: ["create-user"],
         retry: false,
         mutationFn: createUserAPI,
         onSuccess: () => {
             toast.success("User created successfully");
+            queryClient.invalidateQueries({ queryKey: ["users"] });
             onSuccessCallback();
         },
         onError: (response: any) => {
@@ -23,3 +25,5 @@ export const useUserMutation = (onSuccessCallback: () => void, setErrors: (e: an
             toast.error(typeof errors === "string" ? errors : "Unexpected error");
         },
     });
+
+}

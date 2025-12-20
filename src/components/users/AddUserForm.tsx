@@ -72,7 +72,7 @@ const AddUserForm: FC<IAddDeviceOrUserFormProps> = (props) => {
                     <Button variant="outline" onClick={onClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSubmit} disabled={isPending} className="bg-blue-500 text-white shadow-sm">
+                    <Button onClick={handleSubmit} disabled={isPending} className="bg-blue-500 text-white shadow-sm hover:bg-blue-600">
                         {isPending ? <Loader2 className="animate-spin" /> : "Add"}
                     </Button>
 
