@@ -274,6 +274,8 @@ export function AllDevices() {
       );
     },
   });
+
+  
   const confirmDeviceDelete = useCallback(() => {
     if (deviceToDelete) {
       setDeleteLoading(true);
