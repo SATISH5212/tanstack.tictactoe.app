@@ -4,7 +4,7 @@ import { useDevicesQuery } from "@/hooks/devices/useDeviceQueries";
 import { getInitialDeviceQueryParams } from "@/lib/helpers/map/devices/deviceQueryParams";
 import { useDebouncedValue } from "@/lib/helpers/useDebouncedValue";
 import { useUserDetails } from "@/lib/helpers/userpermission";
-import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { Outlet, useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocationContext } from "../context/LocationContext";
@@ -23,7 +23,8 @@ const AllDevices = () => {
   const location = useLocation() as { pathname: string; search: string };
   const navigate = useNavigate();
   const initialParams = getInitialDeviceQueryParams(location.search);
-
+  const { device_id } = useParams({ strict: false })
+  console.log(device_id, "jamjam001")
   const [searchString, setSearchString] = useState(initialParams.searchString);
   const [selectedStatus, setSelectedStatus] = useState(
     initialParams.deploymentStatus
@@ -222,7 +223,8 @@ const AllDevices = () => {
             sortType={sortType}
             setSortBy={setSortBy}
             setSortType={setSortType}
-            removeSortingForColumnIds={["actions","location","user","voltage_current","state","signal_quality","mode"]}
+            removeSortingForColumnIds={["actions", "location", "user", "voltage_current", "state", "signal_quality", "mode"]}
+            isSelectedId={device_id as string}
           />
         </div>
       </div>

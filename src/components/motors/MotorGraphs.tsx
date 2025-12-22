@@ -63,7 +63,10 @@ const MotorGraphs = () => {
   return (
     <div className="py-2 h-[calc(100vh-50px)]  ">
       <div className="flex flex-row justify-between  items-center px-2 py-2">
-        <div className="text-md ">DeviceTitle</div>
+        <div className="text-md ">
+          <span>==</span>
+          <span></span>
+        </div>
         <CustomDateCalendar
           date={date}
           setDate={setDate}

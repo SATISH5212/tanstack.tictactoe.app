@@ -38,7 +38,9 @@ const TanStackTable: FC<any> = ({
   sortType,
   setSortBy,
   setSortType,
+  isSelectedId,
 }: any) => {
+  console.log(isSelectedId, "devdevw")
   const router = useRouter();
   const location = useLocation();
 
@@ -180,7 +182,7 @@ const TanStackTable: FC<any> = ({
                     </TableRow>
                   ))
                 ) : (
-                  table.getRowModel().rows.map((row, index) => {
+                  table.getRowModel().rows.map((row: any, index) => {
                     const isLast =
                       index === table.getRowModel().rows.length - 1;
                     return (
@@ -188,9 +190,9 @@ const TanStackTable: FC<any> = ({
                         key={row.id}
                         ref={isLast ? lastRowRef : null}
                         onClick={() => onRowClick?.(row.original)}
-                        className="hover:bg-[#eef5f8] cursor-pointer "
+                        className={`hover:bg-[#eef5f8] cursor-pointer ${isSelectedId == row?.original?.id && "bg-[#eef5f8]"}`}
                       >
-                        {row.getVisibleCells().map((cell) => (
+                        {row.getVisibleCells().map((cell: any) => (
                           <TableCell
                             key={cell.id}
                             style={{
