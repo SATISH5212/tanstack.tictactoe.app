@@ -1,4 +1,4 @@
-import { useScrollDownObserver } from "@/hooks/core/useScrolldownObserver";
+import { useScrolldownObserver } from "@/hooks/core/useScrolldownObserver";
 import { useDeviceMutation } from "@/hooks/devices/useDeviceMutation";
 import { useDevicesQuery } from "@/hooks/devices/useDeviceQueries";
 import { getInitialDeviceQueryParams } from "@/lib/helpers/map/devices/deviceQueryParams";
@@ -9,6 +9,7 @@ import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocationContext } from "../context/LocationContext";
 import DeleteDialog from "../core/DeleteDialog";
+import EditDeviceSheet from "../core/EditDeviceSheet";
 import LocationDropdown from "../core/LocationDropdown";
 import SearchFilter from "../core/SearchFilter";
 import TanStackTable from "../core/TanstackTable";
@@ -16,7 +17,6 @@ import UserDropdown from "../core/UsersDropdown";
 import { DeviceColumns } from "./DeviceColumns";
 import DevicesFilter from "./DevicesFilter";
 import AddDevice from "./add";
-import EditDeviceSheet from "../core/EditDeviceSheet";
 
 const AllDevices = () => {
   const { isSuperAdmin } = useUserDetails();
@@ -50,6 +50,7 @@ const AllDevices = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deviceToDelete, setDeviceToDelete] = useState<any | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
 
   const {
     locations,
@@ -97,6 +98,7 @@ const AllDevices = () => {
     [data]
   );
 
+
   const confirmDeviceDelete = useCallback(() => {
     if (!deviceToDelete) return;
     setDeleteLoading(true);
@@ -109,16 +111,19 @@ const AllDevices = () => {
     });
   }, [deviceToDelete, deleteDeviceMutation]);
 
-  const { observe: lastRowRef } = useScrollDownObserver({
-    enabled: !isFetching && !isFetchingNextPage && hasNextPage,
-    onIntersect: fetchNextPage,
-  });
-
   useEffect(() => {
     setSelectedFiltersCount(
       Number(selectedStatus !== "ALL") + Number(deviceStatusFilter !== "ALL")
     );
   }, [selectedStatus, deviceStatusFilter]);
+
+  const { lastRowRef } = useScrolldownObserver({
+    hasNextPage: hasNextPage ?? false,
+    isFetchingNextPage,
+    fetchNextPage,
+    dataLength: deviceData.length,
+    containerId: "devicesTable",
+  });
 
   return (
     <div className="w-full flex justify-between h-full bg-white">
@@ -193,8 +198,6 @@ const AllDevices = () => {
           id="devicesTable"
           className="relative flex-1 overflow-auto h-[calc(100vh-140px)]"
         >
-
-
           <TanStackTable
             columns={DeviceColumns({
               refetchDevices,
@@ -210,7 +213,6 @@ const AllDevices = () => {
             loading={isFetching && !isFetchingNextPage}
             lastRowRef={lastRowRef}
             isFetchingNextPage={isFetchingNextPage}
-            // heightClass={"h-[calc(100vh-110px)]"}
             onRowClick={(device: any) =>
               navigate({
                 to: `/devices/${device.id}/motors/${device.motors?.[0]?.id}`,
@@ -220,6 +222,7 @@ const AllDevices = () => {
             sortType={sortType}
             setSortBy={setSortBy}
             setSortType={setSortType}
+            removeSortingForColumnIds={["actions","location","user","voltage_current","state","signal_quality","mode"]}
           />
         </div>
       </div>

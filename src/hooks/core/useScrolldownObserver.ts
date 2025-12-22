@@ -1,32 +1,57 @@
-import { UseIntersectionObserverProps } from "@/lib/interfaces/core/iTable";
-import { useCallback, useRef } from "react";
-export function useScrollDownObserver({
-    onIntersect,
-    enabled = true,
-    root = null,
-    rootMargin = "0px",
-    threshold = 0.1,
-}: UseIntersectionObserverProps) {
-    const observerRef = useRef<IntersectionObserver | null>(null);
-    const observe = useCallback((node: Element | null) => {
-        if (!enabled || !node) return;
-        observerRef.current?.disconnect();
+import { useEffect, useRef } from "react";
 
-        observerRef.current = new IntersectionObserver((entries) => {
-            if (entries[0]?.isIntersecting) {
-                onIntersect();
-            }
-        },
-            { root, rootMargin, threshold }
-        );
-
-        observerRef.current.observe(node);
-    },
-        [enabled, onIntersect, root, rootMargin, threshold]);
-
-    const disconnect = useCallback(() => {
-        observerRef.current?.disconnect();
-    }, []);
-
-    return { observe, disconnect, };
+interface UseInfiniteScrollOptions {
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  fetchNextPage: () => void;
+  dataLength: number;
+  containerId: string;
+  rootMargin?: string;
+  threshold?: number;
 }
+
+export const useScrolldownObserver = ({
+  hasNextPage,
+  isFetchingNextPage,
+  fetchNextPage,
+  dataLength,
+  containerId,
+  rootMargin = "200px",
+  threshold = 0.1,
+}: UseInfiniteScrollOptions) => {
+  const lastRowRef = useRef<HTMLTableRowElement | null>(null);
+
+  useEffect(() => {
+    const currentRef = lastRowRef.current;
+    const scrollContainer = document.getElementById(containerId);
+
+    if (!currentRef || !scrollContainer || isFetchingNextPage || !hasNextPage) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        });
+      },
+      {
+        root: scrollContainer,
+        rootMargin,
+        threshold,
+      }
+    );
+
+    observer.observe(currentRef);
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [dataLength, hasNextPage, isFetchingNextPage, fetchNextPage, containerId, rootMargin, threshold]);
+
+  return { lastRowRef };
+};

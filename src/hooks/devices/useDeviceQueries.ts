@@ -14,8 +14,8 @@ export function useDevicesQuery(params: {
 }) {
     return useInfiniteQuery({
         queryKey: ["devices", params],
-        initialPageParam: params.pageIndex,
-        queryFn: async ({ pageParam }) => {
+        initialPageParam: 1,
+        queryFn: async ({ pageParam = 1 }) => {
             const response = await getAllPaginatedDeviceData({
                 pageIndex: pageParam,
                 page_size: params.page_size,
@@ -32,17 +32,23 @@ export function useDevicesQuery(params: {
                 ...(params.sortType && { sort_type: params.sortType }),
             });
 
-            const { records = [], pagination } = response?.data?.data || {};
+            const { records = [], pagination_info } = response?.data?.data || {};
+            const startSerial = (pageParam - 1) * 10 + 1;
+            const dataWithSerial = records.map((record: any, index: number) => ({
+                ...record,
+                serial: startSerial + index,
+            }));
 
             return {
-                data: records,
-                pagination,
+                data: dataWithSerial,
+                pagination: pagination_info,
             };
         },
-        getNextPageParam: (lastPage) =>
-            lastPage.pagination?.current_page < lastPage.pagination?.total_pages
-                ? lastPage.pagination.current_page + 1
-                : undefined,
+        getNextPageParam: (lastPage) => {
+            const hasNextPage = lastPage.pagination?.next_page !== null;
+            const nextPage = lastPage.pagination?.next_page;
+            return hasNextPage ? nextPage : undefined;
+        },
         staleTime: 5 * 60 * 1000,
         refetchOnWindowFocus: false,
         retry: false,

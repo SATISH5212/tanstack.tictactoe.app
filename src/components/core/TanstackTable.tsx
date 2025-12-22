@@ -106,7 +106,7 @@ const TanStackTable: FC<any> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden">
+    <div className="w-full h-full flex flex-col">
       {!data.length && !loading ? (
         <div className="h-full flex flex-col items-center justify-center text-gray-500">
           {location.pathname.startsWith("/devices") ? (
@@ -126,99 +126,99 @@ const TanStackTable: FC<any> = ({
           )}
         </div>
       ) : (
-        <div className="flex-1 flex flex-col overflow-auto">
-          <Table className="w-full table-fixed">
-            <TableHeader className="bg-[#eef5f8]">
-              {table.getHeaderGroups().map((group) => (
-                <TableRow key={group.id}>
-                  {group.headers.map((header, index) => (
-                    <TableHead
-                      key={header.id}
-                      className="text-xs font-normal"
-                      style={{
-                        width: getWidth(header.id),
-                        minWidth: getWidth(header.id),
-                      }}
-                    >
-                      {!header.isPlaceholder && (
-                        <div
-                          onClick={() => sortAndGetData(header)}
-                          className={`flex items-center gap-1 ${header.column.getCanSort()
-                            ? "cursor-pointer select-none"
-                            : ""
-                            }`}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          <SortItems
-                            header={header}
-                            removeSortingForColumnIds={
-                              removeSortingForColumnIds
-                            }
-                            sortBy={sortBy}
-                            sortType={sortType}
-                          />
-                        </div>
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {loading && !isFetchingNextPage ? (
-                [...Array(15)].map((_, i) => (
-                  <TableRow key={i}>
-                    {columns.map((_: any, j: number) => (
-                      <TableCell key={j}>
-                        <Skeleton className="h-3 w-3/5" />
-                      </TableCell>
+        <>
+          <div className="flex-1 overflow-auto ">
+            <Table className="w-full table-fixed overflow-y-auto !h-full ">
+              <TableHeader className="bg-[#eef5f8] sticky top-0 z-10">
+                {table.getHeaderGroups().map((group) => (
+                  <TableRow key={group.id}>
+                    {group.headers.map((header, index) => (
+                      <TableHead
+                        key={header.id}
+                        className="text-xs font-normal"
+                        style={{
+                          width: getWidth(header.id),
+                          minWidth: getWidth(header.id),
+                        }}
+                      >
+                        {!header.isPlaceholder && (
+                          <div
+                            onClick={() => sortAndGetData(header)}
+                            className={`flex items-center gap-1 ${header.column.getCanSort()
+                              ? "cursor-pointer select-none"
+                              : ""
+                              }`}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                            <SortItems
+                              header={header}
+                              removeSortingForColumnIds={
+                                removeSortingForColumnIds
+                              }
+                              sortBy={sortBy}
+                              sortType={sortType}
+                            />
+                          </div>
+                        )}
+                      </TableHead>
                     ))}
                   </TableRow>
-                ))
-              ) : (
-                table.getRowModel().rows.map((row, index) => {
-                  const isLast =
-                    index === table.getRowModel().rows.length - 1;
-                  return (
-                    <TableRow
-                      key={row.id}
-                      ref={isLast ? lastRowRef : null}
-                      onClick={() => onRowClick?.(row.original)}
-                      className="hover:bg-[#eef5f8] cursor-pointer"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          style={{
-                            width: getWidth(cell.column.id),
-                            minWidth: getWidth(cell.column.id),
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                ))}
+              </TableHeader>
+              <TableBody>
+                {loading && !isFetchingNextPage ? (
+                  [...Array(15)].map((_, i) => (
+                    <TableRow key={i}>
+                      {columns.map((_: any, j: number) => (
+                        <TableCell key={j}>
+                          <Skeleton className="h-3 w-3/5" />
                         </TableCell>
                       ))}
                     </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
-
-          <div className="flex-1 overflow-y-auto">
-            {isFetchingNextPage && (
-              <div className="sticky bottom-0 bg-white border-t py-3 flex justify-center items-center gap-2">
-                <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
-                <span className="text-sm text-gray-600">Loading more…</span>
-              </div>
-            )}
+                  ))
+                ) : (
+                  table.getRowModel().rows.map((row, index) => {
+                    const isLast =
+                      index === table.getRowModel().rows.length - 1;
+                    return (
+                      <TableRow
+                        key={row.id}
+                        ref={isLast ? lastRowRef : null}
+                        onClick={() => onRowClick?.(row.original)}
+                        className="hover:bg-[#eef5f8] cursor-pointer "
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell
+                            key={cell.id}
+                            style={{
+                              width: getWidth(cell.column.id),
+                              minWidth: getWidth(cell.column.id),
+                            }}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
           </div>
-        </div>
+
+          {isFetchingNextPage && (
+            <div className="bg-white border-t py-3 flex justify-center items-center gap-2">
+              <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
+              <span className="text-sm text-gray-600">Loading more devices…</span>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -59,3 +59,13 @@ export interface EditDeviceSheetProps {
     onClose: () => void;
     refetch: () => void;
 };
+
+
+export interface DeviceColumnsProps {
+    refetchDevices: () => void;
+    setEditState: (state: { isOpen: boolean; device: any | null }) => void;
+    handleDelete: (device: any) => void;
+    debounceSearchString?: string;
+    pageSize?: number;
+    assignedMember: any;
+}

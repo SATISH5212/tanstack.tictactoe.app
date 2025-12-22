@@ -5,7 +5,7 @@ export const getInitialDeviceQueryParams = (search: string) => {
         deviceStatus: params.get("status") || "ALL",
         deploymentStatus: params.get("device_status") || "ALL",
         pageIndex: Number(params.get("current_page")) || 1,
-        page_size: Number(params.get("page_size")) || 40,
+        page_size: Number(params.get("page_size")) || 10,
         sortBy: params.get("sort_by"),
         sortType: params.get("sort_type"),
     };
