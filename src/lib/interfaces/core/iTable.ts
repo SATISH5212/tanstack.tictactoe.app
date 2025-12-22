@@ -25,3 +25,12 @@ export interface iConfirmDialog {
   setDeleteReason?: Dispatch<SetStateAction<string>>;
   deleteReason?: string
 }
+
+
+export interface UseIntersectionObserverProps {
+  onIntersect: () => void;
+  enabled?: boolean;
+  root?: Element | null;
+  rootMargin?: string;
+  threshold?: number;
+};
