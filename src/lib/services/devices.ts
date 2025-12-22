@@ -31,10 +31,8 @@ export const getAllPaginatedDeviceData = async ({
   }
 };
 export const getSingleDeviceAPI = async (id: string | undefined) => {
-  const queryParams = {
-  };
-  try {
-    return await $fetch.get(`/starter/${id}/motors`, queryParams);
+   try {
+    return await $fetch.get(`/starters/${id}/motors`);
   } catch (err) {
     throw err;
   }
