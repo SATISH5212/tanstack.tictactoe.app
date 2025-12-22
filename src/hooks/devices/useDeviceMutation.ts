@@ -1,6 +1,7 @@
 import { UseDeviceMutationProps } from "@/lib/interfaces/devices";
 import {
     addDeviceAPI,
+    updateDeviceDetailsAPI,
     updateDeviceStatusAPI,
 } from "@/lib/services/devices";
 import { deleteUsersDeviceAPI } from "@/lib/services/users";
@@ -71,6 +72,31 @@ export const useDeviceMutation = ({
             toast.error(error?.data?.message || "Failed to update device status");
         },
     });
+
+    const updateDeviceDetailsMutation = useMutation({
+        mutationKey: ["update-device-details"],
+        mutationFn: ({
+            deviceId,
+            payload,
+        }: {
+            deviceId: number;
+            payload: any
+        }) => updateDeviceDetailsAPI(deviceId, payload),
+        onSuccess: (res,) => {
+            toast.success(res?.data?.message);
+        },
+
+        onError: (error: any) => {
+            if (error?.status === 422) {
+                setErrors?.(error?.data?.errors || {});
+                return;
+            }
+
+            toast.error(error?.data?.message || "Failed to update device status");
+        },
+    });
+
+
     const deleteDeviceMutation = useMutation({
         mutationKey: ["delete-device"],
         mutationFn: deleteUsersDeviceAPI,
@@ -90,5 +116,6 @@ export const useDeviceMutation = ({
         addDeviceMutation,
         updateDeviceStatusMutation,
         deleteDeviceMutation,
+        updateDeviceDetailsMutation,
     };
 };

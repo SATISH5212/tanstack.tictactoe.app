@@ -183,10 +183,7 @@ export const DeviceColumns = ({
             setDialogOpen(true);
             return;
           }
-          updateDeviceStatusMutation.mutate({
-            deviceId,
-            status: newStatus,
-          },
+          updateDeviceStatusMutation.mutate({ deviceId, status: newStatus, },
             {
               onSettled: () => {
                 refetchDevices();

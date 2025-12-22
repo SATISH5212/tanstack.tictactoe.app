@@ -44,3 +44,18 @@ export interface GetAllPaginatedUsersPropTypes {
     power: any;
     status: any
 }
+
+export interface DeviceData {
+    id: number;
+    name: string;
+    mac_address: string;
+    pcb_number?: string;
+    starter_number?: string;
+    gateway_id?: number | string | null;
+};
+
+export interface EditDeviceSheetProps {
+    device: DeviceData
+    onClose: () => void;
+    refetch: () => void;
+};

@@ -202,6 +202,15 @@ export const updateDeviceUsersAPI = async (id: any, payload: any) => {
     throw err;
   }
 };
+
+export const updateDeviceDetailsAPI = async (id: any, payload: any) => {
+  try {
+    return await $fetch.patch(`/starters/${id}/details`, payload);
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const assignUserForDeviceAPI = async (payload: any) => {
   try {
     return await $fetch.patch(`/starters/assign-web`, payload);

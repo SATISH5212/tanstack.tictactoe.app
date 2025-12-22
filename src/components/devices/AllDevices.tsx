@@ -228,7 +228,6 @@ const AllDevices = () => {
           device={editState.device}
           onClose={() => setEditState({ isOpen: false, device: null })}
           refetch={refetchDevices}
-          gateways=""
         />
       )}
 
