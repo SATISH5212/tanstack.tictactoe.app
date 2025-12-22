@@ -53,7 +53,7 @@ interface DeviceColumnsProps {
   debounceSearchString?: string;
   pageSize?: number;
   assignedMember: any;
-  onViewRawData: (device: any) => void;
+  // onViewRawData: (device: any) => void;
 }
 
 export const DeviceColumns = ({
@@ -65,7 +65,7 @@ export const DeviceColumns = ({
   debounceSearchString,
   assignedMember,
   pageSize,
-  onViewRawData,
+  // onViewRawData,
 }: DeviceColumnsProps): ColumnDef<any>[] => {
   const [logsSheetOpen, setLogsSheetOpen] = useState(false);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);

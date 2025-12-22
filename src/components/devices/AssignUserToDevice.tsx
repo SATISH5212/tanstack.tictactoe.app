@@ -53,24 +53,8 @@ const AssignUserToDevice: React.FC<AssignUserProps> = ({
       enabled: open,
     });
 
-     // const usersData = useMemo(() => {
-  //   return data?.pages.flatMap((page) => page.records) || [];
-  // }, [data]);
-
-
   const filteredUsers = data
 
-  // const handleScroll = (e: React.SyntheticEvent) => {
-  //   const container = e.currentTarget as HTMLDivElement;
-  //   if (
-  //     hasNextPage &&
-  //     !isFetchingNextPage &&
-  //     container.scrollTop + container.clientHeight >=
-  //       container.scrollHeight - 10
-  //   ) {
-  //     fetchNextPage();
-  //   }
-  // };
 
   const assignUserToDeviceMutation = useMutation({
     mutationFn: (userId: number) => {
@@ -152,7 +136,6 @@ const AssignUserToDevice: React.FC<AssignUserProps> = ({
           />
           <div
             ref={userListRef}
-            // onScroll={handleScroll}
             className="h-60 overflow-y-auto mt-2"
           >
             <RadioGroup
@@ -198,11 +181,6 @@ const AssignUserToDevice: React.FC<AssignUserProps> = ({
                       </Label>
                     </div>
                   ))}
-                  {/* {isFetchingNextPage && (
-                    <div className="flex justify-center py-2">
-                      <div className="w-5 h-5 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
-                    </div>
-                  )} */}
                 </>
               )}
             </RadioGroup>

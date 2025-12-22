@@ -1,10 +1,8 @@
 import { useUserDetails } from "@/lib/helpers/userpermission";
-import { deleteUsersDeviceAPI } from "@/lib/services/users";
 import {
   useInfiniteQuery,
-  useMutation,
   useQuery,
-  useQueryClient,
+  useQueryClient
 } from "@tanstack/react-query";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
@@ -15,26 +13,23 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { toast } from "sonner";
 import {
   getAllPaginatedDeviceData,
   getSingleDeviceAPI,
 } from "src/lib/services/deviceses";
-import DeleteDialog from "../core/DeleteDialog";
-import EditDeviceSheet from "../core/EditDeviceSheet";
 import InfoDialogBox from "../core/InfoDialogBox";
 import SearchFilter from "../core/SearchFilter";
 import TanStackTable from "../core/TanstackTable";
 
+import { useLocationContext } from "../context/LocationContext";
 import LocationDropdown from "../core/LocationDropdown";
 import UserDropdown from "../core/UsersDropdown";
 import { DeviceColumns } from "./DeviceColumns";
 import DevicesFilter from "./DevicesFilter";
 import AddDevice from "./add";
-import { useLocationContext } from "../context/LocationContext";
 
 export function AllDevices() {
-  const { isUser, isSuperAdmin } = useUserDetails();
+  const { isSuperAdmin } = useUserDetails();
   const location = useLocation() as { pathname: string; search: string };
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -58,10 +53,7 @@ export function AllDevices() {
   const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
   const [deviceDetails, setDeviceDetails] = useState<any>({});
 
-  const [showSettings, setShowSettings] = useState(false);
   const [deviceId, setDeviceId] = useState<any>();
-  const [gateway, setGateway] = useState<any>(null);
-  const [gatewayId, setGatewayId] = useState<any>(null);
   const [isTestDevice, setIsTestDevice] = useState<boolean>(false);
   const [editState, setEditState] = useState<{
     isOpen: boolean;
@@ -69,18 +61,10 @@ export function AllDevices() {
   }>({ isOpen: false, device: null });
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deviceToDelete, setDeviceToDelete] = useState<any | null>(null);
-  const [errors, setErrors] = useState<{ gateway_title?: string }>({});
-  const [title, setTitle] = useState("");
-  const [originalTitle, setOriginalTitle] = useState("");
-  const [showIcons, setShowIcons] = useState(false);
   const [assignedMember, setAssignUserMember] = useState<any>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>(
     initialDeviceDeploymentStatus
   );
-  const [isMotorDrawerOpen, setIsMotorDrawerOpen] = useState(false);
-  const [selectedMotor, setSelectedMotor] = useState<any>(null);
-  const [selectedDeviceForDrawer, setSelectedDeviceForDrawer] =
-    useState<any>(null);
   const [powerStatus, setPowerStatus] = useState<string | null>(null);
   const [deviceStatusFilter, setDeviceStatusFilter] =
     useState<string>(initialStatus);
@@ -220,84 +204,7 @@ export function AllDevices() {
     enabled: !!deviceId,
     staleTime: 5 * 60 * 1000,
   });
-
-
-
-  const deletedeviceMutation = useMutation({
-    mutationFn: (deviceId: string) => deleteUsersDeviceAPI(deviceId),
-    onMutate: async (deviceId) => {
-      await queryClient.cancelQueries({
-        queryKey: ["devices", debounceSearchString, pageSizeParam],
-      });
-      const previousData = queryClient.getQueryData([
-        "devices",
-        debounceSearchString,
-        pageSizeParam,
-      ]);
-      queryClient.setQueryData(
-        ["devices", debounceSearchString, pageSizeParam],
-        (oldData: any) => {
-          if (!oldData?.pages) return oldData;
-          const updatedPages = oldData.pages.map((page: any) => ({
-            ...page,
-            data: page.data.filter((device: any) => device.id !== deviceId),
-          }));
-          const affectedPageIndex = oldData.pages.findIndex((page: any) =>
-            page.data.some((device: any) => device.id === deviceId)
-          );
-          if (
-            affectedPageIndex >= 0 &&
-            updatedPages[affectedPageIndex].data.length === 0 &&
-            affectedPageIndex < oldData.pages.length - 1
-          ) {
-            fetchNextPage();
-          }
-          return { ...oldData, pages: updatedPages };
-        }
-      );
-      return { previousData };
-    },
-    onSuccess: (response, deviceId) => {
-     toast.success("device deleted successfully")
-    },
-    onError: (error: any, deviceId, context) => {
-      queryClient.setQueryData(
-        ["devices", debounceSearchString, pageSizeParam],
-        context?.previousData
-      );
-      toast.error(
-        error?.message ||
-        "Starter box was connected to motors and cannot be deleted"
-      );
-    },
-  });
-
   
-  const confirmDeviceDelete = useCallback(() => {
-    if (deviceToDelete) {
-      setDeleteLoading(true);
-      deletedeviceMutation.mutate(deviceToDelete?.id, {
-        onSuccess: (response) => {
-           toast.success(response?.data?.message);
-        },
-        onSettled: () => {
-          setDeleteLoading(false);
-          setIsDeleteDialogOpen(false);
-          setDeviceToDelete(null);
-        },
-      });
-    }
-  }, [
-    deviceToDelete,
-    deletedeviceMutation,
-    // device_id,
-    navigate,
-    refetchDevices,
-  ]);
-
-  const toggleShowIcons = () => {
-    setShowIcons((prev) => !prev);
-  };
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastRowRef = useCallback(
@@ -317,42 +224,8 @@ export function AllDevices() {
     [isFetching, isFetchingNextPage, hasNextPage, fetchNextPage]
   );
 
-  const handleViewRawData = useCallback(
-    (device: any) => {
-      const defaultMotor = {
-        id: "mtr_1",
-        title: "Motor 1 (M1)",
-        motor_ref_id: "mtr_1",
-        hp: "",
-        state: 0,
-        pond: {
-          id: "",
-          title: "",
-          location: {
-            id: "",
-            title: "",
-          },
-        },
-      };
-      setSelectedMotor(defaultMotor);
-      setSelectedDeviceForDrawer(device);
-      setIsMotorDrawerOpen(true);
-      const capableMotorsValue =
-        device.capable_motors && device.capable_motors > 0
-          ? device.capable_motors
-          : device.starterBoxParameters?.length || 1;
-
-      navigate({
-        to: `/devices/${device.id}/motors/mtr_1`,
-        search: {
-          motor_ref_id: "mtr_1",
-        },
-      });
-    },
-    [navigate, debounceSearchString, selectedStatus, powerStatus]
-  );
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
+ 
+ const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     setDebounceSearchString(searchString);
@@ -366,7 +239,6 @@ export function AllDevices() {
       console.warn("Missing deviceId or motorId", { deviceId, firstMotorId });
       return;
     }
-    const starterAndMotorId = `${deviceId}@${firstMotorId}`;
     navigate({
       to: `/devices/${deviceId}/motors/${firstMotorId}`,
       search: {
@@ -379,13 +251,10 @@ export function AllDevices() {
     setIsInfoDialogOpen(true);
     setDeviceDetails({
       id: device?.id,
-      title: device?.title || "",
+      name: device?.name || "",
       serial_no: device?.mcu_serial_no || "",
-      ipv6: device?.ipv6 || "",
       mac_address: device?.mac_address || "",
       pcb_number: device?.pcb_number || "",
-      gateway_name: device?.gateways?.title || "",
-      pond_name: device?.pond_name || "",
       test_date: device?.test_date || "",
       deployed_date: device?.deployed_date || "",
     });
@@ -405,11 +274,9 @@ export function AllDevices() {
       );
     }
   }, [singleDeviceData?.device_status]);
-
-
+  
 
   useEffect(() => {
-    const currentSearchParams = new URLSearchParams(location.search);
     navigate({
       to: "/devices",
       search: {
@@ -546,7 +413,7 @@ export function AllDevices() {
               handleDelete: handleDeleteClick,
               debounceSearchString,
               assignedMember,
-              onViewRawData: handleViewRawData,
+              // onViewRawData: handleViewRawData,
             })}
             data={deviceData}
             loading={isFetching && !isFetchingNextPage}
@@ -589,26 +456,7 @@ export function AllDevices() {
           onCancelClick={() => setIsInfoDialogOpen(false)}
           deviceDetails={deviceDetails}
         />
-      )}
-      {editState.isOpen && (
-        <EditDeviceSheet
-          device={editState.device}
-          onClose={() => setEditState({ isOpen: false, device: null })}
-          refetch={refetchDevices}
-          gateways={""}
-        />
-      )}
-      {isDeleteDialogOpen && (
-        <DeleteDialog
-          openOrNot={isDeleteDialogOpen}
-          onCancelClick={() => setIsDeleteDialogOpen(false)}
-          onOKClick={confirmDeviceDelete}
-          label="Are you sure you want to delete this device?"
-          deleteLoading={deleteLoading}
-          buttonLable="Delete"
-          buttonLabling="Deleting..."
-        />
-      )}
+      )}     
     </div>
   );
 }
