@@ -77,7 +77,7 @@ export const exportUsersDevicesAPI = async (user_id: any, queryParams: any) => {
 
 export const deleteUsersDeviceAPI = async (id: string) => {
   try {
-    return await $fetch.delete(`/starters/${id}`);
+    return await $fetch.patch(`/starters/${id}`);
   } catch (err) {
     throw err;
   }

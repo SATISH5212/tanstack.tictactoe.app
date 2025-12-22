@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { UseDeviceMutationProps } from "@/lib/interfaces/devices";
 import { addDeviceAPI } from "@/lib/services/deviceses";
 import { deleteUsersDeviceAPI } from "@/lib/services/users";
-import { UseDeviceMutationProps } from "@/lib/interfaces/devices";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 
 export const useDeviceMutation = ({
@@ -32,7 +32,6 @@ export const useDeviceMutation = ({
                 setErrors?.(error?.data?.errors || {});
                 return;
             }
-
             toast.error(error?.data?.message || "Something went wrong");
         },
     });
@@ -40,34 +39,12 @@ export const useDeviceMutation = ({
     const deleteDeviceMutation = useMutation({
         mutationKey: ["delete-device"],
         mutationFn: deleteUsersDeviceAPI,
-        onMutate: async (deviceId: string) => {
-            await queryClient.cancelQueries({ queryKey: ["devices"] });
-
-            const previousData = queryClient.getQueryData(["devices"]);
-
-            queryClient.setQueryData(["devices"], (old: any) => {
-                if (!old?.pages) return old;
-
-                return {
-                    ...old,
-                    pages: old.pages.map((page: any) => ({
-                        ...page,
-                        data: page.data.filter((d: any) => d.id !== deviceId),
-                    })),
-                };
-            });
-
-            return { previousData };
-        },
-        onSuccess: () => {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["devices"] });
             toast.success("Device deleted successfully");
         },
-        onError: (error: any, _deviceId, context) => {
-            queryClient.setQueryData(["devices"], context?.previousData);
-            toast.error(
-                error?.data?.message ||
-                "Starter box is connected to motors and cannot be deleted"
-            );
+        onError: (error: any, _deviceId,) => {
+            toast.error(error?.data?.message || "Starter box is connected to motors and cannot be deleted");
         },
     });
 

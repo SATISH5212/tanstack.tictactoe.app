@@ -1,5 +1,4 @@
- 
-  /* Import the fonts */
+/* Import the fonts */
 @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100;200;300;400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
@@ -12,14 +11,10 @@ body {
   font-family: "Inter", sans-serif !important;
   margin: 0;
   padding: 0;
-  /* overflow: hidden; */
-   background: linear-gradient(
-    90deg,
-    #f3f9fc 0%,
-    #eef5f8 50%,  
-    #e7f0f4 100%
-  );
-
+  background: linear-gradient(90deg,
+      #f3f9fc 0%,
+      #eef5f8 50%,
+      #e7f0f4 100%);
 }
 
 @layer base {
@@ -36,7 +31,7 @@ body {
   }
 
   .-top-custom_76 {
-    top: -79px
+    top: -79px;
   }
 }
 
@@ -53,33 +48,85 @@ body {
   @apply bg-f0f0f0 !rounded-md;
 }
 
+/* Device Table Sticky Columns with Proper Z-Index Layering */
+
+/* HEADER ROW - Highest z-index for sticky headers */
 #devicesTable thead tr th:first-child {
-  @apply sticky left-0 ;
-}
-
-#devicesTable thead tr th:last-child {
-  @apply sticky right-0 ;
-}
-#devicesTable tbody tr td:last-child {
-  @apply sticky right-0 
-}
-
-#devicesTable tbody tr td:first-child {
-  @apply sticky left-0 z-10;
-}
-
-
-
-
-#devicesTable tbody tr td:last-child {
-  @apply sticky right-0
+  @apply sticky left-0 bg-[#eef5f8];
+  z-index: 50 !important;
 }
 
 #devicesTable thead tr th:nth-child(2) {
-  @apply sticky left-[114px]  z-30;
+  @apply sticky left-[100px] bg-[#eef5f8];
+  z-index: 50 !important;
+}
+
+#devicesTable thead tr th:last-child {
+  @apply sticky right-0 bg-[#eef5f8];
+  z-index: 50 !important;
+}
+
+#devicesTable tbody tr td:first-child {
+  @apply sticky left-0 bg-white;
+  z-index: 30 !important;
 }
 
 #devicesTable tbody tr td:nth-child(2) {
-  @apply sticky left-[114px]  z-30;
+  @apply sticky left-[100px] bg-white;
+  z-index: 30 !important;
 }
 
+#devicesTable tbody tr td:last-child {
+  @apply sticky right-0 bg-white;
+  z-index: 30 !important;
+}
+
+/* Ensure non-sticky columns have lower z-index */
+#devicesTable tbody tr td {
+  z-index: 1;
+}
+
+#devicesTable thead tr th {
+  z-index: 40;
+}
+
+#devicesTable tbody tr td:first-child::after,
+#devicesTable thead tr th:first-child::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -1px;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.05), transparent);
+  pointer-events: none;
+}
+
+#devicesTable tbody tr td:nth-child(2)::after,
+#devicesTable thead tr th:nth-child(2)::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -1px;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.05), transparent);
+  pointer-events: none;
+}
+
+#devicesTable tbody tr td:last-child::before,
+#devicesTable thead tr th:last-child::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -1px;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.05), transparent);
+  pointer-events: none;
+}
+
+/* Ensure hover state works correctly with sticky columns */
+#devicesTable tbody tr:hover td {
+  background-color: #eef5f8 !important;
+}

@@ -7,7 +7,6 @@ import { useUserDetails } from "@/lib/helpers/userpermission";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
 import { useLocationContext } from "../context/LocationContext";
 import DeleteDialog from "../core/DeleteDialog";
 import EditDeviceSheet from "../core/EditDeviceSheet";
@@ -77,7 +76,7 @@ const AllDevices = () => {
     refetch: refetchDevices,
   } = useDevicesQuery({
     search: debouncedSearchString,
-    pageSize: initialParams.pageSize,
+    page_size: initialParams.page_size,
     deploymentStatus: selectedStatus,
     deviceStatus: deviceStatusFilter,
     user: selectedUser,
@@ -93,9 +92,6 @@ const AllDevices = () => {
     if (!deviceToDelete) return;
     setDeleteLoading(true);
     deleteDeviceMutation.mutate(deviceToDelete.id, {
-      onSuccess: (res: any) => {
-        toast.success(res?.data?.message || "Device deleted");
-      },
       onSettled: () => {
         setDeleteLoading(false);
         setIsDeleteDialogOpen(false);
@@ -118,7 +114,7 @@ const AllDevices = () => {
   return (
     <div className="w-full flex justify-between h-full bg-white">
       <div className="w-[65%] p-3 space-y-2 border-r border-slate-200">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between h-[30px] ">
           <div className="flex gap-4">
             <div className="w-[250px]">
               <UserDropdown
@@ -148,7 +144,7 @@ const AllDevices = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2  ">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -190,9 +186,10 @@ const AllDevices = () => {
 
         <div
           id="devicesTable"
-          className="relative overflow-auto hide-scrollbar"
-          style={{ maxHeight: "calc(100vh - 150px)" }}
+          className="relative flex-1 overflow-auto h-[calc(100vh-140px)]"
         >
+
+
           <TanStackTable
             columns={DeviceColumns({
               refetchDevices,
@@ -208,6 +205,7 @@ const AllDevices = () => {
             loading={isFetching && !isFetchingNextPage}
             lastRowRef={lastRowRef}
             isFetchingNextPage={isFetchingNextPage}
+            // heightClass={"h-[calc(100vh-110px)]"}
             onRowClick={(device: any) =>
               navigate({
                 to: `/devices/${device.id}/motors/${device.motors?.[0]?.id}`,

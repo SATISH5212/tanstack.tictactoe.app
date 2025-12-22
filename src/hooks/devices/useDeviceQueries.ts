@@ -3,7 +3,7 @@ import { getAllPaginatedDeviceData } from "@/lib/services/deviceses";
 
 export function useDevicesQuery(params: {
     search: string;
-    pageSize: number;
+    page_size: number;
     deploymentStatus: string;
     deviceStatus: string;
     user?: any;
@@ -18,7 +18,7 @@ export function useDevicesQuery(params: {
         queryFn: async ({ pageParam }) => {
             const response = await getAllPaginatedDeviceData({
                 pageIndex: pageParam,
-                pageSize: params.pageSize,
+                page_size: params.page_size,
                 ...(params.search && { search_string: params.search }),
                 ...(params.deploymentStatus !== "ALL" && {
                     device_status: params.deploymentStatus,

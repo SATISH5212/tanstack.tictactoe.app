@@ -1,7 +1,7 @@
 import { $fetch } from "../fetch";
 export const getAllPaginatedDeviceData = async ({
   pageIndex,
-  pageSize,
+  page_size,
   search_string,
   device_status,
   user_id,
@@ -14,7 +14,7 @@ export const getAllPaginatedDeviceData = async ({
   try {
     const queryParams = {
       page: pageIndex,
-      limit: pageSize,
+      page_size,
       search_string,
       device_status,
       user_id,
@@ -211,7 +211,7 @@ export const assignUserForDeviceAPI = async (payload: any) => {
 }
 
 
-export const getAllUsersForDeviceAPI = async (queryParams : any) => {
+export const getAllUsersForDeviceAPI = async (queryParams: any) => {
   try {
     return await $fetch.get(`/users/basic`, queryParams);
   } catch (err) {

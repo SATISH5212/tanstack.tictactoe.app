@@ -1,6 +1,6 @@
 interface GetAllPaginatedUsersPropTypes {
   pageIndex?: number;
-  pageSize?: number;
+  page_size?: number;
   search_string?: string;
   device_status?: any;
   user_id : string;
