@@ -207,10 +207,7 @@ export function AllDevices() {
     return devices;
   }, [data]);
 
-  console.log(deviceData,"devicedata");
-  
-
-  const { data: singleDeviceData } = useQuery({
+    const { data: singleDeviceData } = useQuery({
     queryKey: ["single-device", deviceId],
     queryFn: async () => {
       if (!deviceId) return null;

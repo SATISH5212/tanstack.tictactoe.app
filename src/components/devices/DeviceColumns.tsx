@@ -395,9 +395,7 @@ export const DeviceColumns = ({
       accessorFn: (row: any) => row.starterBoxParameters?.[0]?.power_present,
       id: "power_present",
       cell: (info: any) => {
-        console.log(info, "power presetn ");
-
-        const powerPresent = info.getValue();
+           const powerPresent = info.getValue();
         return (
           <div className="p-2 h-10 items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm flex justify-center">
             <span>{powerPresent === "1" ? <PowerOn /> : <PowerOff />}</span>

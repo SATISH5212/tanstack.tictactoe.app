@@ -53,10 +53,7 @@ const AssignUserToDevice: React.FC<AssignUserProps> = ({
       enabled: open,
     });
 
-    console.log(data,"user data");
-    
-
-  // const usersData = useMemo(() => {
+     // const usersData = useMemo(() => {
   //   return data?.pages.flatMap((page) => page.records) || [];
   // }, [data]);
 
