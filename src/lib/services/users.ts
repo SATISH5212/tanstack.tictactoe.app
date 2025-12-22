@@ -101,33 +101,6 @@ export const createUserAPI = async (payload: any) => {
     throw err;
   }
 };
-//delete user api
-export const deleteUserAPI = async (userId: any) => {
-  try {
-    const response = await $fetch.delete(`/users/${userId}`);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-};
-//update user
-export const updateUserAPI = async (payload: any, userId: any) => {
-  try {
-    const response = await $fetch.patch(`/users/${userId}`, payload);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-};
-//get single users details
-export const getSingleUserAPI = async (userId: any) => {
-  try {
-    const response = await $fetch.get(`/users/${userId}`);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-};
 export const getDeviceInfo = async (id: any) => {
   try {
     const response = await $fetch.get(`/starter/${id}/info`);
@@ -137,37 +110,5 @@ export const getDeviceInfo = async (id: any) => {
   }
 };
 
-export const getAllUserDevicesAPI = async () => {
-  try {
-    const response = await $fetch.get(`/starter/drop-down`);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-};
-
-export const addDeviceToUserAPI = async (motorId: number, payload: any) => {
-  try {
-    return await $fetch.patch(`/motors/${motorId}/config`, payload);
-  } catch (err) {
-    throw err;
-  }
-}
 
 
-export const getPondAlertLogsAPI = async (queryParams: any, pond_id: any) => {
-  try {
-    const response = await $fetch.get(`/ponds/${pond_id}/starter-alerts`, queryParams);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-};
-export const getPondFaultLogsAPI = async (queryParams: any, pond_id: any) => {
-  try {
-    const response = await $fetch.get(`/ponds/${pond_id}/starter-faults`, queryParams);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-};

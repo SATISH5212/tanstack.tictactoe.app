@@ -9,7 +9,6 @@ import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocationContext } from "../context/LocationContext";
 import DeleteDialog from "../core/DeleteDialog";
-import EditDeviceSheet from "../core/EditDeviceSheet";
 import LocationDropdown from "../core/LocationDropdown";
 import SearchFilter from "../core/SearchFilter";
 import TanStackTable from "../core/TanstackTable";
@@ -17,6 +16,7 @@ import UserDropdown from "../core/UsersDropdown";
 import { DeviceColumns } from "./DeviceColumns";
 import DevicesFilter from "./DevicesFilter";
 import AddDevice from "./add";
+import EditDeviceSheet from "../core/EditDeviceSheet";
 
 const AllDevices = () => {
   const { isSuperAdmin } = useUserDetails();
@@ -25,10 +25,16 @@ const AllDevices = () => {
   const initialParams = getInitialDeviceQueryParams(location.search);
 
   const [searchString, setSearchString] = useState(initialParams.searchString);
-  const [selectedStatus, setSelectedStatus] = useState(initialParams.deploymentStatus);
-  const [deviceStatusFilter, setDeviceStatusFilter] = useState(initialParams.deviceStatus);
+  const [selectedStatus, setSelectedStatus] = useState(
+    initialParams.deploymentStatus
+  );
+  const [deviceStatusFilter, setDeviceStatusFilter] = useState(
+    initialParams.deviceStatus
+  );
   const [sortBy, setSortBy] = useState<string | null>(initialParams.sortBy);
-  const [sortType, setSortType] = useState<string | null>(initialParams.sortType);
+  const [sortType, setSortType] = useState<string | null>(
+    initialParams.sortType
+  );
 
   const debouncedSearchString = useDebouncedValue(searchString, 800);
 
@@ -86,7 +92,10 @@ const AllDevices = () => {
     pageIndex: initialParams.pageIndex,
   });
 
-  const deviceData = useMemo(() => data?.pages.flatMap((p) => p.data) || [], [data]);
+  const deviceData = useMemo(
+    () => data?.pages.flatMap((p) => p.data) || [],
+    [data]
+  );
 
   const confirmDeviceDelete = useCallback(() => {
     if (!deviceToDelete) return;
@@ -149,16 +158,11 @@ const AllDevices = () => {
               onSubmit={(e) => {
                 e.preventDefault();
               }}
-              className={`flex items-center gap-1.5 h-8 transition-all ${isSearchOpen
-                ? "border px-2 w-[300px]"
-                : "w-8 justify-center"
+              className={`flex items-center gap-1.5 h-8 transition-all rounded-md ${isSearchOpen ? "border px-2 w-[300px]" : "w-8 justify-center"
                 }`}
             >
               {!isSearchOpen && (
-                <button
-                  type="button"
-                  onClick={() => setIsSearchOpen(true)}
-                >
+                <button type="button" onClick={() => setIsSearchOpen(true)}>
                   <SearchIcon className="w-4 h-4" />
                 </button>
               )}
@@ -167,7 +171,8 @@ const AllDevices = () => {
                   searchString={searchString}
                   setSearchString={setSearchString}
                   title="Search devices"
-                  className="w-full"
+                  className="w-full h-full"
+                  setIsSearchOpen={setIsSearchOpen}
                 />
               )}
             </form>
@@ -244,7 +249,6 @@ const AllDevices = () => {
       )}
     </div>
   );
-}
+};
 
 export default AllDevices;
-

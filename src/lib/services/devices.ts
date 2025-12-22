@@ -39,13 +39,7 @@ export const getSingleDeviceAPI = async (id: string | undefined) => {
     throw err;
   }
 };
-export const getGatewayTitleAPI = async () => {
-  try {
-    return await $fetch.get(`/gateways/test-gateway`);
-  } catch (err) {
-    throw err;
-  }
-};
+
 
 export const updateDeviceStatusAPI = async (
   starter_id: number,
@@ -58,21 +52,7 @@ export const updateDeviceStatusAPI = async (
   }
 }
 
-export const updateGatewayTitleAPI = async ({
-  title,
-}: {
-  title: string;
 
-}) => {
-  try {
-    return await $fetch.put(`/gateways/test-gateway`, {
-      gateway_title:
-        title,
-    });
-  } catch (err) {
-    throw err;
-  }
-};
 export const getSingleMotorAPI = async (motor_id: any) => {
   try {
     return await $fetch.get(
@@ -83,21 +63,7 @@ export const getSingleMotorAPI = async (motor_id: any) => {
   }
 };
 
-export const getStatusGraphAPI = async ({
-  device_id,
-  motor_ref_id,
-}: {
-  device_id: any;
-  motor_ref_id: any;
-}): Promise<any> => {
-  try {
-    return await $fetch.get(
-      `/test-starters/${device_id}/motors/${motor_ref_id}/connected`
-    );
-  } catch (err) {
-    throw err;
-  }
-};
+
 export const getVoltageAndCurrentGraphAPI = async ({
   starter_id,
   queryParams,
@@ -227,20 +193,7 @@ export const getAllUsersForDeviceAPI = async (queryParams: any) => {
     throw err;
   }
 };
-export const AssignDeviceToUserAPI = async (queryParams: any) => {
-  try {
-    return await $fetch.get(`/starter/deployed`, queryParams);
-  } catch (err) {
-    throw err;
-  }
-}
-export const UpdateAssignDeviceToUserAPI = async (payload: any) => {
-  try {
-    return await $fetch.patch(`/starter/assign-user`, payload);
-  } catch (err) {
-    throw err;
-  }
-}
+
 export const getAllDeviceLogsAPI = async (
   starter_id: any,
   queryParams: any
@@ -261,14 +214,3 @@ export const getAllDeviceStatusLogsAPI = async (
     throw err;
   }
 };
-
-
-export const removeDeviceFromMotorAPI = async (
-  motorId: number
-) => {
-  try {
-    return await $fetch.put(`/motors/${motorId}/detach-starter`);
-  } catch (err) {
-    throw err;
-  }
-}

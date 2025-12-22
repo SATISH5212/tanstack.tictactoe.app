@@ -71,6 +71,15 @@ body {
   z-index: 30 !important;
 }
 
+#devicesTable thead tr th:last-child {
+  @apply sticky right-0;
+}
+
+/* table body */
+#devicesTable tbody tr td:first-child {
+  @apply sticky left-0 z-20;
+}
+
 #devicesTable tbody tr td:nth-child(2) {
   @apply sticky left-[100px] bg-white;
   z-index: 30 !important;

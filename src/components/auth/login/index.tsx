@@ -1,7 +1,6 @@
 "use client";
 
 import IdharaLogo from "@/components/svg/iDharaLogo/iDhara_logo";
-import { LogoIcon } from "@/components/svg/LogoIcon";
 import { Button } from "@/components/ui/button";
 import { updateAuthStore } from "@/lib/interfaces/auth/auth";
 import { useMutation } from "@tanstack/react-query";
