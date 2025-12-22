@@ -3,19 +3,16 @@ import { useUserDetails } from "@/lib/helpers/userpermission";
 import { updateDeviceStatusAPI } from "@/lib/services/devices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Divide, Loader2, SettingsIcon, SpaceIcon } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { DeviceLogs } from "../core/DeviceLogs";
+import AddIcon from "../icons/device/AddIcon";
+import DeviceSignalIcon from "../icons/device/DevicesignalIcon";
 import { DeleteDeviceIcon } from "../svg/DeletePond";
 import { EditDeviceIcon } from "../svg/EditDevice";
-import { GreenDot } from "../svg/GreenDot";
-import { InfoDeviceIcon } from "../svg/InfoIcon";
-import LogsIcon from "../svg/LogsSvg";
 import { MenuIcon } from "../svg/Menu icon";
 import { PowerOff } from "../svg/PowerOff";
 import { PowerOn } from "../svg/PowerOn";
-import { RedDot } from "../svg/RedDot";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,36 +37,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import DeviceSignalIcon from "../icons/device/DevicesignalIcon";
-import AddIcon from "../icons/device/AddIcon";
 import AssignUserToDevice from "./AssignUserToDevice";
 
 interface DeviceColumnsProps {
   refetchDevices: () => void;
-  handleInfoDialogClick: (device: any) => void;
-  // handleSettingsClick: (device: any) => void;
   setEditState: (state: { isOpen: boolean; device: any | null }) => void;
   handleDelete: (device: any) => void;
   debounceSearchString?: string;
   pageSize?: number;
   assignedMember: any;
-  // onViewRawData: (device: any) => void;
 }
 
 export const DeviceColumns = ({
   refetchDevices,
-  handleInfoDialogClick,
-  // handleSettingsClick,
   setEditState,
   handleDelete,
   debounceSearchString,
   assignedMember,
   pageSize,
-  // onViewRawData,
 }: DeviceColumnsProps): ColumnDef<any>[] => {
   const [logsSheetOpen, setLogsSheetOpen] = useState(false);
-  const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
-  const [selectedDeviceName, setSelectedDeviceName] = useState<any>(null);
   const { isAdmin, isOwner } = useUserDetails();
   return [
     {
@@ -223,8 +210,8 @@ export const DeviceColumns = ({
 
         const assignedUser = info.row.original.user
           ? assignedMember?.find(
-              (user: any) => user.id === info.row.original.user.id
-            )
+            (user: any) => user.id === info.row.original.user.id
+          )
           : null;
 
         const handleStatusChange = (newStatus: string) => {
@@ -258,11 +245,11 @@ export const DeviceColumns = ({
                     <p title={assignedUser.full_name || "--"}>
                       {assignedUser.full_name
                         ? assignedUser.full_name
-                            ?.split(" ")
-                            .slice(0, 2)
-                            .map((name: string) => name.charAt(0))
-                            .join("")
-                            .toUpperCase()
+                          ?.split(" ")
+                          .slice(0, 2)
+                          .map((name: string) => name.charAt(0))
+                          .join("")
+                          .toUpperCase()
                         : "--"}
                     </p>
                   </div>
@@ -276,15 +263,14 @@ export const DeviceColumns = ({
                 >
                   <SelectTrigger
                     className={`w-fit px-1 py-0 h-6 border border-gray-200 rounded-md text-2xs font-normal cursor-pointer 
-                    ${
-                      status === "READY"
+                    ${status === "READY"
                         ? "bg-green-500 text-white"
                         : status === "TEST"
                           ? "bg-yellow-400 text-white"
                           : status === "DEPLOYED"
                             ? "bg-cyan-500 text-white"
                             : "bg-gray-300 text-white"
-                    }`}
+                      }`}
                   >
                     <SelectValue placeholder="Select Status">
                       {status !== "--"
@@ -438,7 +424,9 @@ export const DeviceColumns = ({
                     </div>
 
                     <div className="flex gap-1">
-                      <div className="text-blue-500">A</div>
+                      <div className="text-blue-500">
+                        A
+                      </div>
                       <div className="text-red-500 w-[32px] text-center">
                         {voltages?.current_b?.toFixed(1) || 0}
                       </div>
@@ -480,11 +468,7 @@ export const DeviceColumns = ({
               <div className="flex flex-col items-center gap-1">
                 {device && (
                   <div className="flex items-center gap-1">
-                    {state_value === 1 ? (
-                      <span className="text-green-500">ON</span>
-                    ) : (
-                      <span className="text-red-500">OFF</span>
-                    )}
+                    {state_value === 1 ? <span className="text-green-500">ON</span> : <span className="text-red-500">OFF</span>}
                   </div>
                 )}
               </div>
@@ -578,29 +562,10 @@ export const DeviceColumns = ({
               <MenuIcon />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                className="text-gray-500 cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleInfoDialogClick(info.row.original);
-                }}
-              >
-                <InfoDeviceIcon />
-                Info
-              </DropdownMenuItem>
+
 
               {isAdmin() && (
                 <>
-                  <DropdownMenuItem
-                    className="text-gray-500 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // handleSettingsClick(info.row.original);
-                    }}
-                  >
-                    <SettingsIcon />
-                    Settings
-                  </DropdownMenuItem>
                   <DropdownMenuItem
                     className="text-gray-500 cursor-pointer"
                     onClick={(e) => {
@@ -626,40 +591,8 @@ export const DeviceColumns = ({
                 </DropdownMenuItem>
               )}
 
-              {/* <ViewRawDataButton
-                device={info.row.original}
-                onOpenDrawer={() => {
-                  if (onViewRawData) {
-                    onViewRawData(info.row.original);
-                  }
-                }}
-              /> */}
-              <DropdownMenuItem
-                className="text-gray-500 cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // setSelectedDeviceId(info.row.original.id);
-                  // setSelectedDeviceName(() => {
-                  //   return info.row.original.alias_starter_title
-                  //     ? info.row.original.alias_starter_title
-                  //     : info.row.original.title;
-                  // });
-                  // setLogsSheetOpen(true);
-                }}
-              >
-                <LogsIcon />
-                Device Logs
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          {selectedDeviceId && (
-            <DeviceLogs
-              motorId={selectedDeviceId}
-              open={logsSheetOpen}
-              devicename={selectedDeviceName}
-              setOpen={setLogsSheetOpen}
-            />
-          )}
         </div>
       ),
       size: 80,

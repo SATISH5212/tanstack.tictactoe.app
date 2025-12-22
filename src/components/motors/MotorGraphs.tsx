@@ -22,6 +22,21 @@ const MotorGraphs = () => {
     );
   }
 
+  // const { data: singleDeviceData } = useQuery({
+  //   queryKey: ["single-device", deviceId],
+  //   queryFn: async () => {
+  //     if (!deviceId) return null;
+  //     const response = await getSingleDeviceAPI(deviceId);
+  //     if (!response.success) {
+  //       throw new Error(response.message || "Failed to fetch device data");
+  //     }
+  //     return response?.data?.data[0] || {};
+  //   },
+  //   enabled: !!deviceId,
+  //   staleTime: 5 * 60 * 1000,
+  // });
+
+
   // const { isLoading } = useQuery({
   //   queryKey: ["singleMotor", device_id],
   //   enabled: true,

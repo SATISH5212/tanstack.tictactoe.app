@@ -18,4 +18,12 @@ export const getDeviceInfo = async (id: any) => {
   }
 };
 
+export const deleteUsersDeviceAPI = async (id: string) => {
+  try {
+    return await $fetch.delete(`/starter/${id}`);
+  } catch (err) {
+    throw err;
+  }
+};
+
 

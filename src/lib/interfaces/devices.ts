@@ -26,3 +26,8 @@ export interface DeviceFormData {
     pcb_number: string;
     starter_number: string;
 };
+
+export interface UseDeviceMutationProps {
+    onAddSuccess?: () => void;
+    setErrors?: (e: any) => void;
+};
