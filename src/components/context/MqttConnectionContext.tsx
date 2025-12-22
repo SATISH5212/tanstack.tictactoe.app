@@ -80,7 +80,7 @@ export const MqttConnectionProvider = ({
         if (clientRef.current?.connected) {
             return;
         }
-
+        
         if (!BROKER_URL) {
             setConnection((prev) => ({
                 ...prev,

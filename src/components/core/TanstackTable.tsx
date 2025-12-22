@@ -262,13 +262,13 @@ const TanStackTable: FC<any> = ({
                           key={row.id}
                           ref={isLastRow ? lastRowRef : null}
                           onClick={() => onRowClick?.(row.original)}
-                          className={`border-b border-slate-200 h-full w-full text-center hover:bg-[#eef5f8] transition-colors duration-0 cursor-pointer`}
+                          className={`border-b border-slate-200 h-full w-full text-center group hover:bg-[#eef5f8] transition-colors duration-0 cursor-pointer`}
                         >
                           {row
                             .getVisibleCells()
                             .map((cell: any, cellIndex: any) => (
                               <TableCell
-                                className={`p-0 !bg-transparent  transition-colors duration-0 cursor-pointer ${
+                                className={`p-0 transition-colors duration-0 cursor-pointer ${
                                   cell.column?.id === "full_name"
                                     ? "overflow-visible"
                                     : ""

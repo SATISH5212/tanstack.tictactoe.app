@@ -25,10 +25,16 @@ const AllDevices = () => {
   const initialParams = getInitialDeviceQueryParams(location.search);
 
   const [searchString, setSearchString] = useState(initialParams.searchString);
-  const [selectedStatus, setSelectedStatus] = useState(initialParams.deploymentStatus);
-  const [deviceStatusFilter, setDeviceStatusFilter] = useState(initialParams.deviceStatus);
+  const [selectedStatus, setSelectedStatus] = useState(
+    initialParams.deploymentStatus
+  );
+  const [deviceStatusFilter, setDeviceStatusFilter] = useState(
+    initialParams.deviceStatus
+  );
   const [sortBy, setSortBy] = useState<string | null>(initialParams.sortBy);
-  const [sortType, setSortType] = useState<string | null>(initialParams.sortType);
+  const [sortType, setSortType] = useState<string | null>(
+    initialParams.sortType
+  );
 
   const debouncedSearchString = useDebouncedValue(searchString, 800);
 
@@ -86,7 +92,10 @@ const AllDevices = () => {
     pageIndex: initialParams.pageIndex,
   });
 
-  const deviceData = useMemo(() => data?.pages.flatMap((p) => p.data) || [], [data]);
+  const deviceData = useMemo(
+    () => data?.pages.flatMap((p) => p.data) || [],
+    [data]
+  );
 
   const confirmDeviceDelete = useCallback(() => {
     if (!deviceToDelete) return;
@@ -152,16 +161,12 @@ const AllDevices = () => {
               onSubmit={(e) => {
                 e.preventDefault();
               }}
-              className={`flex items-center gap-1.5 h-8 transition-all ${isSearchOpen
-                ? "border px-2 w-[300px]"
-                : "w-8 justify-center"
-                }`}
+              className={`flex items-center gap-1.5 h-8 transition-all rounded-md ${
+                isSearchOpen ? "border px-2 w-[300px]" : "w-8 justify-center"
+              }`}
             >
               {!isSearchOpen && (
-                <button
-                  type="button"
-                  onClick={() => setIsSearchOpen(true)}
-                >
+                <button type="button" onClick={() => setIsSearchOpen(true)}>
                   <SearchIcon className="w-4 h-4" />
                 </button>
               )}
@@ -170,7 +175,8 @@ const AllDevices = () => {
                   searchString={searchString}
                   setSearchString={setSearchString}
                   title="Search devices"
-                  className="w-full"
+                  className="w-full h-full"
+                  setIsSearchOpen={setIsSearchOpen}
                 />
               )}
             </form>
@@ -224,7 +230,6 @@ const AllDevices = () => {
         <Outlet />
       </div>
 
-  
       {isDeleteDialogOpen && (
         <DeleteDialog
           openOrNot
@@ -238,7 +243,6 @@ const AllDevices = () => {
       )}
     </div>
   );
-}
+};
 
 export default AllDevices;
-

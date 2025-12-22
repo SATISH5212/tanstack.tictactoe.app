@@ -19,7 +19,6 @@ body {
     #eef5f8 50%,  
     #e7f0f4 100%
   );
-
 }
 
 @layer base {
@@ -53,33 +52,27 @@ body {
   @apply bg-f0f0f0 !rounded-md;
 }
 
+/* table head */
 #devicesTable thead tr th:first-child {
-  @apply sticky left-0 ;
-}
-
-#devicesTable thead tr th:last-child {
-  @apply sticky right-0 ;
-}
-#devicesTable tbody tr td:last-child {
-  @apply sticky right-0 
-}
-
-#devicesTable tbody tr td:first-child {
-  @apply sticky left-0 z-10;
-}
-
-
-
-
-#devicesTable tbody tr td:last-child {
-  @apply sticky right-0
+  @apply sticky left-0  ;
 }
 
 #devicesTable thead tr th:nth-child(2) {
   @apply sticky left-[114px]  z-30;
+}
+#devicesTable thead tr th:last-child {
+  @apply sticky right-0 ;
+}
+
+/* table body */
+#devicesTable tbody tr td:first-child {
+  @apply sticky left-0 z-20 ;
 }
 
 #devicesTable tbody tr td:nth-child(2) {
   @apply sticky left-[114px]  z-30;
 }
 
+#devicesTable tbody tr td:last-child {
+  @apply sticky right-0 z-20
+}
