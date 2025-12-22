@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getAllPaginatedDeviceData } from "@/lib/services/deviceses";
+import { getAllPaginatedDeviceData } from "@/lib/services/devices";
 
 export function useDevicesQuery(params: {
     search: string;

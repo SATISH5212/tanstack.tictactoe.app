@@ -14,7 +14,7 @@ import {
 import { EditDeviceSheetProps } from "src/lib/interfaces";
 import {
   updateDeviceUsersAPI,
-} from "src/lib/services/deviceses";
+} from "@/lib/services/devices";
 const EditDeviceSheet: React.FC<EditDeviceSheetProps> = ({
   device,
   onClose,
@@ -132,7 +132,7 @@ const EditDeviceSheet: React.FC<EditDeviceSheetProps> = ({
     setOpen(false);
   };
 
- 
+
 
   return (
     <Sheet open={!!device} onOpenChange={onClose}>

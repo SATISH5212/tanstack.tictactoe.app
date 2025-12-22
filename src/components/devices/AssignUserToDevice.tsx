@@ -25,7 +25,7 @@ import {
 import {
   assignUserForDeviceAPI,
   getAllUsersForDeviceAPI,
-} from "@/lib/services/deviceses";
+} from "@/lib/services/devices";
 import AddIcon from "../icons/device/AddIcon";
 
 const AssignUserToDevice: React.FC<AssignUserProps> = ({
@@ -48,12 +48,12 @@ const AssignUserToDevice: React.FC<AssignUserProps> = ({
         const response = await getAllUsersForDeviceAPI({
           search_string: search || "",
         });
-        return response?.data?.data 
+        return response?.data?.data
       },
       enabled: open,
     });
 
-     // const usersData = useMemo(() => {
+  // const usersData = useMemo(() => {
   //   return data?.pages.flatMap((page) => page.records) || [];
   // }, [data]);
 
@@ -164,7 +164,7 @@ const AssignUserToDevice: React.FC<AssignUserProps> = ({
                 setSelectedUser(user || null);
               }}
             >
-              {isLoading? (
+              {isLoading ? (
                 <div className="w-full h-60 flex items-center justify-center">
                   <span className="text-gray-400">Loading users...</span>
                 </div>
@@ -212,7 +212,7 @@ const AssignUserToDevice: React.FC<AssignUserProps> = ({
           <Button
             variant="outline"
             className="bg-red-50 text-xs 3xl:text-sm font-medium text-black hover:bg-red-100 h-auto py-1.5"
-            // onClick={() => navigate({ to: "/users/add" })}
+          // onClick={() => navigate({ to: "/users/add" })}
           >
             <AddIcon className="size-3" />
             Add New User

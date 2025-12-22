@@ -1,16 +1,17 @@
 import { IUserLocation } from "@/lib/interfaces/locations/userLocations";
 import { ExtendedLocationContextType } from "@/lib/interfaces/users/usersList";
-import { getAllUsersForDeviceAPI } from "@/lib/services/deviceses";
+import { getAllUsersForDeviceAPI } from "@/lib/services/devices";
+
 import { getAdminUserLocationsAPI } from "@/lib/services/locations";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import { Location, UsersList } from "src/lib/interfaces/users";
 
@@ -22,10 +23,10 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { pathname } = useLocation();
-//   const { isAdmin, getUserId } = useUserDetails();
+  //   const { isAdmin, getUserId } = useUserDetails();
   const navigate = useNavigate();
   const userLoadMoreRef = useRef<HTMLDivElement>(null);
-  
+
 
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(
     null
@@ -42,8 +43,8 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userSearchString, setUserSearchString] = useState("");
   const [debounceUserSearchString, setDebounceUserSearchString] = useState("");
   const [isUserSelectOpen, setIsUserSelectOpen] = useState(false);
- 
- const pondsRoute = pathname.includes("/devices");
+
+  const pondsRoute = pathname.includes("/devices");
 
   const { data: usersData, isLoading: isUsersLoading } = useQuery({
     queryKey: ["users"],
@@ -56,7 +57,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
     refetchOnWindowFocus: false,
   });
 
-  
+
   const filteredUsers = useMemo(() => {
     if (!usersData || usersData.length === 0) return [];
     if (!userSearchString.trim()) return usersData;
@@ -72,9 +73,9 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
   const { data: locationsData, isLoading: isLocationsLoading } = useQuery({
     queryKey: ["locations", selectedUserId],
     queryFn: async () => {
-    const queryParams = {
-        user_id : selectedUserId
-    }
+      const queryParams = {
+        user_id: selectedUserId
+      }
       const response = await getAdminUserLocationsAPI(queryParams);
       return response.data.data;
     },
@@ -117,7 +118,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
     setSelectedUser(user);
   }, [selectedUserId, filteredUsers]);
 
-  
+
 
 
   const handleLocationChange = (value: string) => {

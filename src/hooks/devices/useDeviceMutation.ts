@@ -1,9 +1,11 @@
 import { UseDeviceMutationProps } from "@/lib/interfaces/devices";
-import { addDeviceAPI } from "@/lib/services/deviceses";
+import {
+    addDeviceAPI,
+    updateDeviceStatusAPI,
+} from "@/lib/services/devices";
 import { deleteUsersDeviceAPI } from "@/lib/services/users";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
 
 export const useDeviceMutation = ({
     onAddSuccess,
@@ -32,10 +34,43 @@ export const useDeviceMutation = ({
                 setErrors?.(error?.data?.errors || {});
                 return;
             }
+
             toast.error(error?.data?.message || "Something went wrong");
         },
     });
+    const updateDeviceStatusMutation = useMutation({
+        mutationKey: ["update-device-status"],
+        mutationFn: ({
+            deviceId,
+            status,
+        }: {
+            deviceId: number;
+            status: string;
+        }) => updateDeviceStatusAPI(deviceId, { deploy_status: status }),
 
+        onSuccess: (_res, { deviceId, status }) => {
+            toast.success("Device status updated");
+            queryClient.setQueryData(["devices"], (oldData: any) => {
+                if (!oldData?.pages) return oldData;
+
+                return {
+                    ...oldData,
+                    pages: oldData.pages.map((page: any) => ({
+                        ...page,
+                        data: page.data.map((device: any) =>
+                            device.id === deviceId
+                                ? { ...device, device_status: status }
+                                : device
+                        ),
+                    })),
+                };
+            });
+        },
+
+        onError: (error: any) => {
+            toast.error(error?.data?.message || "Failed to update device status");
+        },
+    });
     const deleteDeviceMutation = useMutation({
         mutationKey: ["delete-device"],
         mutationFn: deleteUsersDeviceAPI,
@@ -43,13 +78,17 @@ export const useDeviceMutation = ({
             await queryClient.invalidateQueries({ queryKey: ["devices"] });
             toast.success("Device deleted successfully");
         },
-        onError: (error: any, _deviceId,) => {
-            toast.error(error?.data?.message || "Starter box is connected to motors and cannot be deleted");
+        onError: (error: any) => {
+            toast.error(
+                error?.data?.message ||
+                "Starter box is connected to motors and cannot be deleted"
+            );
         },
     });
 
     return {
         addDeviceMutation,
+        updateDeviceStatusMutation,
         deleteDeviceMutation,
     };
 };

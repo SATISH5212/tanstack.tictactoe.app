@@ -10,7 +10,7 @@ import { formatDateToIST } from "@/lib/helpers/formatNumber";
 import {
   getAllDeviceLogsAPI,
   getAllDeviceStatusLogsAPI,
-} from "@/lib/services/deviceses";
+} from "@/lib/services/devices";
 import LogsIcon from "../svg/LogsSvg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { X } from "lucide-react";

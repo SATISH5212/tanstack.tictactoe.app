@@ -1,4 +1,5 @@
 import { $fetch } from "../fetch";
+import { GetAllPaginatedUsersPropTypes } from "../interfaces/devices";
 export const getAllPaginatedDeviceData = async ({
   pageIndex,
   page_size,
@@ -31,7 +32,6 @@ export const getAllPaginatedDeviceData = async ({
 };
 export const getSingleDeviceAPI = async (id: string | undefined) => {
   const queryParams = {
-    //   metadata: true,
   };
   try {
     return await $fetch.get(`/starter/${id}/motors`, queryParams);
@@ -48,11 +48,11 @@ export const getGatewayTitleAPI = async () => {
 };
 
 export const updateDeviceStatusAPI = async (
-  starter_id: any,
+  starter_id: number,
   status: any
 ) => {
   try {
-    return await $fetch.put(`/starter/${starter_id}/device-status`, status);
+    return await $fetch.patch(`/starters/${starter_id}/deploy-status`, status);
   } catch (err) {
     throw err;
   }

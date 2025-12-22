@@ -1,6 +1,7 @@
+import { useDeviceMutation } from "@/hooks/devices/useDeviceMutation";
 import { capitalize } from "@/lib/helpers/capitalize";
 import { useUserDetails } from "@/lib/helpers/userpermission";
-import { updateDeviceStatusAPI } from "@/lib/services/deviceses";
+import { updateDeviceStatusAPI } from "@/lib/services/devices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { Loader2 } from "lucide-react";
@@ -166,47 +167,10 @@ export const DeviceColumns = ({
       cell: (info: any) => {
         const status = info.getValue() || "--";
         const deviceId = info.row.original.id;
-        const [open, setOpen] = useState(false);
         const [dialogOpen, setDialogOpen] = useState(false);
         const [isLoading, setIsLoading] = useState(false);
         const [assignDialogOpen, setAssignDialogOpen] = useState(false);
-
-        const queryClient = useQueryClient();
-
-        const { mutate: updateStatus } = useMutation({
-          mutationFn: (newStatus: string) =>
-            updateDeviceStatusAPI(deviceId, { device_status: newStatus }),
-          onSuccess: (response, newStatus) => {
-            if (response.status === 200 || response.status === 201) {
-              toast.success(response?.data?.message);
-              queryClient.setQueryData(
-                ["devices", debounceSearchString, pageSize],
-                (oldData: any) => {
-                  if (!oldData) return oldData;
-                  return {
-                    ...oldData,
-                    pages: oldData.pages.map((page: any) => ({
-                      ...page,
-                      data: page.data.map((device: any) =>
-                        device.id === deviceId
-                          ? { ...device, device_status: newStatus }
-                          : device
-                      ),
-                    })),
-                  };
-                }
-              );
-              refetchDevices();
-            }
-          },
-          onError: (error: any) => {
-            toast.error(error?.data?.message || "Failed to update status");
-          },
-          onSettled: () => {
-            setIsLoading(false);
-            setDialogOpen(false);
-          },
-        });
+        const { updateDeviceStatusMutation } = useDeviceMutation();
 
         const assignedUser = info.row.original.user
           ? assignedMember?.find(
@@ -217,11 +181,20 @@ export const DeviceColumns = ({
         const handleStatusChange = (newStatus: string) => {
           if (newStatus === "DEPLOYED") {
             setDialogOpen(true);
-          } else {
-            updateStatus(newStatus);
-            setOpen(false);
+            return;
           }
+          updateDeviceStatusMutation.mutate({
+            deviceId,
+            status: newStatus,
+          },
+            {
+              onSettled: () => {
+                refetchDevices();
+              },
+            });
         };
+
+
 
         const handleAssignUser = () => {
           setAssignDialogOpen(true);
@@ -338,10 +311,21 @@ export const DeviceColumns = ({
                           onClick={(e) => {
                             e.preventDefault();
                             setIsLoading(true);
-                            updateStatus("DEPLOYED");
+
+                            updateDeviceStatusMutation.mutate(
+                              { deviceId, status: "DEPLOYED" },
+                              {
+                                onSettled: () => {
+                                  setIsLoading(false);
+                                  setDialogOpen(false);
+                                  refetchDevices();
+                                },
+                              }
+                            );
                           }}
                           disabled={isLoading}
                         >
+
                           {isLoading ? (
                             <div className="flex items-center gap-2">
                               <Loader2 className="h-4 w-4 animate-spin text-white" />

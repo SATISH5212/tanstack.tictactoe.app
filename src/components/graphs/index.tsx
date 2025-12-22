@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { FC, useMemo } from "react";
-import { getRunTimeGraphAPI, getVoltageAndCurrentGraphAPI, } from "src/lib/services/deviceses";
+import { getRunTimeGraphAPI, getVoltageAndCurrentGraphAPI, } from "@/lib/services/devices";
 import { ClockIcon } from "../svg/ClockIcon";
 import { MeterIcon } from "../svg/MeterIcon";
 import { ThunderIcon } from "../svg/ThunderIcon";
