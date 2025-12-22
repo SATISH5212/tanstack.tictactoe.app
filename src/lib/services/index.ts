@@ -42,22 +42,8 @@ export const updateUserLocationAPI = async (id: any, payload: any) => {
     throw err;
   }
 };
-export const addUserGatewayAPI = async (payload: any) => {
-  try {
-    const response = await $fetch.post("/gateways", payload);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-};
-export const updateUserGatewayAPI = async (id: any, payload: any) => {
-  try {
-    const response = await $fetch.patch(`/gateways/${id}`, payload);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-};
+
+
 export const getAllUserLocations = async (queryParams: any) => {
   try {
     const response = await $fetch.get(`/locations/web-user`, queryParams);
@@ -100,33 +86,8 @@ export const editLocationAPI = async (id: any, payload: any) => {
     throw err;
   }
 }
-export const getLocationBasedGatewaysAPI = async (locationId: any, queryParams: any) => {
-  try {
-    const response = await $fetch.get(`/locations/${locationId}/gateways-web`, queryParams);
-    return response;
-  } catch (err) {
-    throw err;
 
-  };
-}
-export const viewLocationBasedGatewaysAPI = async (id: any, queryParams: any) => {
-  try {
-    const response = await $fetch.get(`/gateways/${id}/starters-web-user`, queryParams);
-    return response;
-  } catch (err) {
-    throw err;
 
-  };
-}
-export const deleteLocationBasedGatewaysAPI = async (gatewayId: any) => {
-  try {
-    const response = await $fetch.delete(`/gateways/${gatewayId}/user-mobile`);
-    return response;
-  } catch (err) {
-    throw err;
-
-  };
-}
 export const getViewProfileDetails = async (queryParams: any) => {
   try {
     const response = await $fetch.get(`/users/profile`, queryParams);
@@ -135,14 +96,7 @@ export const getViewProfileDetails = async (queryParams: any) => {
     throw err;
   }
 }
-export const assignPondToUserAPI = async (queryParams: any) => {
-  try {
-    const response = await $fetch.patch(`/ponds/assign-user `, queryParams);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-}
+
 export const UserBasedPondsApi = async (queryParams: any) => {
   try {
     const response = await $fetch.get(`/users/based-ponds`, queryParams);
@@ -168,28 +122,10 @@ export const assignLocationToUserAPI = async (queryParams: any) => {
   }
 }
 
-export const getAllPondsForUserAPI = async (queryParams: any) => {
-  try {
-    const response = await $fetch.get(`/users/based-ponds`, queryParams);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-}
+
 export const getAllLocationsForUserAPI = async (queryParams: any) => {
   try {
     const response = await $fetch.get(`/users/based-locations`, queryParams);
-    return response;
-  } catch (err) {
-    throw err;
-  }
-}
-export const chatBoxaiApi = async (payload: any) => {
-  try {
-    const response = await $fetch.post(
-      `/pa/prompt`,
-      payload
-    );
     return response;
   } catch (err) {
     throw err;

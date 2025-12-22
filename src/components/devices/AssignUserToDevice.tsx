@@ -25,7 +25,7 @@ import {
 import {
   assignUserForDeviceAPI,
   getAllUsersForDeviceAPI,
-} from "@/lib/services/deviceses";
+} from "@/lib/services/devices";
 import AddIcon from "../icons/device/AddIcon";
 
 const AssignUserToDevice: React.FC<AssignUserProps> = ({

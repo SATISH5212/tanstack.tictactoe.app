@@ -1,6 +1,6 @@
 import { capitalize } from "@/lib/helpers/capitalize";
 import { useUserDetails } from "@/lib/helpers/userpermission";
-import { updateDeviceStatusAPI } from "@/lib/services/deviceses";
+import { updateDeviceStatusAPI } from "@/lib/services/devices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { Divide, Loader2, SettingsIcon, SpaceIcon } from "lucide-react";

@@ -1,4 +1,3 @@
-import { Gateway } from "../users";
 
 export interface LiveMotorData {
     mtr_id: number;
@@ -31,27 +30,6 @@ export interface MotorAck {
 
 export interface LatestMotorAck {
     dev: MotorAck[];
-}
-
-
-
-
-export interface GatewayMQTTHelperOptions {
-    gateway?: Gateway | null;
-    client: any;
-    isConnected: boolean;
-    onSubscriptionSuccess?: () => void;
-    onSubscriptionError?: (error: Error) => void;
-}
-export interface GatewayMQTTHelperReturn {
-    isSubscribed: boolean;
-    latestMotorControlAck: LatestMotorAck[];
-    latestLiveData: LatestLiveData[];
-    latestModeChangeAck: LatestMotorAck[];
-    subscribeToGatewayTopics: () => void;
-    unsubscribeFromGatewayTopics: () => void;
-    handleMotorContorlPublish: (data: any) => void;
-    handleMotorModePublish: (data: any) => void;
 }
 
 export interface Device {

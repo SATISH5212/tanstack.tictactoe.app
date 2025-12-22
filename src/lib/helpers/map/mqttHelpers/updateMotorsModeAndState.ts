@@ -1,6 +1,6 @@
-import { Motor, Pond } from "@/lib/interfaces/maps/ponds";
 import { LatestLiveData, LatestMotorAck } from "@/lib/interfaces/mqtt/motor";
 import { getModeString } from "./motorModeConversion";
+import { Motor, Pond } from "@/lib/interfaces/ponds";
 
 export const updateMotorsModeAndState = (
     ponds: Pond[],

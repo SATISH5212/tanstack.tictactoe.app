@@ -1,6 +1,6 @@
 import { IUserLocation } from "@/lib/interfaces/locations/userLocations";
 import { ExtendedLocationContextType } from "@/lib/interfaces/users/usersList";
-import { getAllUsersForDeviceAPI } from "@/lib/services/deviceses";
+import { getAllUsersForDeviceAPI } from "@/lib/services/devices";
 import { getAdminUserLocationsAPI } from "@/lib/services/locations";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "@tanstack/react-router";

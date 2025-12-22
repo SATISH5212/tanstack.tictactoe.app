@@ -16,7 +16,7 @@ import React, {
 import {
   getAllPaginatedDeviceData,
   getSingleDeviceAPI,
-} from "src/lib/services/deviceses";
+} from "@/lib/services/devices";
 import InfoDialogBox from "../core/InfoDialogBox";
 import SearchFilter from "../core/SearchFilter";
 import TanStackTable from "../core/TanstackTable";

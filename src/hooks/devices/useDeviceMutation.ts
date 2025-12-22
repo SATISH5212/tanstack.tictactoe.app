@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { addDeviceAPI } from "@/lib/services/deviceses";
+import { addDeviceAPI } from "@/lib/services/devices";
 
 export const useDeviceMutation = (onSuccessCallback: () => void, setErrors: (e: any) => void) => {
     const queryClient = useQueryClient();
