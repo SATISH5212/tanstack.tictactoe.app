@@ -27,17 +27,6 @@ export interface IUserDeviceBlock {
   handleSettingsClick: (device: any) => void;
 }
 
-export interface IHighChartsBlock {
-  motorData: any;
-  paramater: string;
-  starterId?: string;
-  dateValue: any;
-  setDateValue: any;
-  dateRange: any;
-  setDateRange: any;
-  motor_ref_id:any
-
-}
 
 export interface AssignUserProps {
   open: boolean;
@@ -58,25 +47,4 @@ export interface UserProps {
   status: string;
   updated_at: string;
   user_type: string;
-}
-export interface Devices {
-  ipv6: string | undefined;
-  id: number;
-  title: string;
-  serial_no: string;
-  motors: {
-    id: number;
-    title: string;
-    hp: string;
-    state: number;
-    motor_ref_id: string;
-    pond: {
-      id: number;
-      title: string;
-      location: {
-        id: number;
-        title: string;
-      };
-    };
-  }[];
 }

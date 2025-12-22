@@ -1,4 +1,3 @@
-import { SetStateAction } from "react";
 
 export interface EditDeviceSheetProps {
   device: {
@@ -8,33 +7,16 @@ export interface EditDeviceSheetProps {
     ipv6: string;
     mac_address: string;
     user_id: number;
-    gateway_id: string;
     motor_count: number;
     status: "ACTIVE" | "INACTIVE";
-    // gatewayTitle:any
   } | null;
   onClose: () => void;
-  //   onUpdate: () => void;
+  onUpdate: () => void;
   gateways: any;
   refetch: () => void;
 }
 
-export interface GatewayPayload {
-  title: string;
-  location_id?: any;
-  user_id: number;
-  id?: number;
-}
 
-export interface AddGatewayProps {
-  gateway?: any;
-  isEditMode?: boolean;
-  locations: { id: number; title: string }[];
-  user_id: any;
-  location_id?: number;
-  refetch: any;
-  gateways: any;
-}
 export interface GetAllPaginatedUsersPropTypes {
   pageIndex: number;
   pageSize: number;
@@ -51,7 +33,7 @@ export interface ISearchFilters {
   setSearchString: any;
   title?: string;
   className?: string;
-   setIsSearchOpen?: React.Dispatch<React.SetStateAction<boolean>> | undefined;
+  setIsSearchOpen?: React.Dispatch<React.SetStateAction<boolean>> | undefined;
 }
 
 export interface LocationPayload {
@@ -70,3 +52,4 @@ export interface AddLocationProps {
   userId: any;
   refetch: any;
 }
+

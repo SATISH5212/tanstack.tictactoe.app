@@ -395,7 +395,7 @@ export const DeviceColumns = ({
       accessorFn: (row: any) => row.starterBoxParameters?.[0]?.power_present,
       id: "power_present",
       cell: (info: any) => {
-           const powerPresent = info.getValue();
+        const powerPresent = info.getValue();
         return (
           <div className="p-2 h-10 items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm flex justify-center">
             <span>{powerPresent === "1" ? <PowerOn /> : <PowerOff />}</span>
@@ -425,9 +425,7 @@ export const DeviceColumns = ({
                 {voltages && (
                   <div className="flex flex-col gap-1">
                     <div className="flex gap-1">
-                      <div className="text-red-500">
-                        V
-                      </div>
+                      <div className="text-red-500">V</div>
                       <div className="text-red-500 w-[32px] text-center">
                         {voltages?.line_voltage_b?.toFixed(1) || 0}
                       </div>
@@ -440,9 +438,7 @@ export const DeviceColumns = ({
                     </div>
 
                     <div className="flex gap-1">
-                       <div className="text-blue-500">
-                        A
-                      </div>
+                      <div className="text-blue-500">A</div>
                       <div className="text-red-500 w-[32px] text-center">
                         {voltages?.current_b?.toFixed(1) || 0}
                       </div>
@@ -484,7 +480,11 @@ export const DeviceColumns = ({
               <div className="flex flex-col items-center gap-1">
                 {device && (
                   <div className="flex items-center gap-1">
-                    {state_value === 1 ? <span className="text-green-500">ON</span> : <span className="text-red-500">OFF</span> }
+                    {state_value === 1 ? (
+                      <span className="text-green-500">ON</span>
+                    ) : (
+                      <span className="text-red-500">OFF</span>
+                    )}
                   </div>
                 )}
               </div>
@@ -536,17 +536,17 @@ export const DeviceColumns = ({
         const device = info.row.original;
         const mode_value = device?.motors?.[0]?.mode;
         return (
-          <div className={`p-0 h-10 justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col items-center text-blue-500
-            ${mode_value === "AUTO" && "text-orange-500"}
-          `}>
+          <div
+            className={`p-0 h-10 justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col items-center`}
+          >
             {device ? (
-              <div className="flex items-center gap-1">
+              <div className={`flex items-center gap-1 ${mode_value === "AUTO" && "text-orange-500"}`}>
                 <span>
                   {mode_value ? capitalize(mode_value.toLowerCase()) : "--"}
                 </span>
               </div>
             ) : (
-             "--"
+              "--"
             )}
           </div>
         );

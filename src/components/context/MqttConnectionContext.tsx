@@ -9,7 +9,7 @@ import {
     useState,
 } from "react";
 
-import { getClientId } from "@/lib/helpers/map/mqttHelpers/getClientId";
+import { getClientId } from "@/lib/helpers/mqttHelpers/getClientId";
 import { useLocation } from "@tanstack/react-router";
 
 export interface MqttConnection {

@@ -21,9 +21,6 @@ export interface UserDropdownProps {
     handleUserChange: (value: string) => void;
     handleClearUser: () => void;
     ispondsRoute?: boolean
-
-
-
 }
 
 
