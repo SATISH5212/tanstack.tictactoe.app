@@ -7,7 +7,7 @@ export interface UsersList {
 
 export interface Location {
     id: number;
-    title: string;
+    name: string;
 }
 
 export interface UserDropdownProps {
@@ -38,4 +38,21 @@ export interface UserFormData {
     email: string;
     phone: string;
     address: string;
+}
+
+export interface UserDropdownProps {
+    users: UsersList[];
+    selectedUser: UsersList | null;
+    isUsersLoading: boolean;
+    searchString: string;
+    setSearchString: (v: string) => void;
+    setIsSelectOpen: (v: boolean) => void;
+    handleUserChange: (v: string) => void;
+    handleClearUser: () => void;
+    width?: string;
+    height?: string;
+    borderClass?: string;
+    triggerClass?: string;
+    contentClass?: string;
+    inputClass?: string;
 }

@@ -130,8 +130,8 @@ const AllDevices = () => {
     <div className="w-full flex justify-between h-full bg-white">
       <div className="w-[65%] p-3 space-y-2 border-r border-slate-200">
         <div className="flex items-center justify-between h-[30px] ">
-          <div className="flex gap-4">
-            <div className="w-[250px]">
+          <div className="flex gap-4 ">
+            <div className="w-[200px]">
               <UserDropdown
                 users={users}
                 selectedUser={selectedUser}
@@ -141,10 +141,14 @@ const AllDevices = () => {
                 setIsSelectOpen={setIsUserSelectOpen}
                 handleUserChange={handleUserChange}
                 handleClearUser={handleClearUser}
+                width="w-[200px]"
+                height="h-8"
+                borderClass="border border-gray-300"
               />
+
             </div>
 
-            <div className="w-[250px]">
+            <div className="w-[200px]">
               <LocationDropdown
                 pond={{ location: selectedLocation?.id }}
                 locations={locations}

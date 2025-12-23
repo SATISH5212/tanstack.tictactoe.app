@@ -172,11 +172,11 @@ const TanStackTable: FC<any> = ({
               </TableHeader>
               <TableBody>
                 {loading && !isFetchingNextPage ? (
-                  [...Array(15)].map((_, i) => (
+                  [...Array(13)].map((_, i) => (
                     <TableRow key={i}>
                       {columns.map((_: any, j: number) => (
                         <TableCell key={j}>
-                          <Skeleton className="h-3 w-3/5" />
+                          <Skeleton className="h-7 w-3/5" />
                         </TableCell>
                       ))}
                     </TableRow>

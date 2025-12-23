@@ -90,7 +90,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!locationSearchString.trim()) return locationsData;
     const searchLower = locationSearchString.toLowerCase().trim();
     return locationsData.filter((location: Location) => {
-      const locationTitle = location.title?.toLowerCase() || "";
+      const locationTitle = location.name?.toLowerCase() || "";
 
       return locationTitle.includes(searchLower);
     });
