@@ -32,7 +32,6 @@ export interface UserProfileDropdownProps {
     shortName: string;
     initial: string;
     onNavigate: (path: string) => void;
-    onUpdatePassword: () => void;
 }
 export interface UserFormData {
     full_name: string;

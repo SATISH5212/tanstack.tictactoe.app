@@ -68,7 +68,7 @@ export const DeviceColumns = ({
             : formattedTitle;
 
         return (
-          <div className="p-2 h-10 flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left bg-white">
+          <div className="p-2 h-10 flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left">
             <span title={title}>{displayText}</span>
           </div>
         );
@@ -86,7 +86,7 @@ export const DeviceColumns = ({
           value?.length > 15 ? `${value.slice(0, 12)}...` : value;
 
         return (
-          <div className="w-full truncate p-2 h-[40px] flex items-center bg-white justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left ">
+          <div className="w-full truncate p-2 h-[40px] flex items-center  justify-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm text-left ">
             <span title={value}>{displayText}</span>
           </div>
         );
@@ -521,14 +521,7 @@ export const DeviceColumns = ({
       ),
       cell: (info: any) => (
         <div
-          className="w-full flex justify-center p-2 z-10"
-          style={{
-            position: "sticky",
-            right: 0,
-            zIndex: 10,
-            background: "white",
-          }}
-        >
+          className="w-full flex justify-center p-2 z-10"        >
           <DropdownMenu>
             <DropdownMenuTrigger>
               <MenuIcon />

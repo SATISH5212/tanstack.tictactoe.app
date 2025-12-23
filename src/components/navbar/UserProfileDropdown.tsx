@@ -14,14 +14,12 @@ import {
 const UserProfileDropdown = ({
   menuRef,
   isSuperAdmin,
-  isOwner,
   fullName,
   shortName,
   initial,
   onNavigate,
-  onUpdatePassword,
 }: UserProfileDropdownProps) => {
-  
+
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="relative z-50" ref={menuRef}>
@@ -73,33 +71,8 @@ const UserProfileDropdown = ({
           sideOffset={2}
           className="bg-white w-42 rounded-lg shadow-xl border border-gray-100"
         >
-          {/* {isOwner && (
-            <DropdownMenuItem
-              className="cursor-pointer flex items-center gap-3 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-md mx-1"
-              onClick={() => onNavigate("/viewprofile")}
-            >
-              <ViewProfileIcon className="w-4 h-4 text-gray-700" />
-              <span>User Management</span>
-            </DropdownMenuItem>
-          )} */}
 
-          {/* {isSuperAdmin && (
-            <DropdownMenuItem
-              className="cursor-pointer flex items-center gap-3 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-md mx-1"
-              onClick={() => onNavigate("/default-settings")}
-            >
-              <SettingsSvg color="#282b16ff" />
-              <span>Device Settings</span>
-            </DropdownMenuItem>
-          )} */}
 
-          <DropdownMenuItem
-            className="cursor-pointer flex items-center gap-3 px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-md mx-1"
-            onClick={onUpdatePassword}
-          >
-            <PondEditIcon className="w-4 h-4 text-gray-700" />
-            <span>Update Password</span>
-          </DropdownMenuItem>
 
           <DropdownMenuItem
             className="cursor-pointer flex items-center gap-3 px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 transition-colors rounded-md mx-1"

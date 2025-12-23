@@ -17,54 +17,22 @@ import { MenuIcon } from "./svg/MenuIcon";
 
 const AppSideBar = () => {
   const router = useRouter();
-  const { pathname } = useLocation();
-  const { isAdmin, isSuperAdmin, isSupervisor, isOwner, isUser, getName } =
+
+  const { isSuperAdmin, isOwner, getName } =
     useUserDetails();
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [isUpdatePassword, setIsUpdatePassword] = useState(false);
-  const [updatePassword, setUpdatePassword] = useState("");
-  const [editErrorMessage, setEditErrorMessage] = useState<string | null>(null);
+
 
   const menuRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
 
-  // const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
-  const { mutate: editPassword, isPending: isEditingPasswordPending } =
-    useMutation({
-      mutationFn: ({ password }: { password: string }) =>
-        editPasswordAPI(password),
-      onSuccess: () => {
-        toast.success("Password updated successfully!");
-        setIsUpdatePassword(false);
-        setUpdatePassword("");
-        setEditErrorMessage(null);
-      },
-      onError: (error: any) => {
-        if (error?.status === 422) {
-          const errorMessages =
-            error?.data?.errors?.password || error?.data?.message;
-          setEditErrorMessage(errorMessages);
-        } else if (error?.status === 409) {
-          setEditErrorMessage(error?.data?.message);
-        } else {
-          toast.error(error?.data?.message || "Failed to update Password");
-          setIsUpdatePassword(false);
-        }
-      },
-      retry: false,
-    });
 
-  const handleEditPassword = (password: string) => {
-    editPassword({
-      password: password.trim(),
-    });
-  };
 
   const handleNavigation = (path: string) => {
     if (path === "/viewprofile") {
@@ -79,7 +47,7 @@ const AppSideBar = () => {
     } else {
       router.navigate({ to: path });
     }
-    // queryClient.clear();
+
     setIsProfileMenuOpen(false);
   };
 
@@ -120,12 +88,12 @@ const AppSideBar = () => {
   const name = getName() || "";
   const fullName = name
     ? name
-        .split(" ")
-        .map(
-          (word: string) =>
-            word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        )
-        .join(" ")
+      .split(" ")
+      .map(
+        (word: string) =>
+          word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      )
+      .join(" ")
     : "";
 
   const initial = fullName ? fullName.charAt(0) : "";
@@ -148,7 +116,6 @@ const AppSideBar = () => {
                 shortName={shortName}
                 initial={initial}
                 onNavigate={handleNavigation}
-                onUpdatePassword={() => setIsUpdatePassword(true)}
               />
             </div>
           </div>

@@ -35,7 +35,6 @@ body {
   }
 }
 
-/* Global scrollbar styles */
 ::-webkit-scrollbar {
   @apply w-1 h-1;
 }
@@ -48,94 +47,102 @@ body {
   @apply bg-f0f0f0 !rounded-md;
 }
 
-/* Device Table Sticky Columns with Proper Z-Index Layering */
 
-/* HEADER ROW - Highest z-index for sticky headers */
-#devicesTable thead tr th:first-child {
-  @apply sticky left-0 bg-[#eef5f8];
-  z-index: 50 !important;
+#devicesTable table {
+  position: relative;
 }
 
-#devicesTable thead tr th:nth-child(2) {
-  @apply sticky left-[100px] bg-[#eef5f8];
-  z-index: 50 !important;
+
+#devicesTable thead th:nth-child(1),
+#devicesTable tbody td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  background-color: #eef5f8;
 }
 
-#devicesTable thead tr th:last-child {
-  @apply sticky right-0 bg-[#eef5f8];
-  z-index: 50 !important;
+#devicesTable tbody td:nth-child(1) {
+  background-color: white;
 }
 
-#devicesTable tbody tr td:first-child {
-  @apply sticky left-0 bg-white;
-  z-index: 30 !important;
-}
-
-#devicesTable thead tr th:last-child {
-  @apply sticky right-0;
-}
-
-/* table body */
-#devicesTable tbody tr td:first-child {
-  @apply sticky left-0 z-20;
-}
-
-#devicesTable tbody tr td:nth-child(2) {
-  @apply sticky left-[100px] bg-white;
-  z-index: 30 !important;
-}
-
-#devicesTable tbody tr td:last-child {
-  @apply sticky right-0 bg-white;
-  z-index: 30 !important;
-}
-
-/* Ensure non-sticky columns have lower z-index */
-#devicesTable tbody tr td {
-  z-index: 1;
-}
-
-#devicesTable thead tr th {
-  z-index: 40;
-}
-
-#devicesTable tbody tr td:first-child::after,
-#devicesTable thead tr th:first-child::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: -1px;
-  bottom: 0;
-  width: 1px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.05), transparent);
-  pointer-events: none;
-}
-
-#devicesTable tbody tr td:nth-child(2)::after,
-#devicesTable thead tr th:nth-child(2)::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: -1px;
-  bottom: 0;
-  width: 1px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.05), transparent);
-  pointer-events: none;
-}
-
-#devicesTable tbody tr td:last-child::before,
-#devicesTable thead tr th:last-child::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -1px;
-  bottom: 0;
-  width: 1px;
-  background: linear-gradient(to left, rgba(0, 0, 0, 0.05), transparent);
-  pointer-events: none;
-}
-
-/* Ensure hover state works correctly with sticky columns */
-#devicesTable tbody tr:hover td {
+#devicesTable tbody tr:hover td:nth-child(1) {
   background-color: #eef5f8 !important;
+}
+
+/* Selected row - sticky first column */
+#devicesTable tbody tr.bg-\[\#eef5f8\] td:nth-child(1) {
+  background-color: #eef5f8 !important;
+}
+
+/* Sticky second column (pcb_number) */
+#devicesTable thead th:nth-child(2),
+#devicesTable tbody td:nth-child(2) {
+  position: sticky;
+  left: 100px;
+  /* Width of first column */
+  z-index: 20;
+  background-color: #eef5f8;
+}
+
+#devicesTable tbody td:nth-child(2) {
+  background-color: white;
+}
+
+#devicesTable tbody tr:hover td:nth-child(2) {
+  background-color: #eef5f8 !important;
+}
+
+/* Selected row - sticky second column */
+#devicesTable tbody tr.bg-\[\#eef5f8\] td:nth-child(2) {
+  background-color: #eef5f8 !important;
+}
+
+/* Sticky last column (actions) */
+#devicesTable thead th:last-child,
+#devicesTable tbody td:last-child {
+  position: sticky;
+  right: 0;
+  z-index: 20;
+  background-color: #eef5f8;
+}
+
+#devicesTable tbody td:last-child {
+  background-color: white;
+}
+
+#devicesTable tbody tr:hover td:last-child {
+  background-color: #eef5f8 !important;
+}
+
+/* Selected row - sticky last column */
+#devicesTable tbody tr.bg-\[\#eef5f8\] td:last-child {
+  background-color: #eef5f8 !important;
+}
+
+/* Add shadow to show sticky columns separation */
+#devicesTable thead th:nth-child(2)::after,
+#devicesTable tbody td:nth-child(2)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+#devicesTable thead th:last-child::before,
+#devicesTable tbody td:last-child::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure header has higher z-index */
+#devicesTable thead th {
+  z-index: 30 !important;
 }
