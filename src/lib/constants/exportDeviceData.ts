@@ -2,206 +2,8 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 
-interface DeviceData {
-  id?: number;
-  title?: string;
-  starter_number?: string | null;
-  mcu_serial_no?: string | null;
-  status?: string;
-  ipv6?: string;
-  gateway_connected?: string;
-  mac_address?: string;
-  current_gateway_id?: number | null;
-  pcb_number?: string;
-  motor_count?: number;
-  fault_count?: number;
-  alert_count?: number;
-  starterBoxParameters?: {
-    id?: number;
-    motor_ref_id?: string;
-    current_i1?: number;
-    current_i2?: number;
-    current_i3?: number;
-    line_voltage_vry?: number;
-    line_voltage_vyb?: number;
-    line_voltage_vbr?: number;
-    motor_state?: number;
-    motor_mode?: string;
-    time_stamp?: string;
-    power_present?: string;
-  }[];
-}
 
-const escapeCsvField = (field: any): string => {
-  if (field === null || field === undefined) return "--";
-  const str = String(field);
-  return str.includes(",") || str.includes('"') || str.includes("\n")
-    ? `"${str.replace(/"/g, '""')}"`
-    : str;
-};
 
-export const exportDataInConvertToCSV = (data: DeviceData[]) => {
-  const header = [
-    "S.No",
-    "Device Title",
-    "PCB No",
-    "MAC Address",
-    "Power",
-    "Status",
-    "Voltages",
-    "Currents",
-    "Motor Modes",
-    "Motor States",
-    "Alerts",
-    "Faults",
-    "Time Stamp",
-  ];
-
-  const escapeCsvField = (value: any): string => {
-    if (value == null) return "N/A";
-    const str = String(value);
-    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
-      return `"${str.replace(/"/g, '""')}"`;
-    }
-    return str;
-  };
-  if (data.length === 0) {
-    return `${header.join(",")}\n`;
-  }
-
-  const rows: any[] = [];
-  data.forEach((item) => {
-    const starterBoxParams = item?.starterBoxParameters || [];
-    const motor1Params = starterBoxParams.filter(
-      (param: any) => param.motor_ref_id === "mtr_1"
-    );
-    const motor2Params = starterBoxParams.filter(
-      (param: any) => param.motor_ref_id === "mtr_2"
-    );
-
-    const maxLength = Math.max(motor1Params.length, motor2Params.length);
-
-    if (maxLength === 0) {
-      const row = [
-        rows.length + 1 || 1,
-        escapeCsvField(item?.title),
-        escapeCsvField(item?.pcb_number),
-        escapeCsvField(item?.mac_address),
-        escapeCsvField("N/A"),
-        escapeCsvField("ACTIVE"),
-        escapeCsvField("N/A"),
-        escapeCsvField("N/A"),
-        escapeCsvField("N/A"),
-        escapeCsvField("N/A"),
-        escapeCsvField(item?.alert_count ?? 0),
-        escapeCsvField(item?.fault_count ?? 0),
-        escapeCsvField("N/A"),
-      ];
-      rows.push(row);
-
-      return;
-    }
-
-    for (let i = 0; i < maxLength; i++) {
-      const m1Params = motor1Params[i] || {};
-      const m2Params = motor2Params[i] || {};
-
-      const starterParams =
-        Object.keys(m1Params).length > 0 ? m1Params : m2Params;
-
-      const formattedDate = starterParams.time_stamp
-        ? dayjs
-          .utc(starterParams.time_stamp)
-          .add(5, "hour")
-          .add(30, "minute")
-          .format("DD-MM-YYYY hh:mm A")
-        : "N/A";
-
-      const lineVoltages =
-        starterParams.line_voltage_vry != null
-          ? `${starterParams.line_voltage_vry} ${starterParams.line_voltage_vyb ?? "N/A"} ${starterParams.line_voltage_vbr ?? "N/A"}`
-          : "N/A";
-
-      const motorCurrents =
-        [
-          m1Params.current_i1 != null
-            ? `M1: ${m1Params.current_i1} ${m1Params.current_i2 ?? 0} ${m1Params.current_i3 ?? 0}`
-            : null,
-          m2Params.current_i1 != null
-            ? `M2: ${m2Params.current_i1} ${m2Params.current_i2 ?? 0} ${m2Params.current_i3 ?? 0}`
-            : null,
-        ]
-          .filter(Boolean)
-          .join("; ") || "N/A";
-
-      const powerPresent =
-        starterParams.power_present === "1"
-          ? "ON"
-          : starterParams.power_present != null
-            ? "OFF"
-            : "N/A";
-
-      const motorModes =
-        [
-          m1Params.motor_mode != null ? `M1: ${m1Params.motor_mode}` : null,
-          m2Params.motor_mode != null ? `M2: ${m2Params.motor_mode}` : null,
-        ]
-          .filter(Boolean)
-          .join("; ") || "N/A";
-
-      const motorStates =
-        [
-          m1Params.motor_state != null ? `M1: ${m1Params.motor_state}` : null,
-          m2Params.motor_state != null ? `M2: ${m2Params.motor_state}` : null,
-        ]
-          .filter(Boolean)
-          .join("; ") || "N/A";
-
-      const row = [
-        rows.length + 1 || 1,
-        escapeCsvField(item?.title),
-        escapeCsvField(item?.pcb_number),
-        escapeCsvField(item?.mac_address),
-        escapeCsvField(powerPresent),
-        escapeCsvField("ACTIVE"),
-        escapeCsvField(lineVoltages),
-        escapeCsvField(motorCurrents),
-        escapeCsvField(motorModes),
-        escapeCsvField(motorStates),
-        escapeCsvField(item?.alert_count ?? 0),
-        escapeCsvField(item?.fault_count ?? 0),
-        escapeCsvField(formattedDate),
-      ];
-      rows.push(row);
-    }
-  });
-
-  const csvContent = [
-    header.join(","),
-    ...rows.map((row: any) => row.join(",")),
-  ].join("\n");
-
-  return csvContent;
-};
-export const downloadCSV = (data: string, fileName: string) => {
-  if (!window.Blob || !window.URL) {
-    throw new Error("Browser does not support Blob or URL APIs");
-  }
-
-  const sanitizeFileName = (name: string) => {
-    return name.replace(/[^a-zA-Z0-9-_]/g, "_");
-  };
-
-  const csvData = new Blob([data], { type: "text/csv;charset=utf-8;" });
-  const csvURL = URL.createObjectURL(csvData);
-  const link = document.createElement("a");
-  link.href = csvURL;
-  link.download = `${sanitizeFileName(fileName)}.csv`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(csvURL);
-};
 export const activeConstants = [
   {
     value: "ACTIVE",
@@ -212,6 +14,9 @@ export const activeConstants = [
     label: "Inactive",
   },
 ];
+
+
+
 export const userTypeConstants = [
   {
     value: "SUPER_ADMIN",
@@ -239,12 +44,20 @@ export const userTypeConstants = [
   }
 ];
 export type DeviceStatus = "ALL" | "ACTIVE" | "INACTIVE";
+export type DevicePower = "ON" | "OFF" | "ALL"
+
+export const DEVICE_POWER: Array<{ value: DevicePower; label: string }> = [
+  { value: "ALL", label: "All" },
+  { value: "ON", label: "On" },
+  { value: "OFF", label: "Off" },
+];
 
 export const DEVICE_STATUSES: Array<{ value: DeviceStatus; label: string }> = [
   { value: "ALL", label: "All" },
   { value: "ACTIVE", label: "Active" },
   { value: "INACTIVE", label: "Inactive" },
 ];
+
 export const statusConstants = [
   {
     value: "READY",

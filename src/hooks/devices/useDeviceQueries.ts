@@ -6,6 +6,7 @@ export function useDevicesQuery(params: {
     page_size: number;
     deploymentStatus: string;
     deviceStatus: string;
+    power: string;
     user?: any;
     location?: any;
     sortBy?: string | null;
@@ -26,6 +27,8 @@ export function useDevicesQuery(params: {
                 ...(params.deviceStatus !== "ALL" && {
                     status: params.deviceStatus,
                 }),
+                ...(params.power === "ON" && { power: 1 }),
+                ...(params.power === "OFF" && { power: 0 }),
                 ...(params.user && { user_id: params.user.id }),
                 ...(params.location && { location_id: params.location.id }),
                 ...(params.sortBy && { sort_by: params.sortBy }),
@@ -33,7 +36,7 @@ export function useDevicesQuery(params: {
             });
 
             const { records = [], pagination_info } = response?.data?.data || {};
-            const startSerial = (pageParam - 1) * 10 + 1;
+            const startSerial = (pageParam - 1) * params.page_size + 1;
             const dataWithSerial = records.map((record: any, index: number) => ({
                 ...record,
                 serial: startSerial + index,

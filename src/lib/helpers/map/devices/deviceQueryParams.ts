@@ -3,6 +3,7 @@ export const getInitialDeviceQueryParams = (search: string) => {
     return {
         searchString: params.get("search_string") || "",
         deviceStatus: params.get("status") || "ALL",
+        power:params.get("power") || "ALL",
         deploymentStatus: params.get("device_status") || "ALL",
         pageIndex: Number(params.get("current_page")) || 1,
         page_size: Number(params.get("page_size")) || 10,

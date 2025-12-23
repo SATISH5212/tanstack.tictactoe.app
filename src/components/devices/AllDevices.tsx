@@ -29,9 +29,8 @@ const AllDevices = () => {
   const [selectedStatus, setSelectedStatus] = useState(
     initialParams.deploymentStatus
   );
-  const [deviceStatusFilter, setDeviceStatusFilter] = useState(
-    initialParams.deviceStatus
-  );
+  const [deviceStatusFilter, setDeviceStatusFilter] = useState(initialParams.deviceStatus);
+  const [devicePowerFilter, setDevicePowerFilter] = useState(initialParams.power);
   const [sortBy, setSortBy] = useState<string | null>(initialParams.sortBy);
   const [sortType, setSortType] = useState<string | null>(
     initialParams.sortType
@@ -74,7 +73,7 @@ const AllDevices = () => {
   } = useLocationContext();
 
   const { deleteDeviceMutation } = useDeviceMutation();
-
+console.log(devicePowerFilter,"device001")
   const {
     data,
     fetchNextPage,
@@ -87,6 +86,7 @@ const AllDevices = () => {
     page_size: initialParams.page_size,
     deploymentStatus: selectedStatus,
     deviceStatus: deviceStatusFilter,
+    power: devicePowerFilter,
     user: selectedUser,
     location: selectedLocation,
     sortBy,
@@ -114,9 +114,9 @@ const AllDevices = () => {
 
   useEffect(() => {
     setSelectedFiltersCount(
-      Number(selectedStatus !== "ALL") + Number(deviceStatusFilter !== "ALL")
+      Number(selectedStatus !== "ALL") + Number(deviceStatusFilter !== "ALL") + Number(devicePowerFilter !== "ALL")
     );
-  }, [selectedStatus, deviceStatusFilter]);
+  }, [selectedStatus, deviceStatusFilter, devicePowerFilter]);
 
   const { lastRowRef } = useScrolldownObserver({
     hasNextPage: hasNextPage ?? false,
@@ -145,9 +145,7 @@ const AllDevices = () => {
                 height="h-8"
                 borderClass="border border-gray-300"
               />
-
             </div>
-
             <div className="w-[200px]">
               <LocationDropdown
                 pond={{ location: selectedLocation?.id }}
@@ -190,9 +188,11 @@ const AllDevices = () => {
             <DevicesFilter
               selectedStatus={selectedStatus}
               deviceStatusFilter={deviceStatusFilter}
+              devicePowerFilter={devicePowerFilter}
               selectedFiltersCount={selectedFiltersCount}
               handleDeviceDeploymentStatusChange={setSelectedStatus}
               handleDeviceStatusChange={setDeviceStatusFilter}
+              handleDevicePowerChange={setDevicePowerFilter}
             />
 
             {isSuperAdmin() && <AddDevice />}

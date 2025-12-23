@@ -9,7 +9,11 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DEVICE_STATUSES, statusConstants } from "@/lib/constants/exportDeviceData";
+import {
+  DEVICE_POWER,
+  DEVICE_STATUSES,
+  statusConstants,
+} from "@/lib/constants/exportDeviceData";
 import { useUserDetails } from "@/lib/helpers/userpermission";
 import { DevicesFilterProps } from "@/lib/interfaces/devices";
 import { Check } from "lucide-react";
@@ -19,48 +23,43 @@ import FilterIcon from "../svg/FilterIcon";
 export function DevicesFilter({
   handleDeviceDeploymentStatusChange,
   handleDeviceStatusChange,
+  handleDevicePowerChange,
   deviceStatusFilter,
+  devicePowerFilter,
   selectedStatus,
   selectedFiltersCount,
 }: DevicesFilterProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { isAdmin } = useUserDetails();
 
-  const handleStatusSelect = (status: string, handler: (status: string) => void) => {
-    handler(status);
+  const closeAndApply = (value: string, handler: (v: string) => void) => {
+    handler(value);
     setIsFilterOpen(false);
   };
 
   const getButtonStyles = () => {
-    const baseStyles = "relative flex items-center gap-2 w-[80px] h-7 justify-center";
-    const variantStyles = selectedFiltersCount > 0
-      ? "bg-blue-100 hover:bg-blue-200"
-      : "bg-gray-100 hover:bg-gray-200";
-    return `${baseStyles} ${variantStyles}`;
+    const base = "relative flex items-center gap-2 w-[80px] h-7 justify-center";
+    return selectedFiltersCount > 0
+      ? `${base} bg-blue-100 hover:bg-blue-200`
+      : `${base} bg-gray-100 hover:bg-gray-200`;
   };
 
- const getMenuItemStyles = (status: string, isSelected: boolean) => {
-    if (!isSelected) return "flex justify-between cursor-pointer my-0.5";
-    return "flex justify-between cursor-pointer bg-gray-100 my-0.5 ";
-  };
+  const menuItemClass = (active: boolean) =>
+    `flex justify-between cursor-pointer my-0.5 ${active ? "bg-gray-100" : ""
+    }`;
 
-
-  const renderMenuItem = (
+  const renderItem = (
     item: { value: string; label: string },
     isSelected: boolean,
-    handler: (status: string) => void
+    onSelect: (value: string) => void
   ) => (
     <DropdownMenuItem
       key={item.value}
-      onClick={() => handleStatusSelect(item.value, handler)}
-      className={getMenuItemStyles(item.value, isSelected)}
+      onClick={() => closeAndApply(item.value, onSelect)}
+      className={menuItemClass(isSelected)}
     >
       {item.label}
-      {isSelected && (
-        <Check
-          className={`w-4 h-4 ml-4 text-green-600`}
-        />
-      )}
+      {isSelected && <Check className="w-4 h-4 text-green-600" />}
     </DropdownMenuItem>
   );
 
@@ -71,27 +70,20 @@ export function DevicesFilter({
           <FilterIcon className="w-3 h-3 text-gray-600" />
           <span className="font-normal">Filter</span>
           {selectedFiltersCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[8px] font-normal text-white bg-green-500 rounded-full">
+            <span className="absolute -top-1 -right-1 w-4 h-4 text-[8px] flex items-center justify-center text-white bg-green-500 rounded-full">
               {selectedFiltersCount}
             </span>
           )}
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent
-        className="w-48 bg-white shadow-lg border border-gray-200"
-        side="bottom"
-        align="start"
-      >
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="flex items-center justify-between cursor-pointer">
-            <span>Status</span>
-          </DropdownMenuSubTrigger>
-
+      <DropdownMenuContent className="w-48 bg-white shadow-lg border" align="start">
+              <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Status</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent className="bg-white shadow-lg border border-gray-200">
+            <DropdownMenuSubContent>
               {DEVICE_STATUSES.map((status) =>
-                renderMenuItem(
+                renderItem(
                   status,
                   deviceStatusFilter === status.value,
                   handleDeviceStatusChange
@@ -101,22 +93,36 @@ export function DevicesFilter({
           </DropdownMenuPortal>
         </DropdownMenuSub>
 
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Power</DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              {DEVICE_POWER.map((power) =>
+                renderItem(
+                  power,
+                  devicePowerFilter === power.value,
+                  handleDevicePowerChange
+                )
+              )}
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+
+       
         {isAdmin() && (
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="flex items-center justify-between cursor-pointer">
-              <span>Deployment Status</span>
-            </DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger>Deployment Status</DropdownMenuSubTrigger>
             <DropdownMenuPortal>
-              <DropdownMenuSubContent className="bg-white shadow-lg border border-gray-200">
-                {renderMenuItem(
+              <DropdownMenuSubContent>
+                {renderItem(
                   { value: "ALL", label: "ALL" },
                   selectedStatus === "ALL",
                   handleDeviceDeploymentStatusChange
                 )}
                 {statusConstants.map((status) =>
-                  renderMenuItem(
+                  renderItem(
                     status,
-                    status.value === selectedStatus,
+                    selectedStatus === status.value,
                     handleDeviceDeploymentStatusChange
                   )
                 )}

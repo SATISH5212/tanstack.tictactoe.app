@@ -1,7 +1,9 @@
 export interface DevicesFilterProps {
     handleDeviceDeploymentStatusChange: (status: string) => void;
     handleDeviceStatusChange: (status: string) => void;
+    handleDevicePowerChange:(power:string)=>void
     deviceStatusFilter: string;
+    devicePowerFilter:string;
     selectedStatus: string;
     selectedFiltersCount: number;
 }
