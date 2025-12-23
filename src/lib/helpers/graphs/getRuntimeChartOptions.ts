@@ -1,15 +1,18 @@
 import { ChartPoint, RunTimeData } from "@/lib/interfaces/graphs";
 import Highcharts from "highcharts";
+import { formatUtcToLocal } from "../timeFormat";
 
 export function getRuntimeChartOptions(
     data: RunTimeData[],
-    totalMotorONRunTime: string,
+    totalMotorONRunTime: string
 ): Highcharts.Options {
     const runtimeData = Array.isArray(data) ? data : [];
+
     const onSeries: ChartPoint[] = [];
     const offSeries: ChartPoint[] = [];
     const powerSeries: (number | null)[][] = [];
-      runtimeData.forEach((item: RunTimeData) => {
+
+    runtimeData.forEach((item) => {
         if (item.start_time && item.end_time) {
             const start = new Date(item.start_time).getTime();
             const end = new Date(item.end_time).getTime();
@@ -20,30 +23,25 @@ export function getRuntimeChartOptions(
                     { x: end, y: 1, duration: item.duration },
                     { x: end + 1, y: null, duration: null }
                 );
-            } else if (item.motor_state === 0) {
+            } else {
                 offSeries.push(
                     { x: start, y: 0, duration: item.duration },
                     { x: end, y: 0, duration: item.duration },
                     { x: end + 1, y: null, duration: null }
                 );
             }
-        }
-
-        if (item.start_time && item.end_time) {
-            const powerStart = new Date(item.start_time).getTime();
-            const powerEnd = new Date(item.end_time).getTime();
 
             powerSeries.push(
-                [powerStart, 0.5],
-                [powerEnd, 0.5],
-                [powerEnd + 1, null]
+                [start, 0.5],
+                [end, 0.5],
+                [end + 1, null]
             );
         } else if (item.start_time && !item.end_time) {
-            const powerStart = new Date(item.start_time).getTime();
-            const now = new Date().getTime();
+            const start = new Date(item.start_time).getTime();
+            const now = Date.now();
 
             powerSeries.push(
-                [powerStart, 0.5],
+                [start, 0.5],
                 [now, 0.5]
             );
         }
@@ -54,37 +52,47 @@ export function getRuntimeChartOptions(
             type: "line",
             height: 120,
         },
-        credits: {
-            enabled: false,
-        },
+
+        credits: { enabled: false },
         title: { text: "" },
+
         xAxis: {
             type: "datetime",
-            dateTimeLabelFormats: {
-                hour: '%l:%M %p',
-                day: '%b %e',
-            },
         },
+
         yAxis: {
             visible: false,
             min: -0.5,
             max: 1.5,
         },
+
         tooltip: {
             shared: false,
-            formatter: function (this: any) {
-                const point = this.point;
-                const seriesName = this.series.name;
-                const date = Highcharts.dateFormat('%A, %b %e, %l:%M:%S %p', this.x);
+            formatter: function () {
+                const point = this as Highcharts.Point & {
+                    duration?: string | null;
+                };
 
-                if (seriesName === 'Power') {
-                    return `<b>${seriesName}</b><br/>${date}`;
-                } else if (point.duration) {
-                    return `<b>${seriesName}</b><br/>${date}<br/>Duration: ${point.duration}`;
+                const seriesName = point.series.name;
+                const time = formatUtcToLocal(point.x as number);
+
+                if (seriesName === "Power") {
+                    return `<strong>${seriesName}</strong><br/>${time}`;
                 }
+
+                if (point.duration) {
+                    return `
+        <strong>${seriesName}</strong><br/>
+        ${time}<br/>
+        Duration: ${point.duration}
+      `;
+                }
+
                 return false;
             },
         },
+
+
         plotOptions: {
             series: {
                 marker: { enabled: false },
@@ -92,6 +100,7 @@ export function getRuntimeChartOptions(
                 step: "left",
             },
         },
+
         series: [
             {
                 type: "line",

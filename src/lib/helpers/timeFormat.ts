@@ -11,26 +11,21 @@ export const formatUstToIST = (dateString: string) => {
     });
 };
 
+export const formatUtcToLocal = (utc: number | string, options?: Intl.DateTimeFormatOptions) => {
+    const date = new Date(utc);
 
-export const formatUtcToLocal = (utcString?: string, options?: Intl.DateTimeFormatOptions) => {
-    if (!utcString) return "";
-
-    const date = new Date(utcString);
-
-    if (isNaN(date.getTime())) {
-        console.warn("Invalid UTC date:", utcString);
-        return "";
-    }
+    if (isNaN(date.getTime())) return "";
 
     return date.toLocaleString(undefined, {
-        month: "long",
+        month: "short",
         day: "numeric",
         year: "numeric",
         hour: "numeric",
         minute: "2-digit",
+        second: "2-digit",
         hour12: true,
         ...options,
     });
 };
 
-export default formatUtcToLocal;
+
