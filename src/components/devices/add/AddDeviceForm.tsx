@@ -5,21 +5,19 @@ import {
 } from "@/lib/interfaces/devices";
 import { Loader2 } from "lucide-react";
 import { FC, useCallback, useState } from "react";
+import { Placeholder } from "rsuite";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
-
 const INITIAL_DEVICE_DATA: DeviceFormData = {
   name: "",
   mac_address: "",
   pcb_number: "",
   starter_number: "",
 };
-
 const AddDeviceForm: FC<IAddDeviceOrUserFormProps> = ({ onClose }) => {
   const [deviceData, setDeviceData] = useState(INITIAL_DEVICE_DATA);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
   const { addDeviceMutation } = useDeviceMutation({
     onAddSuccess: () => {
       setDeviceData(INITIAL_DEVICE_DATA);
@@ -28,19 +26,16 @@ const AddDeviceForm: FC<IAddDeviceOrUserFormProps> = ({ onClose }) => {
     },
     setErrors,
   });
-
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
       let sanitized = value.replace(/[^a-zA-Z0-9\s]/g, "").toUpperCase();
-
       if (name === "mac_address") {
         sanitized = sanitized.match(/.{1,2}/g)?.join(":") ?? "";
         setDeviceData(prev => ({ ...prev, mac_address: sanitized }));
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: "" }));
         return;
       }
-
       if (name === "name") {
         sanitized = sanitized.replace(/\s+/g, " ").trimStart();
         if (sanitized) {
@@ -48,20 +43,16 @@ const AddDeviceForm: FC<IAddDeviceOrUserFormProps> = ({ onClose }) => {
             sanitized.charAt(0) + sanitized.slice(1).toLowerCase();
         }
       }
-
       setDeviceData(prev => ({ ...prev, [name]: sanitized }));
-
       if (errors[name]) {
         setErrors(prev => ({ ...prev, [name]: "" }));
       }
     },
     [errors]
   );
-
   const handleSubmit = async () => {
     let mac = deviceData.mac_address;
     if (mac.endsWith(":")) mac = mac.slice(0, -1);
-
     const payload = {
       ...deviceData,
       mac_address: mac.toUpperCase(),
@@ -70,18 +61,16 @@ const AddDeviceForm: FC<IAddDeviceOrUserFormProps> = ({ onClose }) => {
         ? deviceData.starter_number.toUpperCase()
         : null,
     };
-
     await addDeviceMutation.mutateAsync(payload);
   };
-
   return (
     <div className="grid gap-4 pt-2 pb-12">
       {[
-        { key: "name", label: "Device Name" },
-        { key: "mac_address", label: "MAC Address" },
-        { key: "pcb_number", label: "PCB Number" },
-        { key: "starter_number", label: "Serial Number" },
-      ].map(({ key, label }) => (
+        { key: "name", label: "Device Name", placeholder: "Enter Device Name" },
+        { key: "mac_address", label: "MAC Address", placeholder: "Enter Mac Address" },
+        { key: "pcb_number", label: "PCB Number", placeholder: "Enter PCB Number" },
+        { key: "starter_number", label: "Serial Number", placeholder: "Enter Serial Number" },
+      ].map(({ key, label, placeholder }) => (
         <div key={key} className="space-y-1">
           <Label className="text-gray-700">
             {label} <span className="text-red-500">*</span>
@@ -90,6 +79,7 @@ const AddDeviceForm: FC<IAddDeviceOrUserFormProps> = ({ onClose }) => {
             name={key}
             value={(deviceData as any)[key]}
             onChange={handleChange}
+            placeholder={placeholder}
             className="bg-gray-100 shadow-none focus-visible:ring-0"
           />
           {errors[key] && (
@@ -97,7 +87,6 @@ const AddDeviceForm: FC<IAddDeviceOrUserFormProps> = ({ onClose }) => {
           )}
         </div>
       ))}
-
       <div className="flex justify-end space-x-2">
         <Button variant="outline" onClick={onClose}>
           Cancel
@@ -117,5 +106,4 @@ const AddDeviceForm: FC<IAddDeviceOrUserFormProps> = ({ onClose }) => {
     </div>
   );
 };
-
 export default AddDeviceForm;

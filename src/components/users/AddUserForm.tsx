@@ -12,18 +12,15 @@ const INITIAL_USER_DATA: UserFormData = {
     phone: "",
     address: "",
 };
-
 const AddUserForm: FC<IAddDeviceOrUserFormProps> = (props) => {
     const { userId, onClose } = props
     const [formData, setFormData] = useState(INITIAL_USER_DATA);
     const [errors, setErrors] = useState<Record<string, string>>({});
-
     const { mutateAsync, isPending } = useUserMutation(() => {
         setFormData(INITIAL_USER_DATA);
         setErrors({});
         onClose();
     }, setErrors);
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         const updated = name === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value;
@@ -32,7 +29,6 @@ const AddUserForm: FC<IAddDeviceOrUserFormProps> = (props) => {
             setErrors((prev) => ({ ...prev, [name]: "" }));
         }
     };
-
     const handleSubmit = async () => {
         await mutateAsync({
             ...formData,
@@ -40,16 +36,15 @@ const AddUserForm: FC<IAddDeviceOrUserFormProps> = (props) => {
             created_by: userId,
         });
     };
-
     return (
         <>
             <div className="grid gap-4 pt-2 pb-12">
                 {[
-                    { key: "full_name", label: "Full Name" },
-                    { key: "email", label: "Email" },
-                    { key: "phone", label: "Phone Number" },
-                    { key: "address", label: "Address" },
-                ].map(({ key, label }) => (
+                    { key: "full_name", label: "Full Name", placeholder: "Enter Full Name" },
+                    { key: "email", label: "Email", placeholder: "Enter Email Address" },
+                    { key: "phone", label: "Phone Number", placeholder: "Enter Phone Number" },
+                    { key: "address", label: "Address", placeholder: "Enter Address" },
+                ].map(({ key, label, placeholder }) => (
                     <div key={key} className="space-y-1">
                         <Label className="text-gray-700">
                             {label}
@@ -61,6 +56,7 @@ const AddUserForm: FC<IAddDeviceOrUserFormProps> = (props) => {
                             name={key}
                             value={(formData as any)[key]}
                             onChange={handleChange}
+                            placeholder={placeholder}
                             className="bg-gray-100 shadow-none focus-visible:ring-0"
                         />
                         {errors[key] && (
@@ -75,13 +71,9 @@ const AddUserForm: FC<IAddDeviceOrUserFormProps> = (props) => {
                     <Button onClick={handleSubmit} disabled={isPending} className="bg-blue-500 text-white shadow-sm hover:bg-blue-600">
                         {isPending ? <Loader2 className="animate-spin" /> : "Add"}
                     </Button>
-
                 </div>
             </div>
-
-
         </>
     );
 };
-
 export default AddUserForm;
