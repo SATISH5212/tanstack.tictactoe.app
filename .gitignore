@@ -5,6 +5,7 @@
 
 # Dist
 dist
+routeTree.gen.ts
 
 node_modules
 .vinxi
