@@ -24,7 +24,6 @@ const AllDevices = () => {
   const navigate = useNavigate();
   const initialParams = getInitialDeviceQueryParams(location.search);
   const { device_id } = useParams({ strict: false })
-  console.log(device_id, "jamjam001")
   const [searchString, setSearchString] = useState(initialParams.searchString);
   const [selectedStatus, setSelectedStatus] = useState(
     initialParams.deploymentStatus
@@ -73,7 +72,6 @@ const AllDevices = () => {
   } = useLocationContext();
 
   const { deleteDeviceMutation } = useDeviceMutation();
-console.log(devicePowerFilter,"device001")
   const {
     data,
     fetchNextPage,
@@ -227,7 +225,7 @@ console.log(devicePowerFilter,"device001")
             sortType={sortType}
             setSortBy={setSortBy}
             setSortType={setSortType}
-            removeSortingForColumnIds={["actions", "location", "user", "voltage_current", "state", "signal_quality", "mode"]}
+            removeSortingForColumnIds={["actions", "location", "user", "voltage_current", "state", "signal_quality", "mode", "mac_address"]}
             isSelectedId={device_id as string}
           />
         </div>

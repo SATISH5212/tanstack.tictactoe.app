@@ -1,10 +1,10 @@
+import { getSingleDeviceAPI } from "@/lib/services/devices";
+import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import * as React from "react";
 import { DateRange } from "react-day-picker";
 import CustomDateCalendar from "../core/CustomDateCalendar";
 import Graphs from "../graphs";
-import { getSingleDeviceAPI } from "@/lib/services/devices";
-import { useQuery } from "@tanstack/react-query";
 import BackButton from "../icons/BackButton";
 import { Button } from "../ui/button";
 
@@ -31,7 +31,6 @@ const MotorGraphs = () => {
     queryFn: async () => {
       if (!deviceId) return null;
       const response = await getSingleDeviceAPI(deviceId);
-      console.log(response, "dev0dev0")
       if (!response.success) {
         throw new Error(response.message || "Failed to fetch device data");
       }
@@ -45,8 +44,8 @@ const MotorGraphs = () => {
     navigate({ to: "/devices", search: {} })
   }
   return (
-    <div className="py-2 h-[calc(100vh-50px)]  ">
-      <div className="flex flex-row justify-between  items-center px-2 py-2">
+    <div className=" h-[calc(100vh-50px)] overflow-y-auto  ">
+      <div className="sticky top-0  z-40  bg-white flex flex-row justify-between  items-center p-1">
         <div className="text-md ">
           <div className="flex items-center">
             <Button
@@ -57,7 +56,7 @@ const MotorGraphs = () => {
             </Button>
 
             <span
-              className="turncate text-lg sm:text-base font-medium text-gray-800 tracking-tight truncate capitalize"
+              className="turncate text-md sm:text-base  text-gray-800 tracking-tight truncate capitalize"
               title={singleDeviceData?.name}
             >
               {singleDeviceData?.name}

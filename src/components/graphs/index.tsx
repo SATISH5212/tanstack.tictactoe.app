@@ -5,11 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 import { getRunTimeGraphAPI, getVoltageAndCurrentGraphAPI, } from "@/lib/services/devices";
 import { ClockIcon } from "../svg/ClockIcon";
 import { MeterIcon } from "../svg/MeterIcon";
 import { ThunderIcon } from "../svg/ThunderIcon";
+import { useUserDetails } from "@/lib/helpers/userpermission";
 
 const Graphs: FC<IGraphsProps> = (props) => {
     const {
@@ -20,7 +21,8 @@ const Graphs: FC<IGraphsProps> = (props) => {
         rawDataGraphs,
     } = props
     if (rawDataGraphs && graphType === "runtime") return null;
-
+    const { isAdmin } = useUserDetails()
+    const [totalMotorRunOnTime, setTotalMotorRunOnTime] = useState<string>("");
     const queryParams = useMemo(() => ({
         from_date: date?.from ? dayjs(date.from).format("YYYY-MM-DD") : undefined,
         to_date: date?.to ? dayjs(date.to).format("YYYY-MM-DD") : undefined,
@@ -56,24 +58,29 @@ const Graphs: FC<IGraphsProps> = (props) => {
                     motor_id: motorId,
                 },
             });
+            setTotalMotorRunOnTime(res?.data?.data?.total_run_on_time)
             return res?.data?.data ?? [];
         },
     });
 
-    const data = isRuntime ? runtimeQuery.data : vcQuery.data;
+    const data = isRuntime ? runtimeQuery.data?.records : vcQuery.data;
     const isLoading = isRuntime ? runtimeQuery.isLoading : vcQuery.isLoading;
-
-    const chartOptions = useMemo(() => {
-        return isRuntime ? getRuntimeChartOptions(data) : getVCChartOptions(data, graphType);
+     const chartOptions = useMemo(() => {
+        return isRuntime ? getRuntimeChartOptions(data, totalMotorRunOnTime) : getVCChartOptions(data, graphType);
     }, [data, graphType, isRuntime]);
 
     const Icon = graphType === "voltage" ? ThunderIcon : graphType === "current" ? MeterIcon : ClockIcon;
-
-    return (
+       return (
         <div className="relative bg-white border rounded-xl">
-            <div className="flex items-center gap-2 px-4 py-2">
-                <Icon />
-                <span className="capitalize">{graphType}</span>
+            <div className="flex items-center gap-2 px-4 py-2 justify-between items-center">
+                <span className="flex flex-row  items-center  gap-1 capitalize text-sm "><Icon />{graphType}</span>
+                <div>
+                    {graphType === "runtime" && totalMotorRunOnTime && (
+                        <div className="text-xs text-gray-600 font-medium">
+                            Total  {isAdmin() ? "Device" : "Pump"}  On Time: <span className="text-green-600">{totalMotorRunOnTime}</span>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {isLoading ? (

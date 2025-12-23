@@ -2,14 +2,14 @@ import { ChartPoint, RunTimeData } from "@/lib/interfaces/graphs";
 import Highcharts from "highcharts";
 
 export function getRuntimeChartOptions(
-    data: RunTimeData[]
+    data: RunTimeData[],
+    totalMotorONRunTime: string,
 ): Highcharts.Options {
     const runtimeData = Array.isArray(data) ? data : [];
     const onSeries: ChartPoint[] = [];
     const offSeries: ChartPoint[] = [];
     const powerSeries: (number | null)[][] = [];
-
-    runtimeData.forEach((item: RunTimeData) => {
+      runtimeData.forEach((item: RunTimeData) => {
         if (item.start_time && item.end_time) {
             const start = new Date(item.start_time).getTime();
             const end = new Date(item.end_time).getTime();
