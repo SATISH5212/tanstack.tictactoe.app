@@ -1,7 +1,7 @@
 const SIGNAL_COLORS = {
   marginal: "bg-red-500",
-  ok: "bg-blue-500",
-  good: "bg-green-500",
+  ok: "bg-orange-500",
+  good: "bg-blue-500",
   excellent: "bg-green-500",
   invalid: "bg-gray-400",
 };

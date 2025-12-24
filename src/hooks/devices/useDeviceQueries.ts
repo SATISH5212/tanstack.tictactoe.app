@@ -27,8 +27,9 @@ export function useDevicesQuery(params: {
                 ...(params.deviceStatus !== "ALL" && {
                     status: params.deviceStatus,
                 }),
-                ...(params.power === "ON" && { power: 1 }),
-                ...(params.power === "OFF" && { power: 0 }),
+                ...(params.power !== "ALL" && {
+                    power: params.power
+                }),
                 ...(params.user && { user_id: params.user.id }),
                 ...(params.location && { location_id: params.location.id }),
                 ...(params.sortBy && { sort_by: params.sortBy }),

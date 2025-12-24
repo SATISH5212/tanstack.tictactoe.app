@@ -185,7 +185,8 @@ const TanStackTable: FC<any> = ({
                         key={row.id}
                         ref={isLast ? lastRowRef : null}
                         onClick={() => onRowClick?.(row.original)}
-                        className={`hover:bg-[#eef5f8] cursor-pointer ${isSelectedId == row?.original?.id && "bg-[#eef5f8]"}`}
+
+                        className={`hover:bg-[#eef5f8] cursor-pointer ${isSelectedId == row?.original?.id ? "bg-[#eef5f8]" : ""}`}
                       >
                         {row.getVisibleCells().map((cell: any) => (
                           <TableCell
