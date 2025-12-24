@@ -5,18 +5,19 @@ import { getInitialDeviceQueryParams } from "@/lib/helpers/map/devices/deviceQue
 import { useDebouncedValue } from "@/lib/helpers/useDebouncedValue";
 import { useUserDetails } from "@/lib/helpers/userpermission";
 import { Outlet, useLocation, useNavigate, useParams } from "@tanstack/react-router";
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocationContext } from "../context/LocationContext";
 import DeleteDialog from "../core/DeleteDialog";
-import EditDeviceSheet from "../core/EditDeviceSheet";
 import LocationDropdown from "../core/LocationDropdown";
 import SearchFilter from "../core/SearchFilter";
 import TanStackTable from "../core/TanstackTable";
 import UserDropdown from "../core/UsersDropdown";
+import { Sheet, SheetContent } from "../ui/sheet";
 import { DeviceColumns } from "./DeviceColumns";
 import DevicesFilter from "./DevicesFilter";
 import AddDevice from "./add";
+import DeviceForm from "./add/DeviceForm";
 
 const AllDevices = () => {
   const { isSuperAdmin } = useUserDetails();
@@ -123,6 +124,7 @@ const AllDevices = () => {
     dataLength: deviceData.length,
     containerId: "devicesTable",
   });
+  const handleCloseAddSideBar = () => setEditState({ isOpen: false, device: null })
 
   return (
     <div className="w-full flex justify-between h-full bg-white">
@@ -164,11 +166,11 @@ const AllDevices = () => {
               onSubmit={(e) => {
                 e.preventDefault();
               }}
-              className={`flex items-center gap-1.5 h-8 transition-all rounded-md ${isSearchOpen ? "border px-2 w-[300px]" : "w-8 justify-center"
+              className={`flex items-center gap-1.5 h-8 transition-all rounded-md ${isSearchOpen ? "border px-2 w-[200px]" : "w-8 justify-center"
                 }`}
             >
               {!isSearchOpen && (
-                <button type="button" onClick={() => setIsSearchOpen(true)}>
+                <button type="button" onClick={() => setIsSearchOpen(true)} className="rounded-lg border p-1">
                   <SearchIcon className="w-4 h-4" />
                 </button>
               )}
@@ -177,7 +179,7 @@ const AllDevices = () => {
                   searchString={searchString}
                   setSearchString={setSearchString}
                   title="Search devices"
-                  className="w-full h-full"
+                  className=" h-full "
                   setIsSearchOpen={setIsSearchOpen}
                 />
               )}
@@ -235,13 +237,37 @@ const AllDevices = () => {
         <Outlet />
       </div>
 
-      {editState.isOpen && (
-        <EditDeviceSheet
-          device={editState.device}
-          onClose={() => setEditState({ isOpen: false, device: null })}
-          refetch={refetchDevices}
-        />
+      {editState.isOpen && editState.device && (
+        <Sheet
+          open={editState.isOpen}
+          onOpenChange={() =>
+            setEditState({ isOpen: false, device: null })
+          }
+
+        >
+          <SheetContent className="bg-white">
+            <div className="flex flex-row justify-between items-center">
+              <div className={`flex h-[30px]  items-center text-lg text-orange-500   rounded-md `}>Edit Device</div>
+              <div
+                onClick={handleCloseAddSideBar}
+                className="flex rounded-full hover:bg-red-100 text-red-500 cursor-pointer mb-2"
+              >
+                <X size={16} strokeWidth={2.5} />
+              </div>
+
+            </div>
+            <DeviceForm
+              mode="edit"
+              initialData={editState.device}
+              onClose={() =>
+                setEditState({ isOpen: false, device: null })
+              }
+              onSuccess={refetchDevices}
+            />
+          </SheetContent>
+        </Sheet>
       )}
+
 
       {isDeleteDialogOpen && (
         <DeleteDialog

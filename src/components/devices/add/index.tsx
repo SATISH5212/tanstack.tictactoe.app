@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "src/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "src/components/ui/sheet";
-import AddDeviceForm from "./AddDeviceForm";
+import DeviceForm from "./DeviceForm";
 
 const AddDevice = () => {
   const { userId } = useUserDetails();
@@ -62,10 +62,12 @@ const AddDevice = () => {
             </div>
           </div>
           <TabsContent value="addDevice" className="">
-            <AddDeviceForm
-              userId={userId}
+
+            <DeviceForm
+              mode="add"
               onClose={handleCloseAddSideBar}
             />
+
           </TabsContent>
 
           <TabsContent value="addUser">

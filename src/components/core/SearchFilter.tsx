@@ -21,7 +21,7 @@ const SearchFilter: React.FC<ISearchFilters> = ({
     }
   }
   return (
-    <div className={`relative  text-xs 3xl:text-sm ${className}`}>
+    <div className={`relative full text-xs 3xl:text-sm ${className}`}>
       <Search className="absolute left-1 top-1/2 -translate-y-1/2 bg-transparent opacity-50 rounded-none w-6 h-6 p-1" />
       <Input
         placeholder={title}
@@ -36,7 +36,8 @@ const SearchFilter: React.FC<ISearchFilters> = ({
         >
           X
         </button>
-      )}     </div>
+      )}
+    </div>
   );
 };
 
