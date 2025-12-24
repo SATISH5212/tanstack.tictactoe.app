@@ -106,7 +106,7 @@ const EditDeviceSheet: React.FC<EditDeviceSheetProps> = ({
         </SheetHeader>
         <div className="grid gap-4 pt-4 pb-12">
           <div className="flex flex-col gap-1">
-            <Label>Title</Label>
+            <Label>Title <span className="text-red-500">*</span></Label>
             <Input
               name="name"
               value={form.name}
@@ -118,7 +118,7 @@ const EditDeviceSheet: React.FC<EditDeviceSheetProps> = ({
           </div>
 
           <div className="flex flex-col gap-1">
-            <Label>MAC Address</Label>
+            <Label>MAC Address <span className="text-red-500">*</span></Label>
             <Input
               name="mac_address"
               value={form.mac_address}
@@ -127,7 +127,7 @@ const EditDeviceSheet: React.FC<EditDeviceSheetProps> = ({
           </div>
 
           <div className="flex flex-col gap-1">
-            <Label>PCB Number</Label>
+            <Label>PCB Number <span className="text-red-500">*</span></Label>
             <Input
               name="pcb_number"
               value={form.pcb_number}
@@ -141,7 +141,7 @@ const EditDeviceSheet: React.FC<EditDeviceSheetProps> = ({
           </div>
 
           <div className="flex flex-col gap-1">
-            <Label>Device Box Number</Label>
+            <Label>Device Box Number <span className="text-red-500">*</span></Label>
             <Input
               name="starter_number"
               value={form.starter_number}

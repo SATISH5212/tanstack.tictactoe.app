@@ -225,8 +225,8 @@ const AllDevices = () => {
             sortType={sortType}
             setSortBy={setSortBy}
             setSortType={setSortType}
-            removeSortingForColumnIds={["actions", "location", "user", "voltage_current", "state", "signal_quality", "mode", "mac_address"]}
-            isSelectedId={device_id as string}
+            removeSortingForColumnIds={["actions", "power", "location", "user", "voltage_current", "state", "signal_quality", "mode", "mac_address"]}
+            isSelecdtedId={device_id as string}
           />
         </div>
       </div>

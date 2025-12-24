@@ -40,13 +40,8 @@ const TanStackTable: FC<any> = ({
   setSortType,
   isSelectedId,
 }: any) => {
-  console.log(isSelectedId, "devdevw")
-  const router = useRouter();
   const location = useLocation();
-
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: sortBy, desc: sortType === "desc" },
-  ]);
+  const [sorting, setSorting] = useState<SortingState>([{ id: sortBy, desc: sortType === "desc" },]);
 
   const searchParams = new URLSearchParams(location?.search);
 

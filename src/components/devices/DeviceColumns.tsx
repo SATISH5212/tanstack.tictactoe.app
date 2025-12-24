@@ -113,16 +113,19 @@ export const DeviceColumns = ({
           </div>
         );
       },
+      header: () => (
+        <span className="text-center w-full cursor-default">Mac Address</span>
+      ),
     },
 
     {
-      accessorFn: (row: any) => row.starterBoxParameters?.[0]?.power_present,
-      id: "power_present",
+      accessorFn: (row: any) => row?.power,
+      id: "power",
       cell: (info: any) => {
         const powerPresent = info.getValue();
         return (
           <div className="p-1.5 h-8 items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs 3xl:text-sm flex justify-center">
-            <span>{powerPresent === "1" ? <PowerOn /> : <PowerOff />}</span>
+            <span>{powerPresent === 1 ? <PowerOn /> : <PowerOff />}</span>
           </div>
         );
       },
@@ -151,7 +154,7 @@ export const DeviceColumns = ({
                 {voltages && (
                   <div className="flex flex-col gap-0.5">
                     <div className="flex gap-1 items-center">
-                      <div className="text-red-500 text-[10px]">V</div>
+                      <div className="text-red-500 text-[12px]">V : </div>
                       <div className="text-red-500 w-[28px] text-center text-[10px]">
                         {voltages?.line_voltage_b?.toFixed(1) || 0}
                       </div>
@@ -164,8 +167,8 @@ export const DeviceColumns = ({
                     </div>
 
                     <div className="flex gap-1 items-center">
-                      <div className="text-blue-500 text-[10px]">
-                        A
+                      <div className="text-blue-500 text-[12px]">
+                        A :
                       </div>
                       <div className="text-red-500 w-[28px] text-center text-[10px]">
                         {voltages?.current_b?.toFixed(1) || 0}
@@ -199,14 +202,14 @@ export const DeviceColumns = ({
       id: "state",
       cell: (info: any) => {
         const params = info.getValue() || [];
-        const device = info.row.original;
-        const state_value = device?.motors?.[0]?.state;
+        const motor = info.row?.original.motors
+        const state_value = motor[0]?.state;
 
         return (
           <div className="p-1.5 h-8 justify-center text-xs 3xl:text-sm text-center leading-tight flex flex-col gap-0.5 items-center">
             {params.length > 0 ? (
               <div className="flex flex-col items-center gap-0.5">
-                {device && (
+                {motor && (
                   <div className="flex items-center gap-1">
                     {state_value === 1 ? <span className="text-green-500">ON</span> : <span className="text-red-500">OFF</span>}
                   </div>
