@@ -20,4 +20,5 @@ export type GameMode = "PVP" | "PVAI";
 
 export interface IGameStartPageProps {
     setMode: Dispatch<SetStateAction<GameMode | null>>;
+    setSelectedDifficulty: Dispatch<SetStateAction<string>>
 } 
