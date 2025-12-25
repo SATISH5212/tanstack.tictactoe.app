@@ -1,9 +1,12 @@
-import { LoginPage } from '@/components/auth/login'
-import { authMiddleware } from 'src/lib/helpers/middleware'
-import { createFileRoute } from '@tanstack/react-router'
-
+import { createFileRoute, redirect } from '@tanstack/react-router'
+const SampleProject = () => {
+  return null
+}
 export const Route = createFileRoute('/')({
-  component: LoginPage,
-  beforeLoad: authMiddleware
+  component: SampleProject,
+  beforeLoad: async () => {
+    throw redirect({
+      to: '/tictactoe',
+    })
+  },
 })
-

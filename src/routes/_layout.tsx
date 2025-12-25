@@ -1,20 +1,16 @@
-import { MqttConnectionProvider } from "@/components/context/MqttConnectionContext";
-import { AppSideBar } from "@/components/SideBar";
-import { createFileRoute } from "@tanstack/react-router";
-import { LocationProvider } from "@/components/context/LocationContext";
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/_layout")({
+export const Route = createFileRoute('/_layout')({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
   return (
-        <LocationProvider>
-        <MqttConnectionProvider>
-          <div className="font-inter">
-            <AppSideBar />
-          </div>
-        </MqttConnectionProvider>
-        </LocationProvider>
-  );
-} 
+    <div>
+      <div className='flex text-lg font-medium justify-center '>      TicTacToe    </div>
+      <div><Outlet /></div>
+
+    </div>
+
+  )
+}

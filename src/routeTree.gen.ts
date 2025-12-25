@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LayoutTictactoeRouteImport } from './routes/_layout/_tictactoe'
 import { Route as LayoutDevicesRouteImport } from './routes/_layout/_devices'
+import { Route as LayoutTictactoeTictactoeIndexRouteImport } from './routes/_layout/_tictactoe/tictactoe/index'
 import { Route as LayoutDevicesDevicesIndexRouteImport } from './routes/_layout/_devices/devices/index'
 import { Route as LayoutDevicesDevicesDevice_idMotorsRouteImport } from './routes/_layout/_devices/devices/$device_id/_motors'
 import { Route as LayoutDevicesDevicesDevice_idMotorsMotorsIndexRouteImport } from './routes/_layout/_devices/devices/$device_id/_motors/motors/index'
@@ -26,10 +28,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LayoutTictactoeRoute = LayoutTictactoeRouteImport.update({
+  id: '/_tictactoe',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutDevicesRoute = LayoutDevicesRouteImport.update({
   id: '/_devices',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutTictactoeTictactoeIndexRoute =
+  LayoutTictactoeTictactoeIndexRouteImport.update({
+    id: '/tictactoe/',
+    path: '/tictactoe/',
+    getParentRoute: () => LayoutTictactoeRoute,
+  } as any)
 const LayoutDevicesDevicesIndexRoute =
   LayoutDevicesDevicesIndexRouteImport.update({
     id: '/devices/',
@@ -58,6 +70,7 @@ const LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/devices': typeof LayoutDevicesDevicesIndexRoute
+  '/tictactoe': typeof LayoutTictactoeTictactoeIndexRoute
   '/devices/$device_id': typeof LayoutDevicesDevicesDevice_idMotorsRouteWithChildren
   '/devices/$device_id/motors': typeof LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute
   '/devices/$device_id/motors/$motor_id': typeof LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute
@@ -65,6 +78,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/devices': typeof LayoutDevicesDevicesIndexRoute
+  '/tictactoe': typeof LayoutTictactoeTictactoeIndexRoute
   '/devices/$device_id': typeof LayoutDevicesDevicesDevice_idMotorsRouteWithChildren
   '/devices/$device_id/motors': typeof LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute
   '/devices/$device_id/motors/$motor_id': typeof LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute
@@ -74,7 +88,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_layout': typeof LayoutRouteWithChildren
   '/_layout/_devices': typeof LayoutDevicesRouteWithChildren
+  '/_layout/_tictactoe': typeof LayoutTictactoeRouteWithChildren
   '/_layout/_devices/devices/': typeof LayoutDevicesDevicesIndexRoute
+  '/_layout/_tictactoe/tictactoe/': typeof LayoutTictactoeTictactoeIndexRoute
   '/_layout/_devices/devices/$device_id/_motors': typeof LayoutDevicesDevicesDevice_idMotorsRouteWithChildren
   '/_layout/_devices/devices/$device_id/_motors/motors/': typeof LayoutDevicesDevicesDevice_idMotorsMotorsIndexRoute
   '/_layout/_devices/devices/$device_id/_motors/motors/$motor_id/': typeof LayoutDevicesDevicesDevice_idMotorsMotorsMotor_idIndexRoute
@@ -84,6 +100,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/devices'
+    | '/tictactoe'
     | '/devices/$device_id'
     | '/devices/$device_id/motors'
     | '/devices/$device_id/motors/$motor_id'
@@ -91,6 +108,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/devices'
+    | '/tictactoe'
     | '/devices/$device_id'
     | '/devices/$device_id/motors'
     | '/devices/$device_id/motors/$motor_id'
@@ -99,7 +117,9 @@ export interface FileRouteTypes {
     | '/'
     | '/_layout'
     | '/_layout/_devices'
+    | '/_layout/_tictactoe'
     | '/_layout/_devices/devices/'
+    | '/_layout/_tictactoe/tictactoe/'
     | '/_layout/_devices/devices/$device_id/_motors'
     | '/_layout/_devices/devices/$device_id/_motors/motors/'
     | '/_layout/_devices/devices/$device_id/_motors/motors/$motor_id/'
@@ -126,12 +146,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_layout/_tictactoe': {
+      id: '/_layout/_tictactoe'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LayoutTictactoeRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/_devices': {
       id: '/_layout/_devices'
       path: ''
       fullPath: ''
       preLoaderRoute: typeof LayoutDevicesRouteImport
       parentRoute: typeof LayoutRoute
+    }
+    '/_layout/_tictactoe/tictactoe/': {
+      id: '/_layout/_tictactoe/tictactoe/'
+      path: '/tictactoe'
+      fullPath: '/tictactoe'
+      preLoaderRoute: typeof LayoutTictactoeTictactoeIndexRouteImport
+      parentRoute: typeof LayoutTictactoeRoute
     }
     '/_layout/_devices/devices/': {
       id: '/_layout/_devices/devices/'
@@ -197,12 +231,26 @@ const LayoutDevicesRouteWithChildren = LayoutDevicesRoute._addFileChildren(
   LayoutDevicesRouteChildren,
 )
 
+interface LayoutTictactoeRouteChildren {
+  LayoutTictactoeTictactoeIndexRoute: typeof LayoutTictactoeTictactoeIndexRoute
+}
+
+const LayoutTictactoeRouteChildren: LayoutTictactoeRouteChildren = {
+  LayoutTictactoeTictactoeIndexRoute: LayoutTictactoeTictactoeIndexRoute,
+}
+
+const LayoutTictactoeRouteWithChildren = LayoutTictactoeRoute._addFileChildren(
+  LayoutTictactoeRouteChildren,
+)
+
 interface LayoutRouteChildren {
   LayoutDevicesRoute: typeof LayoutDevicesRouteWithChildren
+  LayoutTictactoeRoute: typeof LayoutTictactoeRouteWithChildren
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutDevicesRoute: LayoutDevicesRouteWithChildren,
+  LayoutTictactoeRoute: LayoutTictactoeRouteWithChildren,
 }
 
 const LayoutRouteWithChildren =
