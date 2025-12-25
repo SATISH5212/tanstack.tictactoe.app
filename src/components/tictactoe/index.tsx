@@ -1,21 +1,25 @@
 import { useState } from "react";
 import { Board } from "./Board";
-import { applyMove, createInitialState } from "@/lib/helpers/tictactoe/gameEngine";
+import { handleBoxClick, createInitialGameState } from "@/lib/helpers/tictactoe/gameEngine";
 
 const TicTacToe = () => {
-    const [state, setState] = useState(createInitialState());
+    const [game, setGame] = useState(createInitialGameState());
+    console.log(game, "gg001")
+    const handleMove = (index: number) => {
+        setGame(prev => handleBoxClick(prev, index))
 
+    }
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <div className="flex flex-col items-center justify-center gap-4">
             <Board
-                state={state}
-                onMove={(i) => setState(prev => applyMove(prev, i))}
+                game={game}
+                onMove={(i) => handleMove(i)}
             />
 
             <div className="text-lg">
-                {state.status === 'won' && `Winner: ${state.winner}`}
-                {state.status === 'draw' && 'Draw'}
-                {state.status === 'in-progress' && `Turn: ${state.currentPlayer}`}
+                {game.status === 'won' && `Winner: ${game.winner}`}
+                {game.status === 'draw' && 'Draw'}
+                {game.status === 'in-progress' && `Turn: ${game.currentPlayer}`}
             </div>
         </div>
     );
